@@ -33,6 +33,7 @@ import org.entcore.timeline.controllers.TimelineController;
 import org.entcore.timeline.cron.DailyMailingCronTask;
 import org.entcore.timeline.cron.WeeklyMailingCronTask;
 import org.entcore.timeline.services.impl.FlashMsgRepositoryEventsSql;
+import org.entcore.timeline.mailer.TimelineMailer;
 
 public class Timeline extends BaseServer {
 
