@@ -3887,6 +3887,7 @@ module.directive('dragItem', function() {
                     firstTick = true;
                     element.attr('style', '');
                 },
+
                 dragOver: function(item){
                     item.addClass('dragover');
                     matchedElement = item;
@@ -3894,6 +3895,7 @@ module.directive('dragItem', function() {
                 dragOut: function(item){
                     item.removeClass('dragover');
                     matchedElement = undefined;
+                    console.log(item)
                 },
                 tick: function() {
                     if (firstTick) {
