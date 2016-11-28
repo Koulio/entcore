@@ -27,7 +27,7 @@ module.exports = function(name){
                 dependencies = dependencies.map((dep) => name + '-' + dep);
                 g.task(name + '-' + taskName, dependencies, exec);
             }
-            
+
             if(taskName === 'build'){
                 buildList.push(name + '-' + taskName)
             }

@@ -1,0 +1,50 @@
+<spinner-cube class="component-spinner" waitingFor="users-content"></spinner-cube>
+
+<div class="panel-header">
+    <img src="/userbook/avatar/{{user.id}}?thumbnail=100x100">
+    <span>{{user.firstName}} {{user.lastName}}</span>
+</div>
+
+<div>
+    <panel-section section-title="users.details.section.infos">
+        <form-field label="profile">
+            <span>{{ user.type | translate }}</span>
+        </form-field>
+        <form-field label="login">
+            <span>{{ user.login }}</span>
+        </form-field>
+        <form-field label="activation.code">
+            <input type="text" [(ngModel)]="user.code">
+            <div>
+                <button [disabled]="!user.code"><s5l>change.activation.code</s5l></button>
+            </div>
+        </form-field>
+        <form-field label="id">
+            <span>{{ user.id }}</span>
+        </form-field>
+        <form-field label="source">
+            <span>{{ user.source }}</span>
+        </form-field>
+    </panel-section>
+
+    <panel-section section-title="users.details.section.administrative">
+    </panel-section>
+
+    <panel-section section-title="users.details.section.relatives" [folded]="true">
+    </panel-section>
+
+    <panel-section section-title="users.details.section.functions" [folded]="true">
+    </panel-section>
+
+    <panel-section section-title="users.details.section.structures" [folded]="true">
+    </panel-section>
+
+    <panel-section section-title="users.details.section.classes" [folded]="true">
+    </panel-section>
+
+    <panel-section section-title="users.details.section.learning.groups" [folded]="true">
+    </panel-section>
+
+    <panel-section section-title="users.details.section.manual.groups" [folded]="true">
+    </panel-section>
+</div>

@@ -1,0 +1,537 @@
+/* Font */
+@import url('https://fonts.googleapis.com/css?family=Oxygen');
+
+/* Variables */
+$main: rgb(0, 200, 2248);
+$main-light: rgb(99, 218, 247);
+$main-dark: darken($main, 10%);
+$accent: rgb(255, 131, 82);
+$accent-light: lighten($accent, 20%);
+$accent-dark: darken($accent, 10%);
+$nuance: rgba(255, 255, 255, 0.9);
+
+/* Elements */
+body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Oxygen', sans-serif;
+}
+
+h1 {
+    margin: 0;
+    padding: 1em 0;
+}
+
+button {
+    cursor: pointer;
+    background: white;
+    border: 1px solid black;
+    transition: background 0.25s;
+
+    &:hover{
+        background-color: $accent;
+    }
+}
+
+input[type="search"] {
+    width: 100%;
+    font-size: 0.8em;
+    display: block;
+    padding: 10px;
+    background: none;
+    outline: none;
+    border: none;
+    border-bottom: 2px solid black;
+    transition: border-color 0.25s;
+
+    &:focus {
+        border-color: $accent;
+    }
+
+    &::-webkit-input-placeholder{ color:rgba(0,0,0,0.4); }
+    &::placeholder{ color:rgba(0,0,0,0.4); }
+    &:-ms-input-placeholder{ color:rgba(0,0,0,0.4); }
+    &::-moz-placeholder { color:rgba(0,0,0,0.4); }
+}
+
+input[type="text"] {
+    border: none;
+    border-bottom: 1px solid black;
+    outline: none;
+    transition: border-color 0.25s;
+
+    &:focus { border-color: $accent; }
+}
+
+ul {
+    list-style: none;
+    padding-left: 20px;
+}
+
+/* UX */
+
+.card {
+    box-shadow: 1px 1px 5px #AAA;
+}
+
+i.top-right {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+i.action {
+    transition: color 0.25s;
+    cursor: pointer;
+
+    &:hover {
+        color: $accent;
+    }
+
+    &.selected {
+        color: $accent-dark;
+    }
+}
+
+i.opener {
+    cursor: pointer;
+    font-style: normal;
+    font-family: "FontAwesome";
+    float: right;
+
+    transition: color 0.25s;
+
+    &:hover {
+        color: $accent;
+    }
+
+    &::after{
+        content: '\f105';
+        display: inline-block;
+        margin-right: 15px;
+        transition: transform 0.25s;
+    }
+
+    &.opened {
+        &::after {
+            transform: rotate(90deg);
+        }
+    }
+}
+
+.round-button {
+    position: absolute;
+    border-radius: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 25px;
+    line-height: 37px;
+    text-align: center;
+    box-shadow: 0px 0px 5px #444;
+    cursor: pointer;
+    background: $nuance;
+    color: $accent;
+    transition: all 0.25s;
+
+    &.top-right-button {
+        top: -20px;
+        right: -20px;
+    }
+
+    &:hover {
+        background: $accent-light;
+        box-shadow: 0px 0px 3px #444;
+    }
+
+    &.selected {
+        background: $accent-dark;
+        color: $nuance;
+        box-shadow: 0px 0px 1px #444;
+    }
+}
+
+/** TOOLTIP **/
+
+body > div.tooltip {
+    padding: 2px 10px;
+    font-size: 11px;
+    border-radius: 5px;
+    background-color: opacify($accent, 0.7);
+    color: #EEE;
+    opacity: 0;
+    transition: opacity 0.35s;
+}
+body > div.tooltip.shown {
+    opacity: 1;
+}
+
+/* Portal */
+
+ux-portal {
+    > header {
+        position: fixed !important;
+        z-index: 9;
+        background-color: $main;
+        padding: 15px;
+        box-sizing: border-box;
+        height: 50px;
+        box-shadow: 0px 0px 2px black;
+    }
+
+    side-panel {
+        > div {
+            left: -400px !important;
+            width: 400px !important;
+            top: 50px !important;
+            height: calc(100% - 50px);
+            border-right: 2px solid #AAA;
+            box-sizing: border-box;
+        }
+    }
+
+    div[header-left] > * {
+        margin-right: 20px;
+    }
+    div[header-right] > * {
+        margin-left: 20px;
+    }
+    div[header-left], div[header-right] {
+        a {
+            color: black;
+            &:visited, &:active { color: initial; }
+        }
+        i {
+            font-size: 1.3em;
+            cursor: pointer;
+            padding: 15px 10px;
+            transition: color 0.25s, background-color 0.25s;
+
+            &:hover {
+                color: $accent;
+            }
+
+            &.active {
+                background-color: $main-light;
+                color: $accent;
+            }
+        }
+    }
+    div[section] {
+        position: relative;
+        left: 0px;
+        top: 50px;
+    }
+    div[section] div.portal-body {
+        padding: 0px 25px;
+    }
+}
+
+/* Side panel */
+
+side-panel {
+    > div { background-color: $main; }
+
+    div.side-search {
+
+    }
+
+    > div > item-tree > ul {
+        padding-left: 0px;
+    }
+}
+
+/* ITEM TREE */
+
+item-tree {
+
+    ul {
+        li {
+            padding: 0px;
+
+            > a {
+                color: black;
+                padding: 10px 5px;
+                display: block;
+                text-decoration: none;
+                transition: all 0.25s;
+
+                &:hover {
+                    background-color: $main-light;
+                }
+            }
+
+            &.root {
+                > a {
+                    font-weight: bolder;
+                    border-bottom: 2px solid $main-light;
+                }
+            }
+
+            &.selected >a {
+                background-color: $accent;
+                color: $nuance;
+            }
+        }
+    }
+
+    ul li.parent.unfolded>a>i.opener::after {
+        transform: rotate(90deg);
+    }
+}
+
+/* spinners */
+div.spinner-wrapper{
+    background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.3), transparent);
+
+    div.sk-cube {
+        background-color: $accent;
+    }
+}
+
+spinner-cube.portal-spinner {
+    div.spinner-wrapper {
+        top: 50px !important;
+        height: calc(100% - 50px) !important;
+    }
+}
+
+spinner-cube.component-spinner {
+    div.spinner-wrapper {
+        position: absolute;
+        background: rgba(235,235,235,0.6);
+        top: 0px !important;
+        left: 0px !important;
+    }
+}
+
+/* Two panels - list & companion */
+.side-layout {
+
+    .side-card {
+        @extend .card;
+    }
+
+    .side-companion {
+        @extend .card;
+
+        .panel-header {
+            font-size: 1.6em;
+            background: $main;
+            padding: 10px 20px;
+
+            > img, > i {
+                height: 2.3em;
+                width: 2.3em;
+                border-radius: 2em;
+                box-shadow: 0px 0px 2px;
+                padding: 5px;
+                box-sizing: border-box;
+                background: $accent;
+                position: relative;
+                top: -0.5em;
+                float: left;
+            }
+
+            > i {
+                background: white;
+                color: $accent;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            > span {
+                margin-left: 20px;
+            }
+        }
+
+        .padded {
+            padding: 20px;
+        }
+    }
+}
+
+/* Panel sections */
+
+.panel-section-header {
+    background: $main;
+    border-bottom: 3px solid $accent;
+}
+
+/* Forms */
+.form-field {
+    margin: 5px 0px;
+    > label:first-child {
+        font-weight: bold;
+    }
+}
+
+/* User list */
+user-list {
+    .user-toolbar {
+        > i { @extend .action; }
+
+        button.toolbar-right {
+            font-size: 1em;
+            border: none;
+            background: white;
+            float: right;
+
+            i {
+                transition: color 0.25s;
+            }
+
+            &:hover {
+                i {
+                    color: $accent;
+                }
+            }
+            &.selected {
+                i { color: $accent-dark; }
+            }
+        }
+    }
+
+    li {
+        transition: background-color 0.25s, color 0.25s;
+
+        &:hover {
+            background-color: $accent-light;
+        }
+
+        &.selected {
+            background-color: $accent;
+            color: white;
+        }
+    }
+}
+
+/* User detail */
+user-detail {
+    panel-section:first-child div.panel-section-header {
+        padding-top: 25px;
+    }
+}
+/* MULTI-COMBO */
+
+multi-combo {
+    >button {
+        min-width: 150px;
+        outline: none;
+        border: 2px solid black;
+        font-weight: bolder;
+
+        &:not([disabled]) {
+            background-color: white;
+        }
+
+        &::after {
+            content: '▼';
+            float: right;
+            margin-left: 10px;
+            transition: transform 0.25s, color 0.25s;
+        }
+
+        &:hover::after {
+            color: $accent-dark;
+        }
+
+        &.opened::after {
+            transform: rotate(180deg);
+        }
+    }
+
+    >div {
+        padding: 0px 10px;
+        margin-top: -2px;
+
+        >div.options {
+            margin-top: 10px;
+
+            >button {
+                border: 1px solid #444;
+                background: #EEE;
+                border: 0;
+                transition: all 0.25s;
+                margin: 2px 0px;
+                width: 100%;
+
+                &:hover {
+                    background: $accent;
+                }
+            }
+        }
+
+        >div.filter {
+            input {
+                width: 100%;
+                line-height: 25px;
+                border: none;
+                border-bottom: 1px solid black;
+                transition: border 0.25s ease-in-out;
+                outline: none;
+
+                &:focus {
+                    border-bottom: 1px solid $accent;
+                }
+            }
+        }
+
+        >ul {
+            list-style: none;
+            padding: 0px;
+            margin-bottom: 10px;
+
+            >li {
+                line-height: 25px;
+                font-size: 13px;
+                transition: background-color 0.25s, color 0.25s;
+                margin-bottom: 5px;
+                padding: 0px 10px;
+
+                &.selected {
+                    color: white;
+                    background-color: $accent-dark;
+                }
+
+                &:not(.selected):not([disabled]):hover {
+                    background-color: transparentize($accent, 0.5);
+                }
+
+                &:not(.selected)[disabled="true"] {
+                    background-color: #CCC;
+                }
+            }
+        }
+    }
+}
+
+.multi-combo-companion {
+    margin: 10px 0px;
+
+    > div {
+        border: 2px solid black;
+        display: inline-block;
+        font-size: 0.8em;
+        margin-right: 10px;
+        padding: 2px 10px;
+        cursor: pointer;
+        transition: all 0.25s;
+
+        i {
+            margin-left: 5px;
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+
+        &:hover {
+            background: $accent-light;
+            border-color: white;
+
+            i {
+                opacity: 1;
+            }
+        }
+    }
+}
+

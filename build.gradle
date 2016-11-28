@@ -95,6 +95,13 @@ project(':common') {
   }
 }
 
+project(':admin') {
+  dependencies {
+    compile project(':common')
+    compile "fr.wseduc:web-utils:$webUtilsVersion"
+  }
+}
+
 project(':app-registry') {
   dependencies {
     compile project(':common')
@@ -102,6 +109,7 @@ project(':app-registry') {
     compile "fr.wseduc:mongodb-helper:$mongodbHelperVersion"
   }
 }
+
 
 project(':auth') {
   dependencies {

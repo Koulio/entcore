@@ -19,7 +19,7 @@ function compileTs(){
         var tsResult = tsProject.src()
             .pipe(sourcemaps.init())
             .pipe(ts(tsProject));
-            
+
         stream.push(
             tsResult.js
                 .pipe(sourcemaps.write('.'))
@@ -43,7 +43,7 @@ function startEntCoreWebpack(isLocal) {
             .pipe(gulp.dest('./' + app));
         streams.push(entcoreWebpack);
     });
-    
+
     return merge(streams);
 }
 
@@ -60,7 +60,7 @@ function startWebpack(isLocal) {
             .pipe(gulp.dest('./'));
         streams.push(appWebpack);
     });
-    
+
     return merge(streams);
 }
 
@@ -108,7 +108,7 @@ gulp.task('copy-local-libs', () => {
         streams.push(ts);
         streams.push(html);
     });
-    
+
     return merge(streams);
 });
 
@@ -131,7 +131,7 @@ gulp.task('update-libs', ['bower'], function(){
     apps.forEach((app) => {
         var html = gulp.src('./bower_components/entcore/template/**/*.html')
             .pipe(gulp.dest('./' + app + '/src/main/resources/public/template/entcore'));
-            
+
         var ts = gulp.src('./bower_components/entcore/src/ts/**/*.ts' )
             .pipe(gulp.dest('./' + app + '/src/main/resources/public/ts/entcore'));
 
@@ -142,7 +142,7 @@ gulp.task('update-libs', ['bower'], function(){
         streams.push(ts);
         streams.push(entcore);
     });
-        
+
     return merge(streams);
 });
 
@@ -184,7 +184,7 @@ gulp.task('build', ['drop-temp'], function () {
         streams.push(copyBehaviours);
         streams.push(copyWidgets);
     })
-    
+
     return merge(streams);
 });
 
@@ -199,6 +199,6 @@ gulp.task('build-local', ['webpack-entcore-local'], function () {
         streams.push(copyBehaviours);
         streams.push(copyWidgets);
     })
-    
+
     return merge(streams);
 });
