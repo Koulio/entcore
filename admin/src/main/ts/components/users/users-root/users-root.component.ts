@@ -3,8 +3,8 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestro
 import { ActivatedRoute, Router, Params, Data } from '@angular/router'
 import { Subscription } from 'rxjs'
 
-import { structures } from '../../../models'
 import { User } from '../../../models/mappings'
+import { StructureModel, structureCollection } from '../../../models'
 import { LoadingService } from '../../../services'
 import { UserList } from '../user-list/user-list.component'
 import { UserFilterList } from '../user-filters/user-filters.component'
@@ -16,7 +16,7 @@ import { UserFilterList } from '../user-filters/user-filters.component'
         <side-layout (closeCompanion)="listCompanionView = ''" [hideCompanion]="listCompanionView">
             <div side-card>
                 <div class="round-button top-right-button"
-                    (click)="listCompanionView = 'user-create'"
+                    (click)="openCreationView()"
                     [class.selected]="listCompanionView === 'user-create'"
                     [tooltip]="'create.user' | translate" position="top">+</div>
                 <user-list [userlist]="userlist"
@@ -26,9 +26,9 @@ import { UserFilterList } from '../user-filters/user-filters.component'
                     #userListComponent></user-list>
             </div>
             <div side-companion>
-                <user-detail [user]="selectedUser"
+                <user-detail [user]="selectedUser" [structure]="currentStructure"
                     *ngIf="listCompanionView === 'user-detail'"></user-detail>
-                <user-filters [(filters)]="rawFilters"
+                <user-filters [structure]="currentStructure" [(filters)]="rawFilters"
                     *ngIf="listCompanionView === 'user-filters'"></user-filters>
                 <user-create
                     *ngIf="listCompanionView === 'user-create'"></user-create>
@@ -47,6 +47,14 @@ export class UsersRoot implements OnInit, OnDestroy {
         private cdRef: ChangeDetectorRef,
         private loadingService: LoadingService){}
 
+    // Current structure
+    private _currentStructure: StructureModel
+    get currentStructure(){ return this._currentStructure }
+    set currentStructure(structure) {
+        this._currentStructure = structure
+        this._rawFilters = null
+        this.filters = {}
+    }
     // User list & selection
     private userlist: User[] = []
     private _selectedUser: User
@@ -70,14 +78,6 @@ export class UsersRoot implements OnInit, OnDestroy {
             this.selectedUser = this.userlist.find(user => user.id === id)
     }
 
-    // Components
-    @ViewChild("userListComponent") private userListComponent : UserList
-    private listCompanionView: string = ''
-
-    // Route parameters subscriptions
-    private structureSubscriber: Subscription
-    private userSubscriber : Subscription
-
     // User list filters
     private _rawFilters : UserFilterList<any>
     get rawFilters(){ return this._rawFilters }
@@ -93,18 +93,26 @@ export class UsersRoot implements OnInit, OnDestroy {
     }
     private filters : {}
 
+    // Components
+    @ViewChild("userListComponent") private userListComponent : UserList
+    private listCompanionView: string = ''
+
+    // Route parameters subscriptions
+    private structureSubscriber: Subscription
+    private userSubscriber : Subscription
+
     ngOnInit(): void {
         this.userlist = this.route.snapshot.data['userlist']
 
         // Watch selected structure
         this.structureSubscriber = this.route.parent.data.subscribe((data: Data) => {
-            let currentStructure = data['structure']
-            if (currentStructure.users.data.length > 0) {
-                this.userlist = currentStructure.users.data
+            this.currentStructure = data['structure']
+            if (this.currentStructure.users.data.length > 0) {
+                this.userlist = this.currentStructure.users.data
             } else {
                 this.loadingService.load('portal-content')
-                currentStructure.users.sync().then(() => {
-                    this.userlist = currentStructure.users.data
+                this.currentStructure.users.sync().then(() => {
+                    this.userlist = this.currentStructure.users.data
                 }).catch(e => {
                     this.onError(e)
                 }).then(() => {
@@ -124,6 +132,10 @@ export class UsersRoot implements OnInit, OnDestroy {
             } else {
                 this.selectedUser = null
             }
+
+            if(params['createUser']){
+                this.openCreationView()
+            }
         })
     }
 
@@ -142,6 +154,15 @@ export class UsersRoot implements OnInit, OnDestroy {
                 this.loadingService.done('users-content')
                 this.cdRef.markForCheck()
             })
+    }
+
+    openCreationView() {
+        if(this.listCompanionView !== 'user-create'){
+            this.listCompanionView = 'user-create'
+            this.router.navigate(['../users'], {
+                queryParams: { createUser: 1 },
+                relativeTo: this.route })
+        }
     }
 
     private error: Error

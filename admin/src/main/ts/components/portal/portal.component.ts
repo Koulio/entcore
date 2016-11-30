@@ -1,23 +1,24 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnInit,
-    ElementRef, ViewChild } from '@angular/core'
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Input,
+    OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core'
 import { Location } from '@angular/common'
 import { Router, ActivatedRoute } from '@angular/router'
 
-import { SessionModel, structures } from '../../models'
-import { Session, Structure } from '../../models/mappings'
+import { SessionModel, StructureModel, structureCollection } from '../../models'
+import { Session } from '../../models/mappings'
+import { Subscription } from 'rxjs'
 
 @Component({
     selector: 'admin-portal',
     templateUrl: require('./portal.component.html'),//'/admin/public/templates/admin-root.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Portal implements OnInit {
+export class Portal implements OnInit, OnDestroy {
 
     private session: Session
 
-    private structures: Structure[]
-    private _currentStructure: Structure
-    set currentStructure(struct: Structure){
+    private structures: StructureModel[]
+    private _currentStructure: StructureModel
+    set currentStructure(struct: StructureModel){
         this._currentStructure = struct
 
         let replacerRegex = /^\/{0,1}admin(\/[^\/]+){0,1}/
@@ -29,19 +30,28 @@ export class Portal implements OnInit {
 
     @ViewChild("sidePanelOpener") private sidePanelOpener: ElementRef
 
+    private structureSubscriber : Subscription
+
     constructor(private cdRef: ChangeDetectorRef,
         private router: Router,
         private location: Location,
         private route: ActivatedRoute) {}
 
     ngOnInit() {
+        this.structures = structureCollection.asTree()
         SessionModel.getSession().then((session) => { this.session = session })
 
-        let initialStructureId = this.route.snapshot.params['structureId']
+        this.structureSubscriber = this.route.params.subscribe(params => {
+            let structureId = params['structureId']
+            if(structureId) {
+                this.currentStructure = structureCollection.data.find(s => s.id === structureId)
+            }
+        })
+    }
 
-        this.structures = structures.asTree()
-        if(initialStructureId)
-            this.currentStructure = structures.data.find(s => s.id === initialStructureId)
+    ngOnDestroy() {
+        if(this.structureSubscriber)
+            this.structureSubscriber.unsubscribe()
     }
 
 }

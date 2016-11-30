@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { Resolve } from '@angular/router'
 
-import { structures } from '../models'
+import { structureCollection } from '../models'
 
 @Injectable()
 export class StructuresResolve implements Resolve<void> {
@@ -9,6 +9,6 @@ export class StructuresResolve implements Resolve<void> {
     constructor(){}
 
     resolve(): Promise<any> {
-        return structures.sync()
+        return structureCollection.sync()
     }
 }

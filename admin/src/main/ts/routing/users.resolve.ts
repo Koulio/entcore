@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router'
 
-import { structures } from '../models'
+import { structureCollection } from '../models'
 import { LoadingService } from '../services'
 import { User } from '../models/mappings'
 
@@ -11,7 +11,7 @@ export class UsersResolve implements Resolve<User[]> {
     constructor(private loadingService: LoadingService){}
 
     resolve(route: ActivatedRouteSnapshot): Promise<User[]> {
-        let currentStructure = structures.data.find(s => s.id === route.parent.params['structureId'])
+        let currentStructure = structureCollection.data.find(s => s.id === route.parent.params['structureId'])
         if(currentStructure.users.data.length > 0) {
             return Promise.resolve(currentStructure.users.data)
         } else {

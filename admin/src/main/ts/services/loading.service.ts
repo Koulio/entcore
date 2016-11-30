@@ -14,8 +14,9 @@ export class LoadingService {
         return this._trigger
     }
 
-    isLoading(something) : boolean  {
-        return this.loading.has(something)
+    isLoading(something, pending) : boolean  {
+        return this.loading.has(something) ||
+            (pending && this.timers.has(something))
     }
 
     load(something, timer?: number) : void {

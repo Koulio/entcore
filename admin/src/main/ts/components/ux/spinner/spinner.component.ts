@@ -26,7 +26,6 @@ import { Subscription } from 'rxjs'
             position: fixed;
             width: 100%;
             height: 100%;
-            z-index: 100;
             pointer-events: all;
             display: flex;
             justify-content: center;
@@ -125,7 +124,8 @@ export class SpinnerComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.subscription.unsubscribe()
+        if(this.subscription)
+            this.subscription.unsubscribe()
     }
 
 }

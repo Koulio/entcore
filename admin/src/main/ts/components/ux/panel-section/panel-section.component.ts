@@ -4,10 +4,10 @@ import { Component, Input } from '@angular/core'
     selector: 'panel-section',
     template: `
         <section class="panel-section">
-            <div class="panel-section-header">
+            <div class="panel-section-header" (click)="folded !== null ? folded=!folded : null" [class.foldable]="folded !== null">
                 {{ sectionTitle | translate }}
                 <i class="opener" *ngIf="folded !== null"
-                    [class.opened]="!folded" (click)="folded=!folded"></i>
+                    [class.opened]="!folded"></i>
             </div>
             <div class="panel-section-content" *ngIf="!folded">
                 <ng-content></ng-content>
@@ -15,12 +15,13 @@ import { Component, Input } from '@angular/core'
         </section>
     `,
     styles: [`
-        .panel-section {
-            margin-bottom: 15px;
-        }
+        .panel-section {}
         .panel-section-header {
             font-size: 1.1em;
             padding: 5px 10px;
+        }
+        .panel-section-header.foldable {
+            cursor: pointer;
         }
         .panel-section-content {
             padding: 15px;

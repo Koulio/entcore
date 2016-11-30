@@ -6,29 +6,17 @@
 </div>
 
 <div>
-    <panel-section section-title="users.details.section.infos">
-        <form-field label="profile">
-            <span>{{ user.type | translate }}</span>
-        </form-field>
-        <form-field label="login">
-            <span>{{ user.login }}</span>
-        </form-field>
-        <form-field label="activation.code">
-            <input type="text" [(ngModel)]="user.code">
-            <div>
-                <button [disabled]="!user.code"><s5l>change.activation.code</s5l></button>
-            </div>
-        </form-field>
-        <form-field label="id">
-            <span>{{ user.id }}</span>
-        </form-field>
-        <form-field label="source">
-            <span>{{ user.source }}</span>
-        </form-field>
-    </panel-section>
+    <div class="panel-message" *ngIf="details?.blocked">
+        <i class="fa fa-ban"></i>
+        <s5l>user.blocked</s5l>
+    </div>
+    <div class="panel-message" *ngIf="isContextAdml()">
+        <i class="fa fa-cog"></i>
+        <s5l>adml.current.structure</s5l>
+    </div>
 
-    <panel-section section-title="users.details.section.administrative">
-    </panel-section>
+    <user-info-section [user]="user" [structure]="structure"></user-info-section>
+    <user-administrative-section [user]="user" [structure]="structure"></user-administrative-section>
 
     <panel-section section-title="users.details.section.relatives" [folded]="true">
     </panel-section>
@@ -36,10 +24,16 @@
     <panel-section section-title="users.details.section.functions" [folded]="true">
     </panel-section>
 
-    <panel-section section-title="users.details.section.structures" [folded]="true">
+    <panel-section section-title="users.details.section.structures" [folded]="true" *ngIf="user?.structures.length > 1">
+        <ul>
+            <li *ngFor="let s of user?.structures">
+                <a [routerLink]="['/admin', s.id]">{{ s.name }}</a>
+            </li>
+        </ul>
     </panel-section>
 
-    <panel-section section-title="users.details.section.classes" [folded]="true">
+    <panel-section section-title="users.details.section.classes" [folded]="true" *ngIf="user?.allClasses.length > 0">
+        <ul><li *ngFor="let c of user?.allClasses">{{ c.name }}</li></ul>
     </panel-section>
 
     <panel-section section-title="users.details.section.learning.groups" [folded]="true">

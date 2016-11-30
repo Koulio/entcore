@@ -1,19 +1,19 @@
-import { Structure } from './mappings/structure'
+import { StructureModel } from './structure.model'
 import { Collection } from 'toolkit'
 import { UserCollection } from './user.collection'
 
-export class StructureCollection extends Collection<Structure>{
+export class StructureCollection extends Collection<StructureModel>{
 
     constructor(){
         super({
             sync: '/directory/structure/admin/list',
             create: '/directory/school',
             update: '/directory/structure/:id'
-        }, Structure)
+        }, StructureModel)
     }
 
     public asTree() {
-        let childrenMap = new Map<string, Structure[]>()
+        let childrenMap = new Map<string, StructureModel[]>()
         this.data.forEach(structure => {
             structure.parents && structure.parents.forEach(parent => {
                 childrenMap.has(parent.id) ?
@@ -30,6 +30,7 @@ export class StructureCollection extends Collection<Structure>{
         })
         return result
     }
+
 }
 
-export let structures = new StructureCollection()
+export let structureCollection = new StructureCollection()

@@ -5,12 +5,11 @@ import { FormsModule } from '@angular/forms'
 
 import { SijilModule } from 'sijil/dist'
 import { InfraComponentsModule, LabelsService } from 'infra-components/dist'
+import { routes } from './routing'
+import { SijilLabelsService } from './services'
+import { AdminRoot } from './components'
 
-import { AdminRoot, Portal, Home, UsersRoot, SideLayout, ListComponent, FormField,
-    StructureHome, UserList, UserDetail, UserCreate, UserFilters, UserError, SpinnerComponent,
-    PanelSection } from './components'
-import { routes, UsersResolve, SessionResolve, I18nResolve, StructuresResolve, StructureResolve } from './routing'
-import { LoadingService, SijilLabelsService } from './services'
+import { declarations, providers } from './module.properties'
 
 @NgModule({
     imports: [
@@ -26,30 +25,10 @@ import { LoadingService, SijilLabelsService } from './services'
         RouterModule.forRoot(routes)
     ],
     declarations: [
-        AdminRoot,
-        Portal,
-        Home,
-        UsersRoot,
-        UserList,
-        UserDetail,
-        UserFilters,
-        UserCreate,
-        UserError,
-        StructureHome,
-        SideLayout,
-        ListComponent,
-        SpinnerComponent,
-        PanelSection,
-        FormField
+        ...declarations
     ],
     providers: [
-        UsersResolve,
-        SessionResolve,
-        StructuresResolve,
-        StructureResolve,
-        I18nResolve,
-        LoadingService,
-        SijilLabelsService
+        ...providers
     ],
     bootstrap: [ AdminRoot ]
 })

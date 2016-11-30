@@ -28,7 +28,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core'
         div.side-companion {
             flex: 1;
             position: relative;
-            margin-left: 20px;
+            margin-left: 25px;
         }
     `]
 })
