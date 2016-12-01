@@ -13,7 +13,7 @@ import { UserFilterList } from '../user-filters/user-filters.component'
     selector: 'users-root',
     template: `
         <h1><i class="fa fa-user"></i><s5l>users.title</s5l></h1>
-        <side-layout (closeCompanion)="listCompanionView = ''" [hideCompanion]="listCompanionView">
+        <side-layout (closeCompanion)="listCompanionView = ''" [showCompanion]="listCompanionView">
             <div side-card>
                 <div class="round-button top-right-button"
                     (click)="openCreationView()"
@@ -76,6 +76,10 @@ export class UsersRoot implements OnInit, OnDestroy {
     private setUserById(id: string) {
         if(!this.selectedUser || id !== this.selectedUser.id)
             this.selectedUser = this.userlist.find(user => user.id === id)
+        else if(this.listCompanionView !== 'user-detail') {
+            this.listCompanionView = 'user-detail'
+            this.cdRef.markForCheck()
+        }
     }
 
     // User list filters
@@ -99,7 +103,7 @@ export class UsersRoot implements OnInit, OnDestroy {
 
     // Route parameters subscriptions
     private structureSubscriber: Subscription
-    private userSubscriber : Subscription
+    private querySubscriber : Subscription
 
     ngOnInit(): void {
         this.userlist = this.route.snapshot.data['userlist']
@@ -125,8 +129,8 @@ export class UsersRoot implements OnInit, OnDestroy {
             this.cdRef.markForCheck()
         })
 
-        // Watch selected user
-        this.userSubscriber = this.route.queryParams.subscribe((params: Params) => {
+        // Watch query parameters
+        this.querySubscriber = this.route.queryParams.subscribe((params: Params) => {
             if(params['userId']){
                 this.setUserById(params['userId'])
             } else {
@@ -141,7 +145,7 @@ export class UsersRoot implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.structureSubscriber.unsubscribe()
-        this.userSubscriber.unsubscribe()
+        this.querySubscriber.unsubscribe()
     }
 
     openUserDetail() {

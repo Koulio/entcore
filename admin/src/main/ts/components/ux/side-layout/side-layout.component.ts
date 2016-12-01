@@ -7,7 +7,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core'
             <div class="side-card">
                 <ng-content select="[side-card]"></ng-content>
             </div>
-            <div class="side-companion" *ngIf="hideCompanion">
+            <div class="side-companion" *ngIf="showCompanion">
                 <ng-content select="[side-companion]"></ng-content>
                 <i class="fa fa-times action top-right" (click)="close.emit()"></i>
             </div>
@@ -33,6 +33,6 @@ import { Component, Input, Output, EventEmitter } from '@angular/core'
     `]
 })
 export class SideLayout {
-    @Input() hideCompanion : boolean = false
+    @Input() showCompanion : boolean = false
     @Output("closeCompanion") close : EventEmitter<void> = new EventEmitter<void>()
 }

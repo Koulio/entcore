@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ChangeDetectorRef } from '@angular/core'
+import { Component, Input, ViewChild, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core'
 import { AbstractControl, NgForm } from '@angular/forms'
 import { User } from '../../../models/mappings'
 import { UserDetailsModel } from '../../../models'
@@ -7,7 +7,8 @@ import { structureCollection, StructureModel } from '../../../models'
 
 @Component({
     selector: 'user-detail',
-    templateUrl: require('./user-detail.component.html')
+    templateUrl: require('./user-detail.component.html'),
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserDetail {
 

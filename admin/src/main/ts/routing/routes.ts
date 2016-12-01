@@ -3,7 +3,8 @@ import { StructuresResolve } from './structures.resolve'
 import { StructureResolve } from './structure.resolve'
 import { SessionResolve } from './session.resolve'
 import { UsersResolve } from './users.resolve'
-import { Portal, Home, UsersRoot, StructureHome } from '../components'
+import { GroupsResolve } from './groups.resolve'
+import { Portal, Home, UsersRoot, GroupsRoot, StructureHome } from '../components'
 
 export let routes = [
 	{
@@ -16,7 +17,8 @@ export let routes = [
 				resolve: { structure: StructureResolve },
 				children: [
 					{ path: '', component: StructureHome },
-					{ path: 'users', component: UsersRoot, resolve: { userlist: UsersResolve } }
+					{ path: 'users', component: UsersRoot, resolve: { userlist: UsersResolve } },
+					{ path: 'groups', component: GroupsRoot, resolve: { grouplist: GroupsResolve } }
 				]
 			},
 			{

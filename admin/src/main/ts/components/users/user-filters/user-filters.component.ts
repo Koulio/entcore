@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core'
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectionStrategy } from '@angular/core'
 import { BundlesService } from 'sijil/dist'
 import { User } from '../../../models/mappings'
 import { StructureModel } from '../../../models'
@@ -49,7 +49,8 @@ export type UserFilterList<T> = Array<UserFilter<T>>;
                 </div>
             </div>
         </div>
-    `
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserFilters implements OnInit {
 

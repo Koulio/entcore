@@ -1,7 +1,7 @@
 import { Serializable } from './serializable'
 import { UserDetailsModel } from '../userdetails.model'
 
-export class User  {
+export class User {
 
     constructor() {
         this.userDetails = new UserDetailsModel()

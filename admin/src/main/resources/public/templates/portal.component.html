@@ -11,18 +11,28 @@
             [tooltip]="'switch.old.admin.console.tooltip' | translate">
             <i class="fa fa-step-backward"></i>
         </a>
-        <a href="/auth/logout">
+        <a href="/auth/logout" [tooltip]="'logout' | translate">
             <i class="fa fa-sign-out" aria-hidden="true"></i>
         </a>
-        <i class="fa fa-exclamation-triangle"></i>
-        <i class="fa fa-th"></i>
-        <i class="fa fa-users"></i>
+        <i class="fa fa-exclamation-triangle"
+            *ngIf="currentStructure"
+            [tooltip]="'reports' | translate"></i>
+        <i class="fa fa-th"
+            *ngIf="currentStructure"
+            [tooltip]="'applications' | translate"></i>
+        <i class="fa fa-users"
+            *ngIf="currentStructure"
+            [tooltip]="'groups' | translate"
+            [routerLink]="'/admin/' + currentStructure?.id + '/groups'"
+            [class.active]="router.isActive('/admin/' + currentStructure?.id + '/groups', false)"></i>
         <i class="fa fa-user" aria-hidden="true"
             *ngIf="currentStructure"
+            [tooltip]="'users' | translate"
             [routerLink]="'/admin/' + currentStructure?.id + '/users'"
             [class.active]="router.isActive('/admin/' + currentStructure?.id + '/users', false)"></i>
         <i class="fa fa-home" aria-hidden="true"
             *ngIf="currentStructure"
+            [tooltip]="'structure' | translate"
             [routerLink]="'/admin/' + currentStructure?.id"
             [class.active]="router.isActive('/admin/' + currentStructure?.id, true)"></i>
     </div>

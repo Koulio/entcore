@@ -1,0 +1,5 @@
+export * from './groups-root/groups-root.component'
+export * from './manual-groups/manual-groups.component'
+export * from './functional-groups/functional-groups.component'
+export * from './profile-groups/profile-groups.component'
+export * from './groups-view/groups-view.component'

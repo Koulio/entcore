@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit, ChangeDetectorRef } from '@angular/core'
+import { Component, Input, AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core'
 import { StructureModel } from '../../../../models'
 
 @Component({
@@ -10,16 +10,16 @@ import { StructureModel } from '../../../../models'
                 <s5l>search.user</s5l>
             </span>
         </div>
-        <div class="card-body">
+        <div class="card-body relative">
             <search-input
                 [delay]="500"
                 [attr.placeholder]="'search.user' | translate"
                 (onChange)="inputValue = $event"></search-input>
-            <div class="card-list relative">
-                <!-- position hack ... -->
+            <!-- position hack ... -->
                 <i class="fa fa-spinner fa-pulse fa-2x fa-fw"
                     *ngIf="loading"
-                    style="top: -1em; position: absolute; right: -1.5em;"></i>
+                    style="position: absolute; top: 35px; right: -20px;"></i>
+            <div class="card-list">
                 <div class="card-big-margin" *ngIf="!foundUsers || foundUsers.length === 0">
                     <em *ngIf="!inputValue">
                         <s5l>users.quick.search.intro</s5l>.
@@ -37,7 +37,8 @@ import { StructureModel } from '../../../../models'
                 </ul>
             </div>
         </div>
-    `
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserSearchCard implements AfterViewInit {
 
@@ -67,6 +68,7 @@ export class UserSearchCard implements AfterViewInit {
     private foundUsers: Array<{id: string, firstName: string, lastName: string}> = []
 
     ngAfterViewInit() {
+        this.cdRef.markForCheck()
         this.cdRef.detectChanges()
     }
 }

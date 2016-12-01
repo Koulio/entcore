@@ -28,12 +28,10 @@ import { BundlesService } from 'sijil/dist'
                 }"
                 [tooltip]="'sort.profile' | translate" position="top"
                 (click)="changeSorts('profile')"></i>
-            <button class="toolbar-right"
+            <i class="fa fa-filter toolbar-right" aria-hidden="true"
                 [class.selected]="listCompanion === 'user-filters'"
-                (click)="openfilters.emit('user-filters')">
-                <i class="fa fa-filter"></i>
-                <s5l>filters</s5l>
-            </button>
+                [tooltip]="'filters' | translate" position="top"
+                (click)="openfilters.emit('user-filters')"></i>
         </div>
     </list-component>
     `,
@@ -43,9 +41,6 @@ import { BundlesService } from 'sijil/dist'
             font-size: 1.2em;
         }
         .user-toolbar i {
-            cursor: pointer;
-        }
-        li {
             cursor: pointer;
         }
     `],

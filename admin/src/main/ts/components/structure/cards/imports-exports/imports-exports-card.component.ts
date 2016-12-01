@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
 import { StructureModel } from '../../../../models'
 
 @Component({
@@ -24,7 +24,8 @@ import { StructureModel } from '../../../../models'
                 <s5l>massmail.accounts</s5l>
             </button>
         </div>
-    `
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImportsExportsCard {
         @Input() structure: StructureModel

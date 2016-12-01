@@ -1,11 +1,19 @@
 import { UserCollection } from './user.collection';
 import { Model } from 'toolkit'
+import { GroupCollection } from './group.collection'
 
 export class StructureModel extends Model<StructureModel> {
+
+    constructor() {
+        super({})
+        this.users = new UserCollection()
+        this.groups = new GroupCollection()
+    }
 
     _id?: string
     set id(id: string) {
         this.users.structureId = id
+        this.groups.structureId = id
         this._id = id
     }
     get id() { return this._id }
@@ -17,11 +25,7 @@ export class StructureModel extends Model<StructureModel> {
     children?: StructureModel[]
     users: UserCollection
     classes: Array<{id: string, name: string}> = []
-
-    constructor() {
-        super({})
-        this.users = new UserCollection()
-    }
+    groups: GroupCollection
 
     quickSearchUsers(input: string) {
         return this.http.get(`/admin/api/structure/${this.id}/quicksearch/users`, {

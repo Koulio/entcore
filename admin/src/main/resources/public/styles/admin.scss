@@ -97,18 +97,85 @@ ul {
 
 /* UX */
 
+.tabs {
+    text-align: center;
+    position: relative;
+    background: white;
+    left: -25px;
+    width: calc(100% + 50px);
+    box-shadow: 0px 0px 3px #444;
+
+    > .tab {
+        display: inline-block;
+        padding: 1em 2em;
+        font-size: 1em;
+        background-color: white;
+        color: #888;
+        transition: all 0.25s;
+        border: none;
+        margin: 0px;
+        border-right: 1px solid #DDD;
+        outline: none;
+
+        &:first-child{
+            border-left: 1px solid #DDD;
+        }
+
+        &:hover {
+            background-color: $accent-light;
+            color: #888;
+        }
+
+        &.active {
+            background-color: $accent;
+            color: white;
+        }
+    }
+}
+
 .card {
     box-shadow: 1px 1px 5px #AAA;
+}
+
+button.leaf-button {
+    padding: 10px 20px;
+    font-size: 1.1em;
+    border-bottom-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border: 1px solid #AAA;
+
+     i {
+        float: right;
+        font-size: 1.2em;
+        width: 1.2em;
+        color: #444;
+    }
+
+    &:hover {
+        color:#444;
+        background-color: $accent;
+        border-color: white;
+
+        i {
+            color: white;
+        }
+    }
 }
 
 .card-layout {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     font-size: 0.9em;
 
     > * {
-        flex: 1 0 calc(50% - 40px);
+        flex: 0.5 0 calc(33% - 40px);
+        display: flex;
+        flex-wrap: wrap;
         min-width: 400px;
+        &.align-start {
+            align-content: flex-start;
+        }
 
         @extend .card;
         margin: 20px;
@@ -117,6 +184,7 @@ ul {
     }
 
     .card-header {
+        flex: 1 0 100%;
         font-size: 1.5em;
         line-height: 1.5em;
         font-weight: bold;
@@ -127,34 +195,14 @@ ul {
     }
 
     .card-body {
-        padding: 25px 50px;
+        flex: 1;
+        padding: 25px 5%;
 
         button {
+            @extend .leaf-button;
             display: block;
-            padding: 10px 20px;
-            font-size: 1.1em;
             width: 100%;
             margin: 10px 0px;
-            border-bottom-left-radius: 20px;
-            border-top-right-radius: 20px;
-            border: 1px solid #AAA;
-
-            i {
-                float: right;
-                font-size: 1.2em;
-                width: 1.2em;
-                color: #444;
-            }
-
-            &:hover {
-                color:#444;
-                background-color: $accent;
-                border-color: white;
-
-                i {
-                    color: white;
-                }
-            }
         }
 
         .card-list ul {
@@ -279,6 +327,14 @@ a.old-console {
     }
 }
 
+.error-tech {
+    font-size: 0.7em;
+    font-style: italic;
+    border-left: 5px solid crimson;
+    margin: 5px 20px;
+    padding-left: 20px;
+}
+
 /** TOOLTIP **/
 
 body > div.tooltip {
@@ -397,9 +453,13 @@ item-tree {
                 }
             }
 
-            &.selected >a {
+            &.selected > a {
                 background-color: $accent;
                 color: $nuance;
+
+                &:hover i {
+                    color: black;
+                }
             }
         }
     }
@@ -529,35 +589,9 @@ div.panel-message {
     }
 }
 
-/* User list */
-user-list {
-    .user-toolbar {
-        > i { @extend .action; }
-
-        button.toolbar-right {
-            font-size: 1em;
-            border: none;
-            background: white;
-            float: right;
-
-            i {
-                transition: color 0.25s;
-            }
-
-            &:hover {
-                i {
-                    color: $accent;
-                }
-            }
-            &.selected {
-                i { color: $accent-dark; }
-            }
-        }
-    }
-
+/* Generic lists */
+list-component {
     li {
-        transition: background-color 0.25s, color 0.25s;
-
         &:hover {
             background-color: $accent-light;
         }
@@ -566,6 +600,22 @@ user-list {
             background-color: $accent;
             color: white;
         }
+    }
+}
+
+/* User list */
+user-list {
+    .user-toolbar {
+        > i { @extend .action; }
+
+        .toolbar-right {
+            font-size: 1.2em;
+            float: right;
+        }
+    }
+
+    li {
+        transition: background-color 0.25s, color 0.25s;
     }
 }
 

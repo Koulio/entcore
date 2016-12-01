@@ -1,28 +1,28 @@
 import { Injectable } from '@angular/core'
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router'
-
-import { structureCollection } from '../models'
+import { structureCollection, GroupCollection } from '../models'
+import { Group } from '../models/mappings'
 import { LoadingService } from '../services'
-import { User } from '../models/mappings'
 
 @Injectable()
-export class UsersResolve implements Resolve<User[]> {
+export class GroupsResolve implements Resolve<Group[]> {
 
     constructor(private loadingService: LoadingService){}
 
-    resolve(route: ActivatedRouteSnapshot): Promise<User[]> {
+    resolve(route: ActivatedRouteSnapshot): Promise<Group[]> {
         let currentStructure = structureCollection.data.find(s => s.id === route.parent.params['structureId'])
-        if(currentStructure.users.data.length > 0) {
-            return Promise.resolve(currentStructure.users.data)
+        if(currentStructure.groups.data.length > 0) {
+            return Promise.resolve(currentStructure.groups.data)
         } else {
             this.loadingService.load('portal-content')
-            return currentStructure.users.sync().then(() => {
+            return currentStructure.groups.sync().then(() => {
                 this.loadingService.done('portal-content')
-                return currentStructure.users.data
+                return currentStructure.groups.data
             }).catch(e => {
                 this.loadingService.done('portal-content')
                 console.error(e)
             })
         }
     }
+
 }

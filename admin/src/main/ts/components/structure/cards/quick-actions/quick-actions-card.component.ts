@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
 import { StructureModel } from '../../../../models'
 
 @Component({
@@ -28,7 +28,8 @@ import { StructureModel } from '../../../../models'
                 <i class="fa fa-exclamation-circle"></i>
             </button>
         </div>
-    `
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QuickActionsCard {
         @Input() structure: StructureModel

@@ -16,8 +16,7 @@ import { Component, Input, Output, ChangeDetectionStrategy,
             border-top: 1px solid #ddd;
             padding: 5px 10px;
         }
-    `],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    `]
 })
 export class ListComponent implements AfterViewInit {
 

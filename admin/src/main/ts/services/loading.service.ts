@@ -20,6 +20,9 @@ export class LoadingService {
     }
 
     load(something, timer?: number) : void {
+        if(this.timers.has(something)){
+            window.clearTimeout(this.timers.get(something))
+        }
         this.timers.set(something, window.setTimeout(() => {
             this.loading.add(something)
             this.timers.delete(something)
