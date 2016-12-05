@@ -11,8 +11,6 @@
 </div>
 <div data-ng-controller="Timeline" class="twelve cell">
 
-
-
 	<div class="row drop-down-block" ng-class="{slided: display.slide}">
 
 		<div class="drop-down-label" ng-if="filtered.notificationTypes.length > 0"  ng-click="display.slide = !display.slide" >
@@ -84,4 +82,39 @@
 	<div class="row notification" ng-show="notifications.loading">
 		<h1 class="reduce-block-eight nomargin"><i18n>loading</i18n></h1>
 	</div>
+
+	<pulsar ng-class="{opened: display.box}" ng-click="display.box = !display.box"></pulsar>
+
+	<div class="pulsarbox">
+		<i class="arrow"></i>
+
+		<header>
+			<i class="info-pic"></i>
+			<i class="close" ng-click="display.box = !display.box"></i>
+		</header>
+		<div class="content">
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+				Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+				nisi ut aliquip ex ea commodo consequat. <br>
+				Duis aute irure dolor in reprehenderit in voluptate
+				velit esse cillum dolore eu fugiat nulla pariatur.
+				<br><br>
+				Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+				deserunt mollit anim id est laborum.
+			</p>
+		</div>
+		<div class="bullet-points">
+				<i class="dot"></i>
+				<i class="dot active"></i>
+				<i class="dot"></i>
+				<i class="dot"></i>
+		</div>
+		<footer>
+			<button type="button" name="Précédent" class="cancel">Précédent</button>
+			<button type="button" name="Suivant">Suivant</button>
+		</footer>
+	</div>
+	<div class="mask" ng-class="{opened: display.box}"></div>
+
 </div>

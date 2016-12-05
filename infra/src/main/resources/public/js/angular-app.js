@@ -5129,6 +5129,19 @@ module.directive('whereami', function() {
     }
 });
 
+module.directive('pulsar', function() {
+    return {
+        restrict: 'E',
+        scope: false,
+        template: '<div class="pulsar">' +
+                    '<i class="info-pic"></i>'+
+                    '<div class="pulse"></div>'+
+                    '<div class="pulse2"></div>'+
+                  '</div>',
+        link: function(scope, element, attributes) {
+        }
+    }
+});
 
 var checkToolDelay = (function(){
     var applyAllowed = true;
