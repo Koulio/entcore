@@ -38,6 +38,7 @@
     "change.activation.code": "Changer le code d'activation",
     "users.details.section.administrative": "Informations administratives",
     "users.details.section.relatives": "Responsable(s)",
+    "users.details.section.children": "Enfant(s)",
     "users.details.section.functions": "Fonction(s) & Matière(s) ",
     "users.details.section.structures": "Etablissement(s)",
     "users.details.section.classes": "Classe(s)",
@@ -67,7 +68,7 @@
     "ADMIN_LOCAL": "Administrateur local",
     "SUPER_ADMIN": "Administrateur central",
     "structure.or.more": "{{ rest > 0 ? $head et $rest établissement(s) : $head }}",
-    "adml.current.structure": "Administrateur local sur cette établissement",
+    "adml.current.structure": "Administrateur local sur cet établissement",
     "quick.actions": "Actions rapides",
     "structure": "Etablissement",
     "imports.exports": "Imports / Exports",
@@ -91,5 +92,12 @@
     "manual.groups": "Groupes manuels",
     "profile.groups": "Groupes de profil",
     "functional.groups": "Groupes fonctionnels",
-    "members.of.group": "Membres du groupe"
+    "members.of.group": "Membres du groupe",
+    "members": "Membre(s)",
+    "add.relative": "Ajouter un responsable",
+    "delete.this.relative": "Supprimer le responsable",
+    "add.child": "Ajouter un enfant",
+    "delete.this.child": "Supprimer l'enfant",
+    "add.structure": "Ajouter un établissement",
+    "delete.this.structure": "Supprimer l'établissement"
 }

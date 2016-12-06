@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectionStrategy } from '@angular/core'
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core'
 import { BundlesService } from 'sijil/dist'
 import { User } from '../../../models/mappings'
 import { StructureModel } from '../../../models'
+import { UserlistFiltersService } from '../../../services/userlist.filters.service'
 
 export type UserFilter<T> = {
     type: string,
@@ -52,11 +53,12 @@ export type UserFilterList<T> = Array<UserFilter<T>>;
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserFilters implements OnInit {
+export class UserFilters implements OnInit, OnDestroy {
 
-    constructor(private bundles: BundlesService){}
+    constructor(private bundles: BundlesService, private listFilters: UserlistFiltersService){}
 
     ngOnInit() {}
+    ngOnDestroy() {}
 
     @Input()
     get structure(){ return this._structure }

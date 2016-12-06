@@ -40,6 +40,10 @@ button {
     &:hover:not(:disabled) {
         background-color: $accent;
     }
+
+    i {
+        margin: 0px 5px;
+    }
 }
 
 input[type="search"] {
@@ -93,6 +97,14 @@ form-errors {
 ul {
     list-style: none;
     padding-left: 20px;
+
+    &.actions-list {
+        li {
+            display: table-row;
+            > * { margin-left: 10px; }
+            > *:first-child { display:table-cell; }
+        }
+    }
 }
 
 /* UX */
@@ -236,7 +248,7 @@ i.top-right {
     right: 1em;
 }
 
-i.action {
+.action {
     transition: color 0.25s;
     cursor: pointer;
 
@@ -247,6 +259,11 @@ i.action {
     &.selected {
         color: $accent-dark;
     }
+}
+
+i.disabled {
+    pointer-events: none;
+    color: #AAA !important;
 }
 
 i.opener {
@@ -331,8 +348,32 @@ a.old-console {
     font-size: 0.7em;
     font-style: italic;
     border-left: 5px solid crimson;
-    margin: 5px 20px;
+    margin: 15px 20px;
     padding-left: 20px;
+}
+
+/** Light boxes **/
+light-box {
+    div[content] {
+        border-radius: 10px;
+        box-shadow: 0px 0px 5px white;
+    }
+
+    &.inner-list {
+        max-height: 95vh;
+        overflow-y: hidden;
+
+        .padded {
+            padding-top: 0px;
+        }
+
+        list-component {
+            ul {
+                max-height: 50vh;
+                overflow-y: scroll;
+            }
+        }
+    }
 }
 
 /** TOOLTIP **/
@@ -571,6 +612,9 @@ div.panel-message {
 
     i.opener{ font-size: 1.3em }
 }
+.panel-section-content {
+    font-size: 0.9em;
+}
 
 /* Forms */
 .form-field {
@@ -600,8 +644,15 @@ list-component {
             background-color: $accent;
             color: white;
         }
+
+        &.disabled {
+            color: #CCC;
+        }
     }
 }
+
+
+/* Lists */
 
 /* User list */
 user-list {
@@ -618,6 +669,27 @@ user-list {
         transition: background-color 0.25s, color 0.25s;
     }
 }
+
+/* Group users list */
+group-users-list list-component {
+    div.toolbar {
+        border-bottom: 1px solid #ccc;
+        padding: 15px;
+        margin-bottom: 10px;
+
+        i { @extend .action; }
+
+        .toolbar-right {
+            font-size: 1.2em;
+            float: right;
+        }
+    }
+
+    ul > li:first-child{
+        border-top: none !important;
+    }
+}
+
 
 /* User detail */
 user-detail {

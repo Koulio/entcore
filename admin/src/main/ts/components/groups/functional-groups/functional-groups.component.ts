@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, Params } from '@angular/router'
 
 import { Group } from '../../../models/mappings'
 import { LoadingService } from '../../../services'
+import { BundlesService } from 'sijil/dist'
 
 @Component({
     selector: 'functional-groups',
@@ -10,25 +11,20 @@ import { LoadingService } from '../../../services'
         <groups-view groupType="FunctionalGroup" viewName="functional-groups"
                     [groups]="groups" [(selectedGroup)]="selectedGroup">
             <div class="padded">
-                <ul>
-                    <li *ngFor="let user of selectedGroup?.users">
-                        {{ user.firstName }} {{ user.lastName }}
-                    </li>
-                </ul>
+                <group-users-list [groups]="groups" [selectedGroup]="selectedGroup">
+                </group-users-list>
             </div>
         </groups-view>
     `
 })
 export class FunctionalGroups implements OnInit, OnDestroy {
 
-    constructor(private route: ActivatedRoute,
-        private router: Router,
-        private cdRef: ChangeDetectorRef,
-        private loadingService: LoadingService){}
+    constructor(private route: ActivatedRoute, private router: Router, private bundles: BundlesService,
+            private cdRef: ChangeDetectorRef, private loadingService: LoadingService) {}
 
     // Model
     @Input() groups: Group[]
-    selectedGroup : Group
+    @Input() selectedGroup : Group
 
     ngOnInit() {}
     ngOnDestroy() {}

@@ -2,11 +2,14 @@
 <div class="toolbar">
     <ng-content select="[toolbar]"></ng-content>
 </div>
-<ul>
-    <li *ngFor="let item of model | filter: filters | filter: inputFilter | orderBy: sort | slice: 0:limit"
-        (click)="onSelect.emit(item)"
-        [class.selected]="isSelected(item)">
-        {{ display(item) }}
-    </li>
-</ul>
+<div class="list-wrapper">
+    <ul>
+        <li *ngFor="let item of model | filter: filters | filter: inputFilter | orderBy: sort | slice: 0:limit"
+            (click)="onSelect.emit(item)"
+            [class.selected]="isSelected(item)"
+            [class.disabled]="isDisabled(item)">
+            {{ display(item) }}
+        </li>
+    </ul>
+</div>
 

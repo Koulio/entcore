@@ -1,8 +1,10 @@
-import { Injectable } from '@angular/core'
+import { Injectable, ApplicationRef } from '@angular/core'
 import { Subject } from 'rxjs'
 
 @Injectable()
 export class LoadingService {
+
+    constructor(private appRef: ApplicationRef){}
 
     timer = 250
 
@@ -14,7 +16,7 @@ export class LoadingService {
         return this._trigger
     }
 
-    isLoading(something, pending) : boolean  {
+    isLoading(something, pending = false) : boolean  {
         return this.loading.has(something) ||
             (pending && this.timers.has(something))
     }
@@ -23,11 +25,19 @@ export class LoadingService {
         if(this.timers.has(something)){
             window.clearTimeout(this.timers.get(something))
         }
-        this.timers.set(something, window.setTimeout(() => {
+
+        let addToQueue = () => {
             this.loading.add(something)
             this.timers.delete(something)
+            this.appRef.tick()
             this.trigger.next(true)
-        }, timer || this.timer))
+        }
+
+        if(timer === 0){
+             addToQueue()
+        } else {
+            this.timers.set(something, window.setTimeout(addToQueue, timer || this.timer))
+        }
     }
 
     done(something) : void {
@@ -35,6 +45,7 @@ export class LoadingService {
         this.timers.delete(something)
         this.loading.delete(something)
         this.trigger.next(true)
+        this.appRef.tick()
     }
 
 }

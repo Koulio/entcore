@@ -1,12 +1,12 @@
-import { User } from './mappings/user'
+import { UserModel } from './user.model'
 import { Collection } from 'toolkit'
 
-export class UserCollection extends Collection<User> {
+export class UserCollection extends Collection<UserModel> {
 
     constructor(){
         super({
             sync: '/directory/user/admin/list?structureId=:structureId'
-        }, User)
+        }, UserModel)
     }
 
     public structureId : string

@@ -1,33 +1,35 @@
 import { Component, Input, Output, OnInit, EventEmitter,
     ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core'
-import { User } from '../../../models/mappings'
 import { BundlesService } from 'sijil/dist'
+
+import { User } from '../../../models/mappings'
+import { UserListService } from '../../../services'
 
 @Component({
     selector: 'user-list',
     template: `
-    <list-component [model]="userlist" [filters]="filters" [inputFilter]="filterByInput"
-        [sort]="sortArray" [limit]="limit" searchPlaceholder="search.user"
-        [isSelected]="isSelected" [display]="display"
-        (inputChange)="userNameFilter = $event"
+    <list-component [model]="userlist" [filters]="filters" [inputFilter]="userListService.filterByInput"
+        [sort]="userListService.sorts" [limit]="userListService.limit" searchPlaceholder="search.user"
+        [isSelected]="isSelected" [display]="userListService.display"
+        (inputChange)="userListService.inputFilter = $event"
         (onSelect)="selectedUser = $event; onselect.emit($event)">
         <div toolbar class="user-toolbar">
              <i class="fa" aria-hidden="true"
                 [ngClass]="{
-                    'fa-sort-alpha-asc': sorts.alphabetical.sort === '+',
-                    'fa-sort-alpha-desc': sorts.alphabetical.sort === '-',
-                    'selected': sorts.alphabetical.selected
+                    'fa-sort-alpha-asc': userListService.sortsMap.alphabetical.sort === '+',
+                    'fa-sort-alpha-desc': userListService.sortsMap.alphabetical.sort === '-',
+                    'selected': userListService.sortsMap.alphabetical.selected
                 }"
                 [tooltip]="'sort.alphabetical' | translate" position="top"
-                (click)="changeSorts('alphabetical')"></i>
+                (click)="userListService.changeSorts('alphabetical')"></i>
             <i class="fa" aria-hidden="true"
                 [ngClass]="{
-                    'fa-sort-amount-asc': sorts.profile.sort === '+',
-                    'fa-sort-amount-desc': sorts.profile.sort === '-',
-                    'selected': sorts.profile.selected
+                    'fa-sort-amount-asc': userListService.sortsMap.profile.sort === '+',
+                    'fa-sort-amount-desc': userListService.sortsMap.profile.sort === '-',
+                    'selected': userListService.sortsMap.profile.selected
                 }"
                 [tooltip]="'sort.profile' | translate" position="top"
-                (click)="changeSorts('profile')"></i>
+                (click)="userListService.changeSorts('profile')"></i>
             <i class="fa fa-filter toolbar-right" aria-hidden="true"
                 [class.selected]="listCompanion === 'user-filters'"
                 [tooltip]="'filters' | translate" position="top"
@@ -47,21 +49,18 @@ import { BundlesService } from 'sijil/dist'
     host: {
         '(document:scroll)': 'onDocumentScroll($event)',
     },
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ UserListService ]
 })
 export class UserList implements OnInit {
 
     constructor(private cdRef: ChangeDetectorRef,
-        private bundlesService: BundlesService){}
+        private bundlesService: BundlesService,
+        public userListService: UserListService){}
 
     ngOnInit() {}
 
     @Input() userlist: User[] = []
-
-    // Display
-    private display = (user: User): string => {
-        return `${ user.lastName.toUpperCase() } ${user.firstName} - ${this.bundlesService.translate(user.type)}`
-    }
 
     @Input() listCompanion: string
     @Output("listCompanionChange") openfilters: EventEmitter<string> = new EventEmitter<string>()
@@ -79,62 +78,8 @@ export class UserList implements OnInit {
         return this.selectedUser === user
     }
 
-    // Limit
-    private DEFAULT_INCREMENT: number = 100
-    private limit = this.DEFAULT_INCREMENT
-    resetLimit() {
-        this.limit = this.DEFAULT_INCREMENT
-    }
-
     // Filters
     @Input() filters: {}
-
-    private _userNameFilter = ""
-    private set userNameFilter(filter: string) {
-        this._userNameFilter = filter
-        this.resetLimit()
-    }
-    private get userNameFilter() {
-        return this._userNameFilter
-    }
-
-    // Sorts
-    private sorts = {
-        alphabetical: {
-            sort: '+',
-            orderedValue: 'lastName',
-            staticValues: ['+firstName'],
-            selected: true },
-        profile: {
-            sort: '+',
-            orderedValue: 'type',
-            selected: false }
-    }
-    private sortArray : Array<string> =  ['+lastName', '+firstName', '+type']
-    private changeSorts = function(target) {
-        this.resetLimit()
-        this.sorts[target].selected = true
-        this.sorts[target].sort = this.sorts[target].sort === '+' ? '-' : '+'
-        this.sortArray = [
-            this.sorts[target].sort + this.sorts[target].orderedValue,
-            ...(this.sorts[target].staticValues || []) ]
-
-        for(let prop in this.sorts) {
-            if(prop !== target) {
-                this.sortArray = this.sortArray.concat([
-                    this.sorts[prop].sort + this.sorts[prop].orderedValue,
-                    ...(this.sorts[prop].staticValues || []) ])
-                this.sorts[prop].selected = false
-            }
-        }
-    }
-
-    // Filtering
-    private filterByInput = (user:User) => {
-        if(!this.userNameFilter) return true
-        return `${user.lastName} ${user.firstName}`.toLowerCase()
-            .indexOf(this.userNameFilter.toLowerCase()) >= 0
-    }
 
     // Scroll
     private ticking = false;
@@ -142,7 +87,7 @@ export class UserList implements OnInit {
         if (!this.ticking) {
             window.requestAnimationFrame(() => {
                  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-                    this.limit = Math.min(this.limit + this.DEFAULT_INCREMENT, this.userlist.length)
+                    this.userListService.addPage(this.userlist.length)
                     this.cdRef.markForCheck()
                 }
                 this.ticking = false;

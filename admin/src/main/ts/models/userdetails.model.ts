@@ -2,7 +2,7 @@ import { Model } from 'toolkit'
 
 export class UserDetailsModel extends Model<UserDetailsModel> {
 
-    constructor(source ?: UserDetailsModel) {
+    constructor() {
         super({
             sync: '/directory/user/:id',
             update: '/directory/user/:id'
@@ -29,8 +29,8 @@ export class UserDetailsModel extends Model<UserDetailsModel> {
     profiles?: Array<string>
     type?: Array<string>
     functions?: Array<[string, Array<string>]>
-    children?: Array<string>
-    parents?: Array<string>
+    children?: Array<{id: string, firstName: string, lastName: string, displayName: string, externalId: string}>
+    parents?: Array<{id: string, firstName: string, lastName: string, displayName: string, externalId: string}>
     functionalGroups?: Array<string>
     administrativeStructures?: Array<string>
     deleteDate: number
@@ -46,6 +46,30 @@ export class UserDetailsModel extends Model<UserDetailsModel> {
         payload.append('login', this.login)
         payload.append('email', email);
         return this.http.post('/auth/sendResetPassword', payload)
+    }
+
+    addRelative(parent) {
+        return this.http.put(`/directory/user/${this.id}/related/${parent.id}`).then(() => {
+            this.parents.push(parent)
+        })
+    }
+
+    removeRelative(parent) {
+        return this.http.delete(`/directory/user/${this.id}/related/${parent.id}`).then(() => {
+            this.parents = this.parents.filter(p => p.id !== parent.id)
+        })
+    }
+
+    addChild(child) {
+        return this.http.put(`/directory/user/${child.id}/related/${this.id}`).then(() => {
+            this.children.push(child)
+        })
+    }
+
+    removeChild(child) {
+        return this.http.delete(`/directory/user/${child.id}/related/${this.id}`).then(() => {
+            this.children = this.children.filter(c => c.id !== child.id)
+        })
     }
 
     toJSON() {

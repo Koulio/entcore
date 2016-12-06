@@ -8,6 +8,7 @@ import { StructureModel, structureCollection } from '../../../models'
 import { LoadingService } from '../../../services'
 import { UserList } from '../user-list/user-list.component'
 import { UserFilterList } from '../user-filters/user-filters.component'
+import { UserlistFiltersService } from '../../../services/userlist.filters.service'
 
 @Component({
     selector: 'users-root',
@@ -38,7 +39,8 @@ import { UserFilterList } from '../user-filters/user-filters.component'
             </div>
         </side-layout>
     `,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [UserlistFiltersService]
 })
 export class UsersRoot implements OnInit, OnDestroy {
 
@@ -60,7 +62,10 @@ export class UsersRoot implements OnInit, OnDestroy {
     private _selectedUser: User
     get selectedUser() : User { return this._selectedUser}
     set selectedUser(user: User) {
-        if(user && user !== this._selectedUser) {
+        if(!user) {
+            this.listCompanionView = ''
+            this.cdRef.markForCheck()
+        } else if(user !== this._selectedUser) {
             this._selectedUser = user
             this.openUserDetail()
             this.router.navigate(['../users'], {
@@ -68,9 +73,6 @@ export class UsersRoot implements OnInit, OnDestroy {
                     relativeTo: this.route })
         } else if(user === this._selectedUser) {
             this.listCompanionView = 'user-detail'
-        } else if(!user) {
-            this.listCompanionView = ''
-            this.cdRef.markForCheck()
         }
     }
     private setUserById(id: string) {
@@ -124,7 +126,7 @@ export class UsersRoot implements OnInit, OnDestroy {
                     this.cdRef.markForCheck()
                 })
             }
-            this.userListComponent.resetLimit()
+            this.userListComponent.userListService.resetLimit()
             this.selectedUser = null
             this.cdRef.markForCheck()
         })

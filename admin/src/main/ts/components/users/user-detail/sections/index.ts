@@ -1,2 +1,5 @@
-export * from "./administrative/user-administrative-section.component"
-export * from "./info/user-info-section.component"
+export * from './administrative/user-administrative-section.component'
+export * from './info/user-info-section.component'
+export * from './relatives/user-relatives-section.component'
+export * from './children/user-children-section.component'
+export * from './structures/user-structures-section.compoonent'

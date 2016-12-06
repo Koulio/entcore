@@ -39,7 +39,7 @@
         </span>
     </form-field>
     <div class="form-row" *ngIf="!user.code">
-        <button class="relative" (click)="wrapRequest(details.sendResetPassword, 'user.password.mail', passwordResetMail)" [disabled]="!passwordResetMail || passwordMailInput.errors">
+        <button class="relative" (click)="wrapRequest(details.sendResetPassword, 'user.password.mail', null, passwordResetMail)" [disabled]="!passwordResetMail || passwordMailInput.errors">
                 <spinner-cube class="button-spinner" waitingFor="user.password.mail"></spinner-cube>
                 <s5l>send.reset.password</s5l>
                 <i class="fa fa-envelope"></i>

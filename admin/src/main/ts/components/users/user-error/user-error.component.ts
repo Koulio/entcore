@@ -9,9 +9,9 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
         </div>
         <div class="padded">
             <s5l>user.root.error.text</s5l>
-            <div class="padded error-tech">
+            <div class="error-tech">
                 <span>
-                    {{ error.stack }}
+                    {{ error.stack || error }}
                 </span>
             </div>
         </div>

@@ -1,5 +1,5 @@
 import { Input, ViewChild, ChangeDetectorRef } from '@angular/core'
-import { User } from '../../../../models/mappings'
+import { UserModel } from '../../../../models'
 import { UserDetailsModel, StructureModel, structureCollection } from '../../../../models'
 import { LoadingService } from '../../../../services'
 
@@ -9,12 +9,12 @@ export abstract class AbstractSection {
         protected cdRef: ChangeDetectorRef){}
 
     get user(){ return this._user }
-    set user(u: User){
+    set user(u: UserModel){
         this._user = u
         this.details = u.userDetails
         this.onUserChange()
     }
-    protected _user : User
+    protected _user : UserModel
     protected details: UserDetailsModel
     structure: StructureModel
 
@@ -25,21 +25,15 @@ export abstract class AbstractSection {
         return structureCollection.data.find(s => s.id === id)
     }
 
-    protected isContextAdml() {
-        return this.details.functions &&
-            this.details.functions[0][0] &&
-            this.details.functions[0][1].find(id => this.structure.id === id)
-    }
-
-    protected wrapRequest(request, loadingLabel: string, ...args) {
-        this.loadingService.load(loadingLabel)
-        request.bind(this.details)(...args).then(() => {
-            this.cdRef.markForCheck()
-        }).catch((err) => {
+    protected wrapRequest = (request, loadingLabel: string, delay: number, ...args) => {
+        this.loadingService.load(loadingLabel, delay)
+        request.bind(this.details)(...args).catch((err) => {
             console.error(err)
         }).then(() => {
             this.loadingService.done(loadingLabel)
+            this.cdRef.markForCheck()
         })
+        this.cdRef.markForCheck()
     }
 
     protected abstract onUserChange()

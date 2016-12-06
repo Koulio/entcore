@@ -16,6 +16,10 @@ import { Component, Input, Output, ChangeDetectionStrategy,
             border-top: 1px solid #ddd;
             padding: 5px 10px;
         }
+
+        ul li.disabled {
+            pointer-events: none;
+        }
     `]
 })
 export class ListComponent implements AfterViewInit {
@@ -34,6 +38,7 @@ export class ListComponent implements AfterViewInit {
 
     @Input() searchPlaceholder = "search"
     @Input() isSelected = () => false
+    @Input() isDisabled = () => false
 
     @Input() display = (item) => { return item }
 

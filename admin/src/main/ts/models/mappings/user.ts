@@ -1,18 +1,9 @@
 import { Serializable } from './serializable'
 import { UserDetailsModel } from '../userdetails.model'
 
-export class User {
+export interface User {
 
-    constructor() {
-        this.userDetails = new UserDetailsModel()
-    }
-
-    private _id: string
-    get id(){ return this._id }
-    set id(id) {
-        this._id = id
-        this.userDetails.id = id
-    }
+    id: string
     type: string
     externalId: string
     code: string

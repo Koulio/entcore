@@ -5,7 +5,7 @@ webpackJsonp([0],{
 
 	"use strict";
 	var admin_module_1 = __webpack_require__(1);
-	var platform_browser_dynamic_1 = __webpack_require__(457);
+	var platform_browser_dynamic_1 = __webpack_require__(463);
 	var platform = platform_browser_dynamic_1.platformBrowserDynamic();
 	platform.bootstrapModule(admin_module_1.AdminModule);
 
@@ -33,8 +33,8 @@ webpackJsonp([0],{
 	var dist_2 = __webpack_require__(59);
 	var routing_1 = __webpack_require__(69);
 	var services_1 = __webpack_require__(124);
-	var components_1 = __webpack_require__(415);
-	var module_properties_1 = __webpack_require__(456);
+	var components_1 = __webpack_require__(416);
+	var module_properties_1 = __webpack_require__(462);
 	var AdminModule = (function () {
 	    function AdminModule() {
 	    }
@@ -73,11 +73,11 @@ webpackJsonp([0],{
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
 	__export(__webpack_require__(70));
+	__export(__webpack_require__(414));
 	__export(__webpack_require__(413));
-	__export(__webpack_require__(412));
 	__export(__webpack_require__(72));
 	__export(__webpack_require__(123));
-	__export(__webpack_require__(414));
+	__export(__webpack_require__(415));
 	__export(__webpack_require__(71));
 
 
@@ -90,10 +90,10 @@ webpackJsonp([0],{
 	var i18n_resolve_1 = __webpack_require__(71);
 	var structures_resolve_1 = __webpack_require__(72);
 	var structure_resolve_1 = __webpack_require__(123);
-	var session_resolve_1 = __webpack_require__(412);
-	var users_resolve_1 = __webpack_require__(413);
-	var groups_resolve_1 = __webpack_require__(414);
-	var components_1 = __webpack_require__(415);
+	var session_resolve_1 = __webpack_require__(413);
+	var users_resolve_1 = __webpack_require__(414);
+	var groups_resolve_1 = __webpack_require__(415);
+	var components_1 = __webpack_require__(416);
 	exports.routes = [
 	    {
 	        path: '',
@@ -200,7 +200,8 @@ webpackJsonp([0],{
 	__export(__webpack_require__(101));
 	__export(__webpack_require__(102));
 	__export(__webpack_require__(103));
-	__export(__webpack_require__(105));
+	__export(__webpack_require__(104));
+	__export(__webpack_require__(118));
 	__export(__webpack_require__(119));
 
 
@@ -245,7 +246,7 @@ webpackJsonp([0],{
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var structure_model_1 = __webpack_require__(102);
-	var toolkit_1 = __webpack_require__(106);
+	var toolkit_1 = __webpack_require__(105);
 	var StructureCollection = (function (_super) {
 	    __extends(StructureCollection, _super);
 	    function StructureCollection() {
@@ -291,7 +292,7 @@ webpackJsonp([0],{
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var user_collection_1 = __webpack_require__(103);
-	var toolkit_1 = __webpack_require__(106);
+	var toolkit_1 = __webpack_require__(105);
 	var group_collection_1 = __webpack_require__(119);
 	var StructureModel = (function (_super) {
 	    __extends(StructureModel, _super);
@@ -341,14 +342,14 @@ webpackJsonp([0],{
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var user_1 = __webpack_require__(104);
-	var toolkit_1 = __webpack_require__(106);
+	var user_model_1 = __webpack_require__(104);
+	var toolkit_1 = __webpack_require__(105);
 	var UserCollection = (function (_super) {
 	    __extends(UserCollection, _super);
 	    function UserCollection() {
 	        return _super.call(this, {
 	            sync: '/directory/user/admin/list?structureId=:structureId'
-	        }, user_1.User) || this;
+	        }, user_model_1.UserModel) || this;
 	    }
 	    return UserCollection;
 	}(toolkit_1.Collection));
@@ -361,12 +362,22 @@ webpackJsonp([0],{
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var userdetails_model_1 = __webpack_require__(105);
-	var User = (function () {
-	    function User() {
-	        this.userDetails = new userdetails_model_1.UserDetailsModel();
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var toolkit_1 = __webpack_require__(105);
+	var userdetails_model_1 = __webpack_require__(118);
+	var structure_collection_1 = __webpack_require__(101);
+	var UserModel = (function (_super) {
+	    __extends(UserModel, _super);
+	    function UserModel() {
+	        var _this = _super.call(this, {}) || this;
+	        _this.userDetails = new userdetails_model_1.UserDetailsModel();
+	        return _this;
 	    }
-	    Object.defineProperty(User.prototype, "id", {
+	    Object.defineProperty(UserModel.prototype, "id", {
 	        get: function () { return this._id; },
 	        set: function (id) {
 	            this._id = id;
@@ -375,14 +386,35 @@ webpackJsonp([0],{
 	        enumerable: true,
 	        configurable: true
 	    });
-	    return User;
-	}());
-	exports.User = User;
+	    UserModel.prototype.addStructure = function (structureId) {
+	        var _this = this;
+	        return this.http.put("/directory/structure/" + structureId + "/link/" + this.id).then(function () {
+	            var targetStructure = structure_collection_1.structureCollection.data.find(function (s) { return s.id === structureId; });
+	            if (targetStructure) {
+	                _this.structures.push({ id: targetStructure.id, name: targetStructure.name });
+	                if (targetStructure.users.data.length > 0)
+	                    targetStructure.users.data.push(_this);
+	            }
+	        });
+	    };
+	    UserModel.prototype.removeStructure = function (structureId) {
+	        var _this = this;
+	        return this.http.delete("/directory/structure/" + structureId + "/unlink/" + this.id).then(function () {
+	            _this.structures = _this.structures.filter(function (s) { return s.id !== structureId; });
+	            var targetStructure = structure_collection_1.structureCollection.data.find(function (s) { return s.id === structureId; });
+	            if (targetStructure && targetStructure.users.data.length > 0) {
+	                targetStructure.users.data = targetStructure.users.data.filter(function (u) { return u.id !== _this.id; });
+	            }
+	        });
+	    };
+	    return UserModel;
+	}(toolkit_1.Model));
+	exports.UserModel = UserModel;
 
 
 /***/ },
 
-/***/ 105:
+/***/ 118:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -391,10 +423,10 @@ webpackJsonp([0],{
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var toolkit_1 = __webpack_require__(106);
+	var toolkit_1 = __webpack_require__(105);
 	var UserDetailsModel = (function (_super) {
 	    __extends(UserDetailsModel, _super);
-	    function UserDetailsModel(source) {
+	    function UserDetailsModel() {
 	        return _super.call(this, {
 	            sync: '/directory/user/:id',
 	            update: '/directory/user/:id'
@@ -411,6 +443,30 @@ webpackJsonp([0],{
 	        payload.append('login', this.login);
 	        payload.append('email', email);
 	        return this.http.post('/auth/sendResetPassword', payload);
+	    };
+	    UserDetailsModel.prototype.addRelative = function (parent) {
+	        var _this = this;
+	        return this.http.put("/directory/user/" + this.id + "/related/" + parent.id).then(function () {
+	            _this.parents.push(parent);
+	        });
+	    };
+	    UserDetailsModel.prototype.removeRelative = function (parent) {
+	        var _this = this;
+	        return this.http.delete("/directory/user/" + this.id + "/related/" + parent.id).then(function () {
+	            _this.parents = _this.parents.filter(function (p) { return p.id !== parent.id; });
+	        });
+	    };
+	    UserDetailsModel.prototype.addChild = function (child) {
+	        var _this = this;
+	        return this.http.put("/directory/user/" + child.id + "/related/" + this.id).then(function () {
+	            _this.children.push(child);
+	        });
+	    };
+	    UserDetailsModel.prototype.removeChild = function (child) {
+	        var _this = this;
+	        return this.http.delete("/directory/user/" + child.id + "/related/" + this.id).then(function () {
+	            _this.children = _this.children.filter(function (c) { return c.id !== child.id; });
+	        });
 	    };
 	    UserDetailsModel.prototype.toJSON = function () {
 	        return {
@@ -442,7 +498,7 @@ webpackJsonp([0],{
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var toolkit_1 = __webpack_require__(106);
+	var toolkit_1 = __webpack_require__(105);
 	var mappings_1 = __webpack_require__(120);
 	var GroupCollection = (function (_super) {
 	    __extends(GroupCollection, _super);
@@ -466,7 +522,6 @@ webpackJsonp([0],{
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
 	__export(__webpack_require__(121));
-	__export(__webpack_require__(104));
 	__export(__webpack_require__(122));
 
 
@@ -563,6 +618,7 @@ webpackJsonp([0],{
 	}
 	__export(__webpack_require__(125));
 	__export(__webpack_require__(411));
+	__export(__webpack_require__(412));
 
 
 /***/ },
@@ -583,7 +639,8 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(2);
 	var rxjs_1 = __webpack_require__(126);
 	var LoadingService = (function () {
-	    function LoadingService() {
+	    function LoadingService(appRef) {
+	        this.appRef = appRef;
 	        this.timer = 250;
 	        this.loading = new Set();
 	        this.timers = new Map();
@@ -597,6 +654,7 @@ webpackJsonp([0],{
 	        configurable: true
 	    });
 	    LoadingService.prototype.isLoading = function (something, pending) {
+	        if (pending === void 0) { pending = false; }
 	        return this.loading.has(something) ||
 	            (pending && this.timers.has(something));
 	    };
@@ -605,23 +663,31 @@ webpackJsonp([0],{
 	        if (this.timers.has(something)) {
 	            window.clearTimeout(this.timers.get(something));
 	        }
-	        this.timers.set(something, window.setTimeout(function () {
+	        var addToQueue = function () {
 	            _this.loading.add(something);
 	            _this.timers.delete(something);
+	            _this.appRef.tick();
 	            _this.trigger.next(true);
-	        }, timer || this.timer));
+	        };
+	        if (timer === 0) {
+	            addToQueue();
+	        }
+	        else {
+	            this.timers.set(something, window.setTimeout(addToQueue, timer || this.timer));
+	        }
 	    };
 	    LoadingService.prototype.done = function (something) {
 	        window.clearTimeout(this.timers.get(something));
 	        this.timers.delete(something);
 	        this.loading.delete(something);
 	        this.trigger.next(true);
+	        this.appRef.tick();
 	    };
 	    return LoadingService;
 	}());
 	LoadingService = __decorate([
 	    core_1.Injectable(),
-	    __metadata("design:paramtypes", [])
+	    __metadata("design:paramtypes", [core_1.ApplicationRef])
 	], LoadingService);
 	exports.LoadingService = LoadingService;
 
@@ -675,6 +741,105 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(2);
+	var dist_1 = __webpack_require__(56);
+	var UserListService = (function () {
+	    function UserListService(bundlesService) {
+	        var _this = this;
+	        this.bundlesService = bundlesService;
+	        // Sorts
+	        this.sortsMap = {
+	            alphabetical: {
+	                sort: '+',
+	                orderedValue: 'lastName',
+	                staticValues: ['+firstName'],
+	                selected: true
+	            },
+	            profile: {
+	                sort: '+',
+	                orderedValue: 'type',
+	                selected: false
+	            }
+	        };
+	        this.sorts = ['+lastName', '+firstName', '+type'];
+	        this.changeSorts = function (target) {
+	            this.resetLimit();
+	            this.sortsMap[target].selected = true;
+	            this.sortsMap[target].sort = this.sortsMap[target].sort === '+' ? '-' : '+';
+	            this.sorts = [
+	                this.sortsMap[target].sort + this.sortsMap[target].orderedValue
+	            ].concat((this.sortsMap[target].staticValues || []));
+	            for (var prop in this.sortsMap) {
+	                if (prop !== target) {
+	                    this.sorts = this.sorts.concat([
+	                        this.sortsMap[prop].sort + this.sortsMap[prop].orderedValue
+	                    ].concat((this.sortsMap[prop].staticValues || [])));
+	                    this.sortsMap[prop].selected = false;
+	                }
+	            }
+	        };
+	        // Filters
+	        this._inputFilter = "";
+	        this.filterByInput = function (user) {
+	            if (!_this.inputFilter)
+	                return true;
+	            return (user.lastName + " " + user.firstName).toLowerCase()
+	                .indexOf(_this.inputFilter.toLowerCase()) >= 0;
+	        };
+	        // Display
+	        this.display = function (user) {
+	            return user.lastName.toUpperCase() + " " + user.firstName + " - " + _this.bundlesService.translate(user.type);
+	        };
+	        // Limit
+	        this.DEFAULT_INCREMENT = 100;
+	        this.limit = this.DEFAULT_INCREMENT;
+	    }
+	    Object.defineProperty(UserListService.prototype, "inputFilter", {
+	        get: function () {
+	            return this._inputFilter;
+	        },
+	        set: function (filter) {
+	            this._inputFilter = filter;
+	            this.resetLimit();
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    UserListService.prototype.resetLimit = function () {
+	        this.limit = this.DEFAULT_INCREMENT;
+	    };
+	    UserListService.prototype.addPage = function (max) {
+	        if (max) {
+	            this.limit = Math.min(this.limit + this.DEFAULT_INCREMENT, max);
+	        }
+	        else {
+	            this.limit = this.limit + this.DEFAULT_INCREMENT;
+	        }
+	    };
+	    return UserListService;
+	}());
+	UserListService = __decorate([
+	    core_1.Injectable(),
+	    __metadata("design:paramtypes", [dist_1.BundlesService])
+	], UserListService);
+	exports.UserListService = UserListService;
+
+
+/***/ },
+
+/***/ 413:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
 	var models_1 = __webpack_require__(73);
 	var SessionResolve = (function () {
 	    function SessionResolve() {
@@ -693,7 +858,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 413:
+/***/ 414:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -741,7 +906,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 414:
+/***/ 415:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -789,25 +954,25 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 415:
+/***/ 416:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(416));
-	__export(__webpack_require__(418));
-	__export(__webpack_require__(420));
+	__export(__webpack_require__(417));
+	__export(__webpack_require__(419));
 	__export(__webpack_require__(421));
-	__export(__webpack_require__(428));
-	__export(__webpack_require__(442));
-	__export(__webpack_require__(448));
+	__export(__webpack_require__(422));
+	__export(__webpack_require__(429));
+	__export(__webpack_require__(447));
+	__export(__webpack_require__(454));
 
 
 /***/ },
 
-/***/ 416:
+/***/ 417:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -831,7 +996,7 @@ webpackJsonp([0],{
 	AdminRoot = __decorate([
 	    core_1.Component({
 	        selector: 'admin-app',
-	        templateUrl: __webpack_require__(417),
+	        templateUrl: __webpack_require__(418),
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [core_1.ChangeDetectorRef])
@@ -841,14 +1006,14 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 417:
+/***/ 418:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "templates/admin-root.component.html";
 
 /***/ },
 
-/***/ 418:
+/***/ 419:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -907,7 +1072,7 @@ webpackJsonp([0],{
 	Portal = __decorate([
 	    core_1.Component({
 	        selector: 'admin-portal',
-	        templateUrl: __webpack_require__(419),
+	        templateUrl: __webpack_require__(420),
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [core_1.ChangeDetectorRef,
@@ -920,14 +1085,14 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 419:
+/***/ 420:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "templates/portal.component.html";
 
 /***/ },
 
-/***/ 420:
+/***/ 421:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -963,20 +1128,20 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 421:
+/***/ 422:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(422));
 	__export(__webpack_require__(423));
+	__export(__webpack_require__(424));
 
 
 /***/ },
 
-/***/ 422:
+/***/ 423:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1023,22 +1188,22 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 423:
+/***/ 424:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(424));
 	__export(__webpack_require__(425));
 	__export(__webpack_require__(426));
 	__export(__webpack_require__(427));
+	__export(__webpack_require__(428));
 
 
 /***/ },
 
-/***/ 424:
+/***/ 425:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1075,7 +1240,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 425:
+/***/ 426:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1102,7 +1267,7 @@ webpackJsonp([0],{
 	QuickActionsCard = __decorate([
 	    core_1.Component({
 	        selector: 'quick-actions-card',
-	        template: "\n        <div class=\"card-header\">\n            <span>\n                <i class=\"fa fa-wrench\"></i>\n                <s5l>quick.actions</s5l>\n            </span>\n        </div>\n        <div class=\"card-body\">\n            <button routerLink=\"users\" [queryParams]=\"{ createUser: 1 }\">\n                <s5l>create.user</s5l>\n                <i class=\"fa fa-user-plus\"></i>\n            </button>\n            <button>\n                <s5l>create.group</s5l>\n                <i class=\"fa fa-users\"></i>\n            </button>\n            <button>\n                <s5l>manage.duplicates</s5l>\n                <i class=\"fa fa-user-times\"></i>\n            </button>\n            <button>\n                <s5l>manage.reports</s5l>\n                <i class=\"fa fa-exclamation-circle\"></i>\n            </button>\n        </div>\n    ",
+	        template: "\n        <div class=\"card-header\">\n            <span>\n                <i class=\"fa fa-wrench\"></i>\n                <s5l>quick.actions</s5l>\n            </span>\n        </div>\n        <div class=\"card-body\">\n            <button routerLink=\"users\" [queryParams]=\"{ createUser: 1 }\">\n                <s5l>create.user</s5l>\n                <i class=\"fa fa-user-plus\"></i>\n            </button>\n            <button routerLink=\"groups\">\n                <s5l>create.group</s5l>\n                <i class=\"fa fa-users\"></i>\n            </button>\n            <button>\n                <s5l>manage.duplicates</s5l>\n                <i class=\"fa fa-user-times\"></i>\n            </button>\n            <button>\n                <s5l>manage.reports</s5l>\n                <i class=\"fa fa-exclamation-circle\"></i>\n            </button>\n        </div>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [])
@@ -1112,7 +1277,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 426:
+/***/ 427:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1180,7 +1345,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 427:
+/***/ 428:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1217,25 +1382,25 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 428:
+/***/ 429:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(429));
 	__export(__webpack_require__(430));
 	__export(__webpack_require__(431));
 	__export(__webpack_require__(433));
-	__export(__webpack_require__(439));
-	__export(__webpack_require__(440));
-	__export(__webpack_require__(441));
+	__export(__webpack_require__(435));
+	__export(__webpack_require__(444));
+	__export(__webpack_require__(445));
+	__export(__webpack_require__(446));
 
 
 /***/ },
 
-/***/ 429:
+/***/ 430:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1251,7 +1416,8 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(2);
 	var router_1 = __webpack_require__(22);
 	var services_1 = __webpack_require__(124);
-	var user_list_component_1 = __webpack_require__(430);
+	var user_list_component_1 = __webpack_require__(431);
+	var userlist_filters_1 = __webpack_require__(432);
 	var UsersRoot = (function () {
 	    function UsersRoot(route, router, cdRef, loadingService) {
 	        this.route = route;
@@ -1275,7 +1441,11 @@ webpackJsonp([0],{
 	    Object.defineProperty(UsersRoot.prototype, "selectedUser", {
 	        get: function () { return this._selectedUser; },
 	        set: function (user) {
-	            if (user && user !== this._selectedUser) {
+	            if (!user) {
+	                this.listCompanionView = '';
+	                this.cdRef.markForCheck();
+	            }
+	            else if (user !== this._selectedUser) {
 	                this._selectedUser = user;
 	                this.openUserDetail();
 	                this.router.navigate(['../users'], {
@@ -1285,10 +1455,6 @@ webpackJsonp([0],{
 	            }
 	            else if (user === this._selectedUser) {
 	                this.listCompanionView = 'user-detail';
-	            }
-	            else if (!user) {
-	                this.listCompanionView = '';
-	                this.cdRef.markForCheck();
 	            }
 	        },
 	        enumerable: true,
@@ -1336,7 +1502,7 @@ webpackJsonp([0],{
 	                    _this.cdRef.markForCheck();
 	                });
 	            }
-	            _this.userListComponent.resetLimit();
+	            _this.userListComponent.userListService.resetLimit();
 	            _this.selectedUser = null;
 	            _this.cdRef.markForCheck();
 	        });
@@ -1393,7 +1559,8 @@ webpackJsonp([0],{
 	    core_1.Component({
 	        selector: 'users-root',
 	        template: "\n        <h1><i class=\"fa fa-user\"></i><s5l>users.title</s5l></h1>\n        <side-layout (closeCompanion)=\"listCompanionView = ''\" [showCompanion]=\"listCompanionView\">\n            <div side-card>\n                <div class=\"round-button top-right-button\"\n                    (click)=\"openCreationView()\"\n                    [class.selected]=\"listCompanionView === 'user-create'\"\n                    [tooltip]=\"'create.user' | translate\" position=\"top\">+</div>\n                <user-list [userlist]=\"userlist\"\n                    [(listCompanion)]=\"listCompanionView\"\n                    [(selectedUser)]=\"selectedUser\"\n                    [filters]=\"filters\"\n                    #userListComponent></user-list>\n            </div>\n            <div side-companion>\n                <user-detail [user]=\"selectedUser\" [structure]=\"currentStructure\"\n                    *ngIf=\"listCompanionView === 'user-detail'\"></user-detail>\n                <user-filters [structure]=\"currentStructure\" [(filters)]=\"rawFilters\"\n                    *ngIf=\"listCompanionView === 'user-filters'\"></user-filters>\n                <user-create\n                    *ngIf=\"listCompanionView === 'user-create'\"></user-create>\n                <user-error\n                    [error]=\"error\"\n                    *ngIf=\"listCompanionView === 'user-error'\"></user-error>\n            </div>\n        </side-layout>\n    ",
-	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
+	        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+	        providers: [userlist_filters_1.UserlistFilters]
 	    }),
 	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
 	        router_1.Router,
@@ -1405,7 +1572,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 430:
+/***/ 431:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1419,64 +1586,19 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(2);
-	var mappings_1 = __webpack_require__(120);
 	var dist_1 = __webpack_require__(56);
+	var services_1 = __webpack_require__(124);
 	var UserList = (function () {
-	    function UserList(cdRef, bundlesService) {
+	    function UserList(cdRef, bundlesService, userListService) {
 	        var _this = this;
 	        this.cdRef = cdRef;
 	        this.bundlesService = bundlesService;
+	        this.userListService = userListService;
 	        this.userlist = [];
-	        // Display
-	        this.display = function (user) {
-	            return user.lastName.toUpperCase() + " " + user.firstName + " - " + _this.bundlesService.translate(user.type);
-	        };
 	        this.openfilters = new core_1.EventEmitter();
 	        this.onselect = new core_1.EventEmitter();
 	        this.isSelected = function (user) {
 	            return _this.selectedUser === user;
-	        };
-	        // Limit
-	        this.DEFAULT_INCREMENT = 100;
-	        this.limit = this.DEFAULT_INCREMENT;
-	        this._userNameFilter = "";
-	        // Sorts
-	        this.sorts = {
-	            alphabetical: {
-	                sort: '+',
-	                orderedValue: 'lastName',
-	                staticValues: ['+firstName'],
-	                selected: true
-	            },
-	            profile: {
-	                sort: '+',
-	                orderedValue: 'type',
-	                selected: false
-	            }
-	        };
-	        this.sortArray = ['+lastName', '+firstName', '+type'];
-	        this.changeSorts = function (target) {
-	            this.resetLimit();
-	            this.sorts[target].selected = true;
-	            this.sorts[target].sort = this.sorts[target].sort === '+' ? '-' : '+';
-	            this.sortArray = [
-	                this.sorts[target].sort + this.sorts[target].orderedValue
-	            ].concat((this.sorts[target].staticValues || []));
-	            for (var prop in this.sorts) {
-	                if (prop !== target) {
-	                    this.sortArray = this.sortArray.concat([
-	                        this.sorts[prop].sort + this.sorts[prop].orderedValue
-	                    ].concat((this.sorts[prop].staticValues || [])));
-	                    this.sorts[prop].selected = false;
-	                }
-	            }
-	        };
-	        // Filtering
-	        this.filterByInput = function (user) {
-	            if (!_this.userNameFilter)
-	                return true;
-	            return (user.lastName + " " + user.firstName).toLowerCase()
-	                .indexOf(_this.userNameFilter.toLowerCase()) >= 0;
 	        };
 	        // Scroll
 	        this.ticking = false;
@@ -1486,26 +1608,12 @@ webpackJsonp([0],{
 	        this.selectedUser = user;
 	        this.onselect.emit(user);
 	    };
-	    UserList.prototype.resetLimit = function () {
-	        this.limit = this.DEFAULT_INCREMENT;
-	    };
-	    Object.defineProperty(UserList.prototype, "userNameFilter", {
-	        get: function () {
-	            return this._userNameFilter;
-	        },
-	        set: function (filter) {
-	            this._userNameFilter = filter;
-	            this.resetLimit();
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
 	    UserList.prototype.onDocumentScroll = function (event) {
 	        var _this = this;
 	        if (!this.ticking) {
 	            window.requestAnimationFrame(function () {
 	                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-	                    _this.limit = Math.min(_this.limit + _this.DEFAULT_INCREMENT, _this.userlist.length);
+	                    _this.userListService.addPage(_this.userlist.length);
 	                    _this.cdRef.markForCheck();
 	                }
 	                _this.ticking = false;
@@ -1529,7 +1637,7 @@ webpackJsonp([0],{
 	], UserList.prototype, "openfilters", void 0);
 	__decorate([
 	    core_1.Input(),
-	    __metadata("design:type", mappings_1.User)
+	    __metadata("design:type", Object)
 	], UserList.prototype, "selectedUser", void 0);
 	__decorate([
 	    core_1.Output("selectedUserChange"),
@@ -1542,22 +1650,111 @@ webpackJsonp([0],{
 	UserList = __decorate([
 	    core_1.Component({
 	        selector: 'user-list',
-	        template: "\n    <list-component [model]=\"userlist\" [filters]=\"filters\" [inputFilter]=\"filterByInput\"\n        [sort]=\"sortArray\" [limit]=\"limit\" searchPlaceholder=\"search.user\"\n        [isSelected]=\"isSelected\" [display]=\"display\"\n        (inputChange)=\"userNameFilter = $event\"\n        (onSelect)=\"selectedUser = $event; onselect.emit($event)\">\n        <div toolbar class=\"user-toolbar\">\n             <i class=\"fa\" aria-hidden=\"true\"\n                [ngClass]=\"{\n                    'fa-sort-alpha-asc': sorts.alphabetical.sort === '+',\n                    'fa-sort-alpha-desc': sorts.alphabetical.sort === '-',\n                    'selected': sorts.alphabetical.selected\n                }\"\n                [tooltip]=\"'sort.alphabetical' | translate\" position=\"top\"\n                (click)=\"changeSorts('alphabetical')\"></i>\n            <i class=\"fa\" aria-hidden=\"true\"\n                [ngClass]=\"{\n                    'fa-sort-amount-asc': sorts.profile.sort === '+',\n                    'fa-sort-amount-desc': sorts.profile.sort === '-',\n                    'selected': sorts.profile.selected\n                }\"\n                [tooltip]=\"'sort.profile' | translate\" position=\"top\"\n                (click)=\"changeSorts('profile')\"></i>\n            <i class=\"fa fa-filter toolbar-right\" aria-hidden=\"true\"\n                [class.selected]=\"listCompanion === 'user-filters'\"\n                [tooltip]=\"'filters' | translate\" position=\"top\"\n                (click)=\"openfilters.emit('user-filters')\"></i>\n        </div>\n    </list-component>\n    ",
+	        template: "\n    <list-component [model]=\"userlist\" [filters]=\"filters\" [inputFilter]=\"userListService.filterByInput\"\n        [sort]=\"userListService.sorts\" [limit]=\"userListService.limit\" searchPlaceholder=\"search.user\"\n        [isSelected]=\"isSelected\" [display]=\"userListService.display\"\n        (inputChange)=\"userListService.inputFilter = $event\"\n        (onSelect)=\"selectedUser = $event; onselect.emit($event)\">\n        <div toolbar class=\"user-toolbar\">\n             <i class=\"fa\" aria-hidden=\"true\"\n                [ngClass]=\"{\n                    'fa-sort-alpha-asc': userListService.sortsMap.alphabetical.sort === '+',\n                    'fa-sort-alpha-desc': userListService.sortsMap.alphabetical.sort === '-',\n                    'selected': userListService.sortsMap.alphabetical.selected\n                }\"\n                [tooltip]=\"'sort.alphabetical' | translate\" position=\"top\"\n                (click)=\"userListService.changeSorts('alphabetical')\"></i>\n            <i class=\"fa\" aria-hidden=\"true\"\n                [ngClass]=\"{\n                    'fa-sort-amount-asc': userListService.sortsMap.profile.sort === '+',\n                    'fa-sort-amount-desc': userListService.sortsMap.profile.sort === '-',\n                    'selected': userListService.sortsMap.profile.selected\n                }\"\n                [tooltip]=\"'sort.profile' | translate\" position=\"top\"\n                (click)=\"userListService.changeSorts('profile')\"></i>\n            <i class=\"fa fa-filter toolbar-right\" aria-hidden=\"true\"\n                [class.selected]=\"listCompanion === 'user-filters'\"\n                [tooltip]=\"'filters' | translate\" position=\"top\"\n                (click)=\"openfilters.emit('user-filters')\"></i>\n        </div>\n    </list-component>\n    ",
 	        styles: ["\n        .user-toolbar {\n            padding: 15px;\n            font-size: 1.2em;\n        }\n        .user-toolbar i {\n            cursor: pointer;\n        }\n    "],
 	        host: {
 	            '(document:scroll)': 'onDocumentScroll($event)',
 	        },
-	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
+	        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+	        providers: [services_1.UserListService]
 	    }),
 	    __metadata("design:paramtypes", [core_1.ChangeDetectorRef,
-	        dist_1.BundlesService])
+	        dist_1.BundlesService,
+	        services_1.UserListService])
 	], UserList);
 	exports.UserList = UserList;
 
 
 /***/ },
 
-/***/ 431:
+/***/ 432:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
+	var UserlistFilters = (function () {
+	    function UserlistFilters() {
+	        var _this = this;
+	        this.filters = [
+	            {
+	                type: 'type',
+	                label: 'profiles.multi.combo.title',
+	                comboModel: ['Student', 'Teacher', 'Relative', 'Personnel', 'Guest'],
+	                setOutput: function (output) {
+	                    _this.filters[0].outputModel = output;
+	                },
+	                outputModel: [],
+	                filter: function (type) {
+	                    var outputModel = _this.filters[0].outputModel;
+	                    return outputModel.length === 0 || outputModel.indexOf(type) >= 0;
+	                }
+	            },
+	            {
+	                type: 'code',
+	                label: 'code.multi.combo.title',
+	                comboModel: ['users.activated', 'users.not.activated'],
+	                setOutput: function (output) {
+	                    _this.filters[1].outputModel = output;
+	                },
+	                outputModel: [],
+	                filter: function (code) {
+	                    var outputModel = _this.filters[1].outputModel;
+	                    return outputModel.length === 0 ||
+	                        outputModel.indexOf('users.activated') >= 0 && !code ||
+	                        outputModel.indexOf('users.not.activated') >= 0 && !(!code);
+	                }
+	            },
+	            {
+	                type: 'allClasses',
+	                label: 'classes.multi.combo.title',
+	                comboModel: [],
+	                setOutput: function (output) {
+	                    _this.filters[2].outputModel = output;
+	                },
+	                display: 'name',
+	                order: '+name',
+	                filterProp: 'name',
+	                outputModel: [],
+	                filter: function (allClasses) {
+	                    var outputModel = _this.filters[2].outputModel;
+	                    return outputModel.length === 0 ||
+	                        allClasses && allClasses.length > 0 &&
+	                            allClasses.some(function (c) {
+	                                return outputModel.find(function (o) { return o.id === c.id; });
+	                            });
+	                }
+	            }
+	        ];
+	    }
+	    UserlistFilters.prototype.getFormattedFilters = function () {
+	        var formattedFilters = {};
+	        for (var i = 0; i < this.filters.length; i++) {
+	            var filter = this.filters[i];
+	            formattedFilters[filter.type] = filter.filter;
+	        }
+	        return formattedFilters;
+	    };
+	    return UserlistFilters;
+	}());
+	UserlistFilters = __decorate([
+	    core_1.Injectable(),
+	    __metadata("design:paramtypes", [])
+	], UserlistFilters);
+	exports.UserlistFilters = UserlistFilters;
+
+
+/***/ },
+
+/***/ 433:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1572,7 +1769,6 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var forms_1 = __webpack_require__(54);
-	var mappings_1 = __webpack_require__(120);
 	var services_1 = __webpack_require__(124);
 	var models_1 = __webpack_require__(73);
 	var UserDetail = (function () {
@@ -1602,24 +1798,9 @@ webpackJsonp([0],{
 	    };
 	    UserDetail.prototype.isContextAdml = function () {
 	        var _this = this;
-	        return this.details.functions &&
+	        return this.details && this.details.functions &&
 	            this.details.functions[0][0] &&
 	            this.details.functions[0][1].find(function (id) { return _this.structure.id === id; });
-	    };
-	    UserDetail.prototype.wrapRequest = function (request, loadingLabel) {
-	        var _this = this;
-	        var args = [];
-	        for (var _i = 2; _i < arguments.length; _i++) {
-	            args[_i - 2] = arguments[_i];
-	        }
-	        this.loadingService.load(loadingLabel);
-	        request.bind(this.details).apply(void 0, args).then(function () {
-	            _this.cdRef.markForCheck();
-	        }).catch(function (err) {
-	            console.error(err);
-	        }).then(function () {
-	            _this.loadingService.done(loadingLabel);
-	        });
 	    };
 	    return UserDetail;
 	}());
@@ -1633,8 +1814,8 @@ webpackJsonp([0],{
 	], UserDetail.prototype, "administrativeForm", void 0);
 	__decorate([
 	    core_1.Input(),
-	    __metadata("design:type", mappings_1.User),
-	    __metadata("design:paramtypes", [mappings_1.User])
+	    __metadata("design:type", Object),
+	    __metadata("design:paramtypes", [Object])
 	], UserDetail.prototype, "user", null);
 	__decorate([
 	    core_1.Input(),
@@ -1643,7 +1824,7 @@ webpackJsonp([0],{
 	UserDetail = __decorate([
 	    core_1.Component({
 	        selector: 'user-detail',
-	        templateUrl: __webpack_require__(432),
+	        templateUrl: __webpack_require__(434),
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [services_1.LoadingService,
@@ -1654,27 +1835,30 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 432:
+/***/ 434:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "templates/user-detail.component.html";
 
 /***/ },
 
-/***/ 433:
+/***/ 435:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(434));
-	__export(__webpack_require__(437));
+	__export(__webpack_require__(436));
+	__export(__webpack_require__(439));
+	__export(__webpack_require__(441));
+	__export(__webpack_require__(442));
+	__export(__webpack_require__(443));
 
 
 /***/ },
 
-/***/ 434:
+/***/ 436:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1694,7 +1878,7 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var forms_1 = __webpack_require__(54);
-	var abstract_section_1 = __webpack_require__(435);
+	var abstract_section_1 = __webpack_require__(437);
 	var services_1 = __webpack_require__(124);
 	var UserAdministrativeSection = (function (_super) {
 	    __extends(UserAdministrativeSection, _super);
@@ -1717,7 +1901,7 @@ webpackJsonp([0],{
 	UserAdministrativeSection = __decorate([
 	    core_1.Component({
 	        selector: 'user-administrative-section',
-	        templateUrl: __webpack_require__(436),
+	        templateUrl: __webpack_require__(438),
 	        inputs: ['user', 'structure']
 	    }),
 	    __metadata("design:paramtypes", [services_1.LoadingService,
@@ -1728,17 +1912,32 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 435:
+/***/ 437:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var models_1 = __webpack_require__(73);
 	var AbstractSection = (function () {
 	    function AbstractSection(loadingService, cdRef) {
+	        var _this = this;
 	        this.loadingService = loadingService;
 	        this.cdRef = cdRef;
 	        this.now = new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate();
 	        this.emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+	        this.wrapRequest = function (request, loadingLabel, delay) {
+	            var args = [];
+	            for (var _i = 3; _i < arguments.length; _i++) {
+	                args[_i - 3] = arguments[_i];
+	            }
+	            _this.loadingService.load(loadingLabel, delay);
+	            request.bind(_this.details).apply(void 0, args).catch(function (err) {
+	                console.error(err);
+	            }).then(function () {
+	                _this.loadingService.done(loadingLabel);
+	                _this.cdRef.markForCheck();
+	            });
+	            _this.cdRef.markForCheck();
+	        };
 	    }
 	    Object.defineProperty(AbstractSection.prototype, "user", {
 	        get: function () { return this._user; },
@@ -1753,27 +1952,6 @@ webpackJsonp([0],{
 	    AbstractSection.prototype.getStructure = function (id) {
 	        return models_1.structureCollection.data.find(function (s) { return s.id === id; });
 	    };
-	    AbstractSection.prototype.isContextAdml = function () {
-	        var _this = this;
-	        return this.details.functions &&
-	            this.details.functions[0][0] &&
-	            this.details.functions[0][1].find(function (id) { return _this.structure.id === id; });
-	    };
-	    AbstractSection.prototype.wrapRequest = function (request, loadingLabel) {
-	        var _this = this;
-	        var args = [];
-	        for (var _i = 2; _i < arguments.length; _i++) {
-	            args[_i - 2] = arguments[_i];
-	        }
-	        this.loadingService.load(loadingLabel);
-	        request.bind(this.details).apply(void 0, args).then(function () {
-	            _this.cdRef.markForCheck();
-	        }).catch(function (err) {
-	            console.error(err);
-	        }).then(function () {
-	            _this.loadingService.done(loadingLabel);
-	        });
-	    };
 	    return AbstractSection;
 	}());
 	exports.AbstractSection = AbstractSection;
@@ -1781,14 +1959,14 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 436:
+/***/ 438:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "templates/user-administrative-section.component.html";
 
 /***/ },
 
-/***/ 437:
+/***/ 439:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1808,7 +1986,7 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var forms_1 = __webpack_require__(54);
-	var abstract_section_1 = __webpack_require__(435);
+	var abstract_section_1 = __webpack_require__(437);
 	var services_1 = __webpack_require__(124);
 	var UserInfoSection = (function (_super) {
 	    __extends(UserInfoSection, _super);
@@ -1831,7 +2009,7 @@ webpackJsonp([0],{
 	UserInfoSection = __decorate([
 	    core_1.Component({
 	        selector: 'user-info-section',
-	        templateUrl: __webpack_require__(438),
+	        templateUrl: __webpack_require__(440),
 	        inputs: ['user', 'structure']
 	    }),
 	    __metadata("design:paramtypes", [services_1.LoadingService,
@@ -1842,14 +2020,249 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 438:
+/***/ 440:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "templates/user-info-section.component.html";
 
 /***/ },
 
-/***/ 439:
+/***/ 441:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
+	var forms_1 = __webpack_require__(54);
+	var abstract_section_1 = __webpack_require__(437);
+	var services_1 = __webpack_require__(124);
+	var UserRelativesSection = (function (_super) {
+	    __extends(UserRelativesSection, _super);
+	    function UserRelativesSection(userListService, loadingService, cdRef) {
+	        var _this = _super.call(this, loadingService, cdRef) || this;
+	        _this.userListService = userListService;
+	        _this.loadingService = loadingService;
+	        _this.cdRef = cdRef;
+	        _this.filterRelatives = function (u) {
+	            return _this.details && _this.details.parents &&
+	                u.type === 'Relative' && !_this.details.parents.find(function (p) { return p.id === u.id; });
+	        };
+	        _this.disableRelative = function (relative) {
+	            return _this.loadingService.isLoading(relative.id);
+	        };
+	        return _this;
+	    }
+	    UserRelativesSection.prototype.onUserChange = function () { };
+	    UserRelativesSection.prototype.isStudent = function (u) {
+	        return u.type === 'Student';
+	    };
+	    return UserRelativesSection;
+	}(abstract_section_1.AbstractSection));
+	__decorate([
+	    core_1.ViewChild("codeInput"),
+	    __metadata("design:type", forms_1.AbstractControl)
+	], UserRelativesSection.prototype, "codeInput", void 0);
+	UserRelativesSection = __decorate([
+	    core_1.Component({
+	        selector: 'user-relatives-section',
+	        template: "\n        <panel-section section-title=\"users.details.section.relatives\" [folded]=\"true\" *ngIf=\"isStudent(user)\">\n            <button (click)=\"showRelativesLightbox = true\">\n                <s5l>add.relative</s5l><i class=\"fa fa-plus-circle\"></i>\n            </button>\n            <light-box class=\"inner-list\"\n                    [show]=\"showRelativesLightbox\" (onClose)=\"showRelativesLightbox = false\">\n                <div class=\"padded\">\n                    <h3><s5l>add.relative</s5l></h3>\n                    <list-component class=\"inner-list\"\n                        [model]=\"structure?.users?.data\"\n                        [inputFilter]=\"userListService.filterByInput\"\n                        [filters]=\"filterRelatives\"\n                        searchPlaceholder=\"search.user\"\n                        [sort]=\"userListService.sorts\"\n                        [display]=\"userListService.display\"\n                        (inputChange)=\"userListService.inputFilter = $event\"\n                        [isDisabled]=\"disableRelative\"\n                        (onSelect)=\"wrapRequest(details?.addRelative, $event.id, 0, $event)\">\n                    </list-component>\n                </div>\n            </light-box>\n            <ul class=\"actions-list\">\n                <li *ngFor=\"let parent of details?.parents\">\n                    <a class=\"action\" [routerLink]=\"['../users']\" [queryParams]=\"{ userId: parent.id }\">\n                        {{ parent.lastName | uppercase }} {{ parent.firstName }}\n                    </a>\n                    <i  class=\"fa fa-times action\" (click)=\"wrapRequest(details?.removeRelative, parent.id, 0, parent)\"\n                        [tooltip]=\"'delete.this.relative' | translate\"\n                        [ngClass]=\"{ disabled: loadingService.isLoading(parent.id)}\"></i>\n                </li>\n            </ul>\n        </panel-section>\n    ",
+	        inputs: ['user', 'structure'],
+	        providers: [services_1.UserListService]
+	    }),
+	    __metadata("design:paramtypes", [services_1.UserListService,
+	        services_1.LoadingService,
+	        core_1.ChangeDetectorRef])
+	], UserRelativesSection);
+	exports.UserRelativesSection = UserRelativesSection;
+
+
+/***/ },
+
+/***/ 442:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
+	var forms_1 = __webpack_require__(54);
+	var abstract_section_1 = __webpack_require__(437);
+	var services_1 = __webpack_require__(124);
+	var UserChildrenSection = (function (_super) {
+	    __extends(UserChildrenSection, _super);
+	    function UserChildrenSection(userListService, loadingService, cdRef) {
+	        var _this = _super.call(this, loadingService, cdRef) || this;
+	        _this.userListService = userListService;
+	        _this.loadingService = loadingService;
+	        _this.cdRef = cdRef;
+	        _this.filterChildren = function (u) {
+	            return _this.details && _this.details.children &&
+	                u.type === 'Student' && !_this.details.children.find(function (c) { return c.id === u.id; });
+	        };
+	        _this.disableChild = function (child) {
+	            return _this.loadingService.isLoading(child.id);
+	        };
+	        return _this;
+	    }
+	    UserChildrenSection.prototype.onUserChange = function () { };
+	    UserChildrenSection.prototype.isRelative = function (u) {
+	        return u.type === 'Relative';
+	    };
+	    return UserChildrenSection;
+	}(abstract_section_1.AbstractSection));
+	__decorate([
+	    core_1.ViewChild("codeInput"),
+	    __metadata("design:type", forms_1.AbstractControl)
+	], UserChildrenSection.prototype, "codeInput", void 0);
+	UserChildrenSection = __decorate([
+	    core_1.Component({
+	        selector: 'user-children-section',
+	        template: "\n        <panel-section section-title=\"users.details.section.children\" [folded]=\"true\" *ngIf=\"isRelative(user)\">\n            <button (click)=\"showChildrenLightbox = true\">\n                <s5l>add.child</s5l><i class=\"fa fa-plus-circle\"></i>\n            </button>\n            <light-box class=\"inner-list\"\n                    [show]=\"showChildrenLightbox\" (onClose)=\"showChildrenLightbox = false\">\n                <div class=\"padded\">\n                    <h3><s5l>add.child</s5l></h3>\n                    <list-component class=\"inner-list\"\n                        [model]=\"structure?.users?.data\"\n                        [inputFilter]=\"userListService.filterByInput\"\n                        [filters]=\"filterChildren\"\n                        searchPlaceholder=\"search.user\"\n                        [sort]=\"userListService.sorts\"\n                        [display]=\"userListService.display\"\n                        (inputChange)=\"userListService.inputFilter = $event\"\n                        [isDisabled]=\"disableChild\"\n                        (onSelect)=\"wrapRequest(details?.addChild, $event.id, 0, $event)\">\n                    </list-component>\n                </div>\n            </light-box>\n            <ul class=\"actions-list\">\n                <li *ngFor=\"let child of details?.children\">\n                    <a class=\"action\" [routerLink]=\"['../users']\" [queryParams]=\"{ userId: child.id }\">\n                        {{ child.lastName | uppercase }} {{ child.firstName }}\n                    </a>\n                    <i  class=\"fa fa-times action\" (click)=\"wrapRequest(details?.removeChild, child.id, 0, child)\"\n                        [tooltip]=\"'delete.this.child' | translate\"\n                        [ngClass]=\"{ disabled: loadingService.isLoading(child.id)}\"></i>\n                </li>\n            </ul>\n        </panel-section>\n    ",
+	        inputs: ['user', 'structure'],
+	        providers: [services_1.UserListService]
+	    }),
+	    __metadata("design:paramtypes", [services_1.UserListService,
+	        services_1.LoadingService,
+	        core_1.ChangeDetectorRef])
+	], UserChildrenSection);
+	exports.UserChildrenSection = UserChildrenSection;
+
+
+/***/ },
+
+/***/ 443:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
+	var forms_1 = __webpack_require__(54);
+	var router_1 = __webpack_require__(22);
+	var abstract_section_1 = __webpack_require__(437);
+	var services_1 = __webpack_require__(124);
+	var models_1 = __webpack_require__(73);
+	var UserStructuresSection = (function (_super) {
+	    __extends(UserStructuresSection, _super);
+	    function UserStructuresSection(userListService, router, loadingService, cdRef) {
+	        var _this = _super.call(this, loadingService, cdRef) || this;
+	        _this.userListService = userListService;
+	        _this.router = router;
+	        _this.loadingService = loadingService;
+	        _this.cdRef = cdRef;
+	        _this.structureCollection = models_1.structureCollection;
+	        _this.disableStructure = function (s) {
+	            return _this.loadingService.isLoading(s.id);
+	        };
+	        // Filters
+	        _this._inputFilter = "";
+	        _this.filterByInput = function (s) {
+	            if (!_this.inputFilter)
+	                return true;
+	            return ("" + s.name).toLowerCase().indexOf(_this.inputFilter.toLowerCase()) >= 0;
+	        };
+	        _this.filterStructures = function (s) {
+	            return !_this.user.structures.find(function (struct) { return s.id === struct.id; });
+	        };
+	        // Display
+	        _this.display = function (s) {
+	            return s.name;
+	        };
+	        // Loading wrapper
+	        _this.wrapRequest = function (request, loadingLabel, delay) {
+	            var args = [];
+	            for (var _i = 3; _i < arguments.length; _i++) {
+	                args[_i - 3] = arguments[_i];
+	            }
+	            _this.loadingService.load(loadingLabel, delay);
+	            request.bind(_this.user).apply(void 0, args).catch(function (err) {
+	                console.error(err);
+	            }).then(function () {
+	                _this.loadingService.done(loadingLabel);
+	                _this.cdRef.markForCheck();
+	            });
+	            _this.cdRef.markForCheck();
+	        };
+	        return _this;
+	    }
+	    UserStructuresSection.prototype.onUserChange = function () { };
+	    Object.defineProperty(UserStructuresSection.prototype, "inputFilter", {
+	        get: function () {
+	            return this._inputFilter;
+	        },
+	        set: function (filter) {
+	            this._inputFilter = filter;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    //Routing
+	    UserStructuresSection.prototype.routeToStructure = function (structureId) {
+	        //[routerLink]="['/admin', structure.id, 'users']" [queryParams]="{userId: user.id, refresh: 1}"
+	        this.router.navigate(['/admin', structureId, 'users'], {
+	            queryParams: { userId: this.user.id }
+	        });
+	    };
+	    return UserStructuresSection;
+	}(abstract_section_1.AbstractSection));
+	__decorate([
+	    core_1.ViewChild("codeInput"),
+	    __metadata("design:type", forms_1.AbstractControl)
+	], UserStructuresSection.prototype, "codeInput", void 0);
+	UserStructuresSection = __decorate([
+	    core_1.Component({
+	        selector: 'user-structures-section',
+	        template: "\n        <panel-section section-title=\"users.details.section.structures\" [folded]=\"true\">\n            <button (click)=\"showStructuresLightbox = true\">\n                <s5l>add.structure</s5l><i class=\"fa fa-plus-circle\"></i>\n            </button>\n            <light-box class=\"inner-list\"\n                    [show]=\"showStructuresLightbox\" (onClose)=\"showStructuresLightbox = false\">\n                <div class=\"padded\">\n                    <h3><s5l>add.structure</s5l></h3>\n                    <list-component class=\"inner-list\"\n                        [model]=\"structureCollection.data\"\n                        [inputFilter]=\"filterByInput\"\n                        [filters]=\"filterStructures\"\n                        searchPlaceholder=\"search.structure\"\n                        sort=\"name\"\n                        [display]=\"display\"\n                        (inputChange)=\"inputFilter = $event\"\n                        [isDisabled]=\"disableStructure\"\n                        (onSelect)=\"wrapRequest(user?.addStructure, $event.id, 0, $event.id)\">\n                    </list-component>\n                </div>\n            </light-box>\n            <ul class=\"actions-list\">\n                <li *ngFor=\"let structure of user?.structures\">\n                    <a class=\"action\" (click)=\"routeToStructure(structure.id)\">\n                        {{ structure.name }}\n                    </a>\n                    <i  class=\"fa fa-times action\" (click)=\"wrapRequest(user?.removeStructure, structure.id, 0, structure.id)\"\n                        [tooltip]=\"'delete.this.structure' | translate\"\n                        [ngClass]=\"{ disabled: loadingService.isLoading(structure.id)}\"></i>\n                </li>\n            </ul>\n        </panel-section>\n    ",
+	        inputs: ['user', 'structure']
+	    }),
+	    __metadata("design:paramtypes", [services_1.UserListService,
+	        router_1.Router,
+	        services_1.LoadingService,
+	        core_1.ChangeDetectorRef])
+	], UserStructuresSection);
+	exports.UserStructuresSection = UserStructuresSection;
+
+
+/***/ },
+
+/***/ 444:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1864,10 +2277,12 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var dist_1 = __webpack_require__(56);
+	var userlist_filters_1 = __webpack_require__(432);
 	var UserFilters = (function () {
-	    function UserFilters(bundles) {
+	    function UserFilters(bundles, listFilters) {
 	        var _this = this;
 	        this.bundles = bundles;
+	        this.listFilters = listFilters;
 	        this._filters = [
 	            {
 	                type: 'type',
@@ -1971,14 +2386,14 @@ webpackJsonp([0],{
 	        template: "\n        <div class=\"panel-header\">\n            <i class=\"fa fa-filter\"></i>\n            <span><s5l>filters</s5l></span>\n        </div>\n        <div class=\"padded\">\n            <div *ngFor=\"let filter of _filters\">\n                <div *ngIf=\"filter.comboModel.length > 0\">\n                    <multi-combo\n                        [comboModel]=\"filter.comboModel\"\n                        [outputModel]=\"filter.outputModel\"\n                        (outputModelChange)=\"filter.setOutput($event); onfilterschange.emit(_filters)\"\n                        [title]=\"filter.label | translate\"\n                        [display]=\"filter.display || translateFunction\"\n                        [orderBy]=\"filter.order || orderer\"\n                        [filter]=\"filter.filterProp\"\n                    ></multi-combo>\n                    <div class=\"multi-combo-companion\">\n                        <div *ngFor=\"let item of filter.outputModel\" (click)=\"deselect(filter, item)\">\n                            <span *ngIf=\"filter.display\">\n                                {{ item[filter.display] }}\n                            </span>\n                            <span *ngIf=\"!filter.display\">\n                                {{ item | translate }}\n                            </span>\n                            <i class=\"fa fa-trash\"></i>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
-	    __metadata("design:paramtypes", [dist_1.BundlesService])
+	    __metadata("design:paramtypes", [dist_1.BundlesService, userlist_filters_1.UserlistFilters])
 	], UserFilters);
 	exports.UserFilters = UserFilters;
 
 
 /***/ },
 
-/***/ 440:
+/***/ 445:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2010,7 +2425,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 441:
+/***/ 446:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2036,7 +2451,7 @@ webpackJsonp([0],{
 	UserError = __decorate([
 	    core_1.Component({
 	        selector: 'user-error',
-	        template: "\n        <div class=\"panel-header\">\n            <i class=\"fa fa-warning\"></i>\n            <span><s5l>user.root.error</s5l></span>\n        </div>\n        <div class=\"padded\">\n            <s5l>user.root.error.text</s5l>\n            <div class=\"padded error-tech\">\n                <span>\n                    {{ error.stack }}\n                </span>\n            </div>\n        </div>\n    ",
+	        template: "\n        <div class=\"panel-header\">\n            <i class=\"fa fa-warning\"></i>\n            <span><s5l>user.root.error</s5l></span>\n        </div>\n        <div class=\"padded\">\n            <s5l>user.root.error.text</s5l>\n            <div class=\"error-tech\">\n                <span>\n                    {{ error.stack || error }}\n                </span>\n            </div>\n        </div>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [])
@@ -2046,23 +2461,24 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 442:
+/***/ 447:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(443));
-	__export(__webpack_require__(444));
-	__export(__webpack_require__(445));
-	__export(__webpack_require__(446));
-	__export(__webpack_require__(447));
+	__export(__webpack_require__(448));
+	__export(__webpack_require__(449));
+	__export(__webpack_require__(450));
+	__export(__webpack_require__(451));
+	__export(__webpack_require__(452));
+	__export(__webpack_require__(453));
 
 
 /***/ },
 
-/***/ 443:
+/***/ 448:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2084,7 +2500,7 @@ webpackJsonp([0],{
 	        this.router = router;
 	        this.cdRef = cdRef;
 	        this.loadingService = loadingService;
-	        // Group list
+	        // Model
 	        this.grouplist = [];
 	        // View
 	        this.shownView = '';
@@ -2103,10 +2519,7 @@ webpackJsonp([0],{
 	    });
 	    GroupsRoot.prototype.openView = function (view) {
 	        this.shownView = view;
-	        this.router.navigate(['../groups'], {
-	            queryParams: { view: view },
-	            relativeTo: this.route
-	        });
+	        this.selectedGroup = null;
 	    };
 	    GroupsRoot.prototype.ngOnInit = function () {
 	        var _this = this;
@@ -2149,7 +2562,7 @@ webpackJsonp([0],{
 	GroupsRoot = __decorate([
 	    core_1.Component({
 	        selector: 'groups-root',
-	        template: "\n        <div class=\"tabs\">\n            <button class=\"tab\" *ngFor=\"let tab of tabs\"\n                (click)=\"openView(tab.view)\" [class.active]=\"shownView === tab.view\">\n                {{ tab.label | translate }}\n            </button>\n        </div>\n        <h1>\n            <i class=\"fa fa-users\"></i>\n            <s5l>groups</s5l>\n        </h1>\n\n        <manual-groups      [groups]=\"grouplist\"\n            *ngIf=\"shownView === 'manual-groups'\"></manual-groups>\n        <profile-groups     [groups]=\"grouplist\"\n            *ngIf=\"shownView === 'profile-groups'\"></profile-groups>\n        <functional-groups  [groups]=\"grouplist\"\n             *ngIf=\"shownView === 'functional-groups'\"></functional-groups>\n    ",
+	        template: "\n        <div class=\"tabs\">\n            <button class=\"tab\" *ngFor=\"let tab of tabs\"\n                routerLink=\"../groups\" [queryParams]=\"{ view: tab.view }\"\n                [class.active]=\"shownView === tab.view\">\n                {{ tab.label | translate }}\n            </button>\n        </div>\n        <h1>\n            <i class=\"fa fa-users\"></i>\n            <s5l>groups</s5l>\n        </h1>\n\n        <manual-groups [selectedGroup]=\"selectedGroup\" [groups]=\"grouplist\"\n            *ngIf=\"shownView === 'manual-groups'\"></manual-groups>\n        <profile-groups [selectedGroup]=\"selectedGroup\" [groups]=\"grouplist\"\n            *ngIf=\"shownView === 'profile-groups'\"></profile-groups>\n        <functional-groups [selectedGroup]=\"selectedGroup\" [groups]=\"grouplist\"\n             *ngIf=\"shownView === 'functional-groups'\"></functional-groups>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
@@ -2162,7 +2575,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 444:
+/***/ 449:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2177,11 +2590,14 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var router_1 = __webpack_require__(22);
+	var mappings_1 = __webpack_require__(120);
 	var services_1 = __webpack_require__(124);
+	var dist_1 = __webpack_require__(56);
 	var ManualGroups = (function () {
-	    function ManualGroups(route, router, cdRef, loadingService) {
+	    function ManualGroups(route, router, bundles, cdRef, loadingService) {
 	        this.route = route;
 	        this.router = router;
+	        this.bundles = bundles;
 	        this.cdRef = cdRef;
 	        this.loadingService = loadingService;
 	    }
@@ -2193,22 +2609,24 @@ webpackJsonp([0],{
 	    core_1.Input(),
 	    __metadata("design:type", Array)
 	], ManualGroups.prototype, "groups", void 0);
+	__decorate([
+	    core_1.Input(),
+	    __metadata("design:type", mappings_1.Group)
+	], ManualGroups.prototype, "selectedGroup", void 0);
 	ManualGroups = __decorate([
 	    core_1.Component({
 	        selector: 'manual-groups',
-	        template: "\n        <groups-view groupType=\"ManualGroup\" viewName=\"manual-groups\"\n                    [groups]=\"groups\" [(selectedGroup)]=\"selectedGroup\">\n            <div class=\"padded\">\n                <ul>\n                    <li *ngFor=\"let user of selectedGroup?.users\">\n                        {{ user.firstName }} {{ user.lastName }}\n                    </li>\n                </ul>\n            </div>\n        </groups-view>\n    "
+	        template: "\n        <groups-view groupType=\"ManualGroup\" viewName=\"manual-groups\"\n                    [groups]=\"groups\" [(selectedGroup)]=\"selectedGroup\">\n            <div class=\"padded\">\n                <group-users-list [groups]=\"groups\" [selectedGroup]=\"selectedGroup\">\n                    <em>{{ selectedGroup?.users?.length }} {{ 'members' | translate | lowercase }}</em>\n                </group-users-list>\n            </div>\n        </groups-view>\n    "
 	    }),
-	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
-	        router_1.Router,
-	        core_1.ChangeDetectorRef,
-	        services_1.LoadingService])
+	    __metadata("design:paramtypes", [router_1.ActivatedRoute, router_1.Router, dist_1.BundlesService,
+	        core_1.ChangeDetectorRef, services_1.LoadingService])
 	], ManualGroups);
 	exports.ManualGroups = ManualGroups;
 
 
 /***/ },
 
-/***/ 445:
+/***/ 450:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2223,11 +2641,14 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var router_1 = __webpack_require__(22);
+	var mappings_1 = __webpack_require__(120);
 	var services_1 = __webpack_require__(124);
+	var dist_1 = __webpack_require__(56);
 	var FunctionalGroups = (function () {
-	    function FunctionalGroups(route, router, cdRef, loadingService) {
+	    function FunctionalGroups(route, router, bundles, cdRef, loadingService) {
 	        this.route = route;
 	        this.router = router;
+	        this.bundles = bundles;
 	        this.cdRef = cdRef;
 	        this.loadingService = loadingService;
 	    }
@@ -2239,22 +2660,24 @@ webpackJsonp([0],{
 	    core_1.Input(),
 	    __metadata("design:type", Array)
 	], FunctionalGroups.prototype, "groups", void 0);
+	__decorate([
+	    core_1.Input(),
+	    __metadata("design:type", mappings_1.Group)
+	], FunctionalGroups.prototype, "selectedGroup", void 0);
 	FunctionalGroups = __decorate([
 	    core_1.Component({
 	        selector: 'functional-groups',
-	        template: "\n        <groups-view groupType=\"FunctionalGroup\" viewName=\"functional-groups\"\n                    [groups]=\"groups\" [(selectedGroup)]=\"selectedGroup\">\n            <div class=\"padded\">\n                <ul>\n                    <li *ngFor=\"let user of selectedGroup?.users\">\n                        {{ user.firstName }} {{ user.lastName }}\n                    </li>\n                </ul>\n            </div>\n        </groups-view>\n    "
+	        template: "\n        <groups-view groupType=\"FunctionalGroup\" viewName=\"functional-groups\"\n                    [groups]=\"groups\" [(selectedGroup)]=\"selectedGroup\">\n            <div class=\"padded\">\n                <group-users-list [groups]=\"groups\" [selectedGroup]=\"selectedGroup\">\n                </group-users-list>\n            </div>\n        </groups-view>\n    "
 	    }),
-	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
-	        router_1.Router,
-	        core_1.ChangeDetectorRef,
-	        services_1.LoadingService])
+	    __metadata("design:paramtypes", [router_1.ActivatedRoute, router_1.Router, dist_1.BundlesService,
+	        core_1.ChangeDetectorRef, services_1.LoadingService])
 	], FunctionalGroups);
 	exports.FunctionalGroups = FunctionalGroups;
 
 
 /***/ },
 
-/***/ 446:
+/***/ 451:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2269,11 +2692,14 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var router_1 = __webpack_require__(22);
+	var mappings_1 = __webpack_require__(120);
 	var services_1 = __webpack_require__(124);
+	var dist_1 = __webpack_require__(56);
 	var ProfileGroups = (function () {
-	    function ProfileGroups(route, router, cdRef, loadingService) {
+	    function ProfileGroups(route, router, bundles, cdRef, loadingService) {
 	        this.route = route;
 	        this.router = router;
+	        this.bundles = bundles;
 	        this.cdRef = cdRef;
 	        this.loadingService = loadingService;
 	    }
@@ -2285,22 +2711,24 @@ webpackJsonp([0],{
 	    core_1.Input(),
 	    __metadata("design:type", Array)
 	], ProfileGroups.prototype, "groups", void 0);
+	__decorate([
+	    core_1.Input(),
+	    __metadata("design:type", mappings_1.Group)
+	], ProfileGroups.prototype, "selectedGroup", void 0);
 	ProfileGroups = __decorate([
 	    core_1.Component({
 	        selector: 'profile-groups',
-	        template: "\n        <groups-view groupType=\"ProfileGroup\" viewName=\"profile-groups\"\n                    [groups]=\"groups\" [(selectedGroup)]=\"selectedGroup\">\n            <div class=\"padded\">\n                <ul>\n                    <li *ngFor=\"let user of selectedGroup?.users\">\n                        {{ user.firstName }} {{ user.lastName }}\n                    </li>\n                </ul>\n            </div>\n        </groups-view>\n    "
+	        template: "\n        <groups-view groupType=\"ProfileGroup\" viewName=\"profile-groups\"\n                    [groups]=\"groups\" [(selectedGroup)]=\"selectedGroup\">\n            <div class=\"padded\">\n                <group-users-list [groups]=\"groups\" [selectedGroup]=\"selectedGroup\">\n                </group-users-list>\n            </div>\n        </groups-view>\n    "
 	    }),
-	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
-	        router_1.Router,
-	        core_1.ChangeDetectorRef,
-	        services_1.LoadingService])
+	    __metadata("design:paramtypes", [router_1.ActivatedRoute, router_1.Router, dist_1.BundlesService,
+	        core_1.ChangeDetectorRef, services_1.LoadingService])
 	], ProfileGroups);
 	exports.ProfileGroups = ProfileGroups;
 
 
 /***/ },
 
-/***/ 447:
+/***/ 452:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2342,11 +2770,6 @@ webpackJsonp([0],{
 	                if (g !== this._selectedGroup) {
 	                    this._selectedGroup = g;
 	                    this.onselect.emit(g);
-	                    this.openGroup();
-	                    this.router.navigate(['../groups'], {
-	                        queryParams: { groupId: g.id, view: this.viewName },
-	                        relativeTo: this.route
-	                    });
 	                }
 	            }
 	            else {
@@ -2366,11 +2789,18 @@ webpackJsonp([0],{
 	        this.querySubscriber = this.route.queryParams.subscribe(function (params) {
 	            if (params['groupId']) {
 	                _this.selectGroupByid(params['groupId']);
+	                _this.openGroup();
 	            }
 	        });
 	    };
 	    GroupView.prototype.ngOnDestroy = function () {
 	        this.querySubscriber.unsubscribe();
+	    };
+	    GroupView.prototype.routeToGroup = function (g) {
+	        this.router.navigate(['../groups'], {
+	            queryParams: { groupId: g.id, view: this.viewName },
+	            relativeTo: this.route
+	        });
 	    };
 	    GroupView.prototype.openGroup = function () {
 	        var _this = this;
@@ -2411,7 +2841,7 @@ webpackJsonp([0],{
 	GroupView = __decorate([
 	    core_1.Component({
 	        selector: 'groups-view',
-	        template: "\n        <side-layout (closeCompanion)=\"showCompanion = false\" [showCompanion]=\"showCompanion\">\n            <div side-card>\n                <list-component\n                    [model]=\"groups\"\n                    [filters]=\"{type: groupType}\"\n                    [inputFilter]=\"filterByInput\"\n                    sort=\"name\" searchPlaceholder=\"search.group\"\n                    [isSelected]=\"isSelected\" [display]=\"display\"\n                    (inputChange)=\"groupInputFilter = $event\"\n                    (onSelect)=\"selectedGroup = $event\">\n                </list-component>\n            </div>\n            <div side-companion>\n                <spinner-cube class=\"component-spinner\" waitingFor=\"groups-content\"></spinner-cube>\n\n                <div class=\"panel-header\">\n                    <i class=\"fa fa-users\"></i>\n                    <span><s5l>members.of.group</s5l>:</span><span>{{ selectedGroup?.name }}</span>\n                </div>\n\n                <div>\n                    <ng-content></ng-content>\n                </div>\n            </div>\n        </side-layout>\n    ",
+	        template: "\n        <side-layout (closeCompanion)=\"showCompanion = false\" [showCompanion]=\"showCompanion\">\n            <div side-card>\n                <list-component\n                    [model]=\"groups\"\n                    [filters]=\"{type: groupType}\"\n                    [inputFilter]=\"filterByInput\"\n                    sort=\"name\" searchPlaceholder=\"search.group\"\n                    [isSelected]=\"isSelected\" [display]=\"display\"\n                    (inputChange)=\"groupInputFilter = $event\"\n                    (onSelect)=\"routeToGroup($event)\">\n                </list-component>\n            </div>\n            <div side-companion>\n                <spinner-cube class=\"component-spinner\" waitingFor=\"groups-content\"></spinner-cube>\n\n                <div class=\"panel-header\">\n                    <i class=\"fa fa-users\"></i>\n                    <span><s5l>members.of.group</s5l>:</span><span>{{ selectedGroup?.name }}</span>\n                </div>\n\n                <div>\n                    <ng-content></ng-content>\n                </div>\n            </div>\n        </side-layout>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
@@ -2424,24 +2854,102 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 448:
+/***/ 453:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
+	var group_1 = __webpack_require__(122);
+	var router_1 = __webpack_require__(22);
+	var dist_1 = __webpack_require__(56);
+	var services_1 = __webpack_require__(124);
+	var GroupUsersList = (function () {
+	    function GroupUsersList(route, router, cdRef, bundles, loadingService, userListService) {
+	        var _this = this;
+	        this.route = route;
+	        this.router = router;
+	        this.cdRef = cdRef;
+	        this.bundles = bundles;
+	        this.loadingService = loadingService;
+	        this.userListService = userListService;
+	        this.display = function (user) {
+	            var result = user.lastName + " " + user.firstName + " - " + _this.bundles.translate(user.profile);
+	            if (user.structures.length === 1) {
+	                result += " - " + user.structures[0].name;
+	            }
+	            else if (user.structures.length > 1) {
+	                result += " - " + _this.bundles.translate('structure.or.more', {
+	                    head: user.structures[0].name,
+	                    rest: user.structures.length - 1
+	                });
+	            }
+	            return result;
+	        };
+	    }
+	    //protected isSelected = (user: GroupUser) => this.selectedUser === user
+	    GroupUsersList.prototype.selectUser = function (user) {
+	        if (user.structures.length > 0) {
+	            this.router.navigate(['admin', user.structures[0].id, 'users'], {
+	                queryParams: { userId: user.id }
+	            });
+	        }
+	    };
+	    return GroupUsersList;
+	}());
+	__decorate([
+	    core_1.Input(),
+	    __metadata("design:type", Array)
+	], GroupUsersList.prototype, "groups", void 0);
+	__decorate([
+	    core_1.Input(),
+	    __metadata("design:type", group_1.Group)
+	], GroupUsersList.prototype, "selectedGroup", void 0);
+	GroupUsersList = __decorate([
+	    core_1.Component({
+	        selector: 'group-users-list',
+	        template: "\n        <list-component\n            [model]=\"selectedGroup?.users\"\n            [inputFilter]=\"userListService.filterByInput\"\n            [sort]=\"userListService.sorts\"\n            searchPlaceholder=\"search.user\"\n            [display]=\"display\"\n            (inputChange)=\"userListService.inputFilter = $event\"\n            (onSelect)=\"selectUser($event)\">\n            <div toolbar>\n                <i class=\"fa\" aria-hidden=\"true\"\n                [ngClass]=\"{\n                    'fa-sort-alpha-asc': userListService.sortsMap.alphabetical.sort === '+',\n                    'fa-sort-alpha-desc': userListService.sortsMap.alphabetical.sort === '-',\n                    'selected': userListService.sortsMap.alphabetical.selected\n                }\"\n                [tooltip]=\"'sort.alphabetical' | translate\" position=\"top\"\n                (click)=\"userListService.changeSorts('alphabetical')\"></i>\n                <i class=\"fa\" aria-hidden=\"true\"\n                    [ngClass]=\"{\n                        'fa-sort-amount-asc': userListService.sortsMap.profile.sort === '+',\n                        'fa-sort-amount-desc': userListService.sortsMap.profile.sort === '-',\n                        'selected': userListService.sortsMap.profile.selected\n                    }\"\n                    [tooltip]=\"'sort.profile' | translate\" position=\"top\"\n                    (click)=\"userListService.changeSorts('profile')\"></i>\n                <ng-content></ng-content>\n            </div>\n        </list-component>\n    ",
+	        styles: [""],
+	        providers: [services_1.UserListService]
+	    }),
+	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
+	        router_1.Router,
+	        core_1.ChangeDetectorRef,
+	        dist_1.BundlesService,
+	        services_1.LoadingService,
+	        services_1.UserListService])
+	], GroupUsersList);
+	exports.GroupUsersList = GroupUsersList;
+
+
+/***/ },
+
+/***/ 454:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(449));
-	__export(__webpack_require__(450));
-	__export(__webpack_require__(451));
-	__export(__webpack_require__(453));
-	__export(__webpack_require__(454));
 	__export(__webpack_require__(455));
+	__export(__webpack_require__(456));
+	__export(__webpack_require__(457));
+	__export(__webpack_require__(459));
+	__export(__webpack_require__(460));
+	__export(__webpack_require__(461));
 
 
 /***/ },
 
-/***/ 449:
+/***/ 455:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2501,7 +3009,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 450:
+/***/ 456:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2543,7 +3051,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 451:
+/***/ 457:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2563,6 +3071,7 @@ webpackJsonp([0],{
 	        this.model = [];
 	        this.searchPlaceholder = "search";
 	        this.isSelected = function () { return false; };
+	        this.isDisabled = function () { return false; };
 	        this.display = function (item) { return item; };
 	        this.inputChange = new core_1.EventEmitter();
 	        this.onSelect = new core_1.EventEmitter();
@@ -2604,6 +3113,10 @@ webpackJsonp([0],{
 	__decorate([
 	    core_1.Input(),
 	    __metadata("design:type", Object)
+	], ListComponent.prototype, "isDisabled", void 0);
+	__decorate([
+	    core_1.Input(),
+	    __metadata("design:type", Object)
 	], ListComponent.prototype, "display", void 0);
 	__decorate([
 	    core_1.Output("inputChange"),
@@ -2616,8 +3129,8 @@ webpackJsonp([0],{
 	ListComponent = __decorate([
 	    core_1.Component({
 	        selector: 'list-component',
-	        templateUrl: __webpack_require__(452),
-	        styles: ["\n        ul {\n            margin: 0;\n            padding: 0px;\n            font-size: 0.9em;\n        }\n\n        ul li {\n            cursor: pointer;\n            border-top: 1px solid #ddd;\n            padding: 5px 10px;\n        }\n    "]
+	        templateUrl: __webpack_require__(458),
+	        styles: ["\n        ul {\n            margin: 0;\n            padding: 0px;\n            font-size: 0.9em;\n        }\n\n        ul li {\n            cursor: pointer;\n            border-top: 1px solid #ddd;\n            padding: 5px 10px;\n        }\n\n        ul li.disabled {\n            pointer-events: none;\n        }\n    "]
 	    }),
 	    __metadata("design:paramtypes", [core_1.ChangeDetectorRef])
 	], ListComponent);
@@ -2626,14 +3139,14 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 452:
+/***/ 458:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "templates/list-component.html";
 
 /***/ },
 
-/***/ 453:
+/***/ 459:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2669,7 +3182,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 454:
+/***/ 460:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2710,7 +3223,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 455:
+/***/ 461:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2754,11 +3267,11 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 456:
+/***/ 462:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var components = __webpack_require__(415);
+	var components = __webpack_require__(416);
 	var routing = __webpack_require__(69);
 	var services = __webpack_require__(124);
 	exports.declarations = [];

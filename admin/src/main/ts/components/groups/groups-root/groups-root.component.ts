@@ -10,7 +10,8 @@ import { Subscription } from 'rxjs'
     template: `
         <div class="tabs">
             <button class="tab" *ngFor="let tab of tabs"
-                (click)="openView(tab.view)" [class.active]="shownView === tab.view">
+                routerLink="../groups" [queryParams]="{ view: tab.view }"
+                [class.active]="shownView === tab.view">
                 {{ tab.label | translate }}
             </button>
         </div>
@@ -19,11 +20,11 @@ import { Subscription } from 'rxjs'
             <s5l>groups</s5l>
         </h1>
 
-        <manual-groups      [groups]="grouplist"
+        <manual-groups [selectedGroup]="selectedGroup" [groups]="grouplist"
             *ngIf="shownView === 'manual-groups'"></manual-groups>
-        <profile-groups     [groups]="grouplist"
+        <profile-groups [selectedGroup]="selectedGroup" [groups]="grouplist"
             *ngIf="shownView === 'profile-groups'"></profile-groups>
-        <functional-groups  [groups]="grouplist"
+        <functional-groups [selectedGroup]="selectedGroup" [groups]="grouplist"
              *ngIf="shownView === 'functional-groups'"></functional-groups>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -40,16 +41,15 @@ export class GroupsRoot implements OnInit, OnDestroy {
     get currentStructure() { return this._currentStructure }
     set currentStructure(structure) { this._currentStructure = structure }
 
-    // Group list
+    // Model
     private grouplist: Group[] = []
+    private selectedGroup: Group
 
     // View
     private shownView: string = ''
     private openView(view: string) {
         this.shownView = view
-        this.router.navigate(['../groups'], {
-            queryParams: { view: view },
-            relativeTo: this.route })
+        this.selectedGroup = null
     }
 
     // Subscriberts

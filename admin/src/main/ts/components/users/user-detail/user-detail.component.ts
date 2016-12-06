@@ -41,19 +41,8 @@ export class UserDetail {
     }
 
     private isContextAdml() {
-        return this.details.functions &&
+        return this.details && this.details.functions &&
             this.details.functions[0][0] &&
             this.details.functions[0][1].find(id => this.structure.id === id)
-    }
-
-    wrapRequest(request, loadingLabel: string, ...args) {
-        this.loadingService.load(loadingLabel)
-        request.bind(this.details)(...args).then(() => {
-            this.cdRef.markForCheck()
-        }).catch((err) => {
-            console.error(err)
-        }).then(() => {
-            this.loadingService.done(loadingLabel)
-        })
     }
 }

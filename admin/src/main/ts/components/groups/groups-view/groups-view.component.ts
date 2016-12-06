@@ -17,7 +17,7 @@ import { LoadingService } from '../../../services'
                     sort="name" searchPlaceholder="search.group"
                     [isSelected]="isSelected" [display]="display"
                     (inputChange)="groupInputFilter = $event"
-                    (onSelect)="selectedGroup = $event">
+                    (onSelect)="routeToGroup($event)">
                 </list-component>
             </div>
             <div side-companion>
@@ -56,11 +56,6 @@ export class GroupView implements OnInit, OnDestroy {
             if(g !== this._selectedGroup) {
                 this._selectedGroup = g
                 this.onselect.emit(g)
-                this.openGroup()
-                this.router.navigate(['../groups'],{
-                    queryParams: { groupId: g.id, view: this.viewName },
-                    relativeTo: this.route
-                })
             }
         } else {
             this._selectedGroup = null
@@ -96,12 +91,20 @@ export class GroupView implements OnInit, OnDestroy {
         this.querySubscriber = this.route.queryParams.subscribe((params: Params) => {
             if(params['groupId']) {
                 this.selectGroupByid(params['groupId'])
+                this.openGroup()
             }
         })
     }
 
     ngOnDestroy() {
         this.querySubscriber.unsubscribe()
+    }
+
+    routeToGroup(g:Group) {
+        this.router.navigate(['../groups'],{
+            queryParams: { groupId: g.id, view: this.viewName },
+            relativeTo: this.route
+        })
     }
 
     openGroup() {

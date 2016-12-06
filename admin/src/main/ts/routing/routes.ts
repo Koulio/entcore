@@ -1,3 +1,4 @@
+import { Routes } from '@angular/router'
 import { I18nResolve } from './i18n.resolve'
 import { StructuresResolve } from './structures.resolve'
 import { StructureResolve } from './structure.resolve'
@@ -6,7 +7,7 @@ import { UsersResolve } from './users.resolve'
 import { GroupsResolve } from './groups.resolve'
 import { Portal, Home, UsersRoot, GroupsRoot, StructureHome } from '../components'
 
-export let routes = [
+export let routes : Routes = [
 	{
 		path: '',
 		resolve: { session: SessionResolve, structures : StructuresResolve, i18n: I18nResolve },
