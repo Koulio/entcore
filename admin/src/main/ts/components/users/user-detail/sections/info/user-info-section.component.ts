@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild, ChangeDetectorRef } from '@angular/core'
-import { AbstractControl } from '@angular/forms'
+import { NgModel } from '@angular/forms'
 import { AbstractSection } from '../abstract.section'
 import { LoadingService } from '../../../../../services'
 
@@ -15,11 +15,11 @@ export class UserInfoSection extends AbstractSection {
         super(loadingService, cdRef)
     }
 
-    @ViewChild("codeInput") codeInput : AbstractControl
+    @ViewChild("passwordMailInput") passwordMailInput : NgModel
 
     protected onUserChange(){
-        if(this.codeInput)
-            this.codeInput.reset()
+        if(this.passwordMailInput)
+            this.passwordMailInput.reset()
     }
 
 }

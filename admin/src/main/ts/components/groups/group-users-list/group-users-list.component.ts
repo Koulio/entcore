@@ -55,9 +55,7 @@ export class GroupUsersList {
     //protected isSelected = (user: GroupUser) => this.selectedUser === user
     protected selectUser(user: GroupUser) {
         if(user.structures.length > 0){
-            this.router.navigate(['admin', user.structures[0].id, 'users'], {
-                queryParams: {userId: user.id }
-            })
+            this.router.navigate(['admin', user.structures[0].id, 'users', user.id])
         }
     }
 

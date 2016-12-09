@@ -4,13 +4,22 @@ import { BundlesService } from 'sijil/dist'
 
 import { User } from '../../../models/mappings'
 import { UserListService } from '../../../services'
+import { UserlistFiltersService } from '../../../services/users/userlist.filters.service'
+import { OnDestroy } from '@angular/core'
+import { Subscription } from 'rxjs'
 
 @Component({
     selector: 'user-list',
     template: `
-    <list-component [model]="userlist" [filters]="filters" [inputFilter]="userListService.filterByInput"
-        [sort]="userListService.sorts" [limit]="userListService.limit" searchPlaceholder="search.user"
-        [isSelected]="isSelected" [display]="userListService.display"
+    <list-component
+        [model]="userlist"
+        [filters]="listFilters.getFormattedFilters()"
+        [inputFilter]="userListService.filterByInput"
+        [sort]="userListService.sorts"
+        [limit]="userListService.limit"
+        searchPlaceholder="search.user"
+        [isSelected]="isSelected"
+        [display]="userListService.display"
         (inputChange)="userListService.inputFilter = $event"
         (onSelect)="selectedUser = $event; onselect.emit($event)">
         <div toolbar class="user-toolbar">
@@ -31,9 +40,8 @@ import { UserListService } from '../../../services'
                 [tooltip]="'sort.profile' | translate" position="top"
                 (click)="userListService.changeSorts('profile')"></i>
             <i class="fa fa-filter toolbar-right" aria-hidden="true"
-                [class.selected]="listCompanion === 'user-filters'"
                 [tooltip]="'filters' | translate" position="top"
-                (click)="openfilters.emit('user-filters')"></i>
+                (click)="companionChange.emit('filter')"></i>
         </div>
     </list-component>
     `,
@@ -52,18 +60,29 @@ import { UserListService } from '../../../services'
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ UserListService ]
 })
-export class UserList implements OnInit {
+export class UserList implements OnInit, OnDestroy {
 
     constructor(private cdRef: ChangeDetectorRef,
         private bundlesService: BundlesService,
-        public userListService: UserListService){}
+        public userListService: UserListService,
+        private listFilters: UserlistFiltersService){}
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.filtersUpdatesSubscriber = this.listFilters.updateSubject.subscribe(() => {
+            this.cdRef.markForCheck()
+        })
+    }
+
+    ngOnDestroy() {
+        this.filtersUpdatesSubscriber.unsubscribe()
+    }
+
+    private filtersUpdatesSubscriber: Subscription
 
     @Input() userlist: User[] = []
 
     @Input() listCompanion: string
-    @Output("listCompanionChange") openfilters: EventEmitter<string> = new EventEmitter<string>()
+    @Output("listCompanionChange") companionChange: EventEmitter<string> = new EventEmitter<string>()
 
     // Selection
     @Input() selectedUser: User
@@ -75,11 +94,9 @@ export class UserList implements OnInit {
     }
 
     isSelected = (user: User) => {
-        return this.selectedUser === user
+        return this.selectedUser && user &&
+            this.selectedUser.id === user.id
     }
-
-    // Filters
-    @Input() filters: {}
 
     // Scroll
     private ticking = false;

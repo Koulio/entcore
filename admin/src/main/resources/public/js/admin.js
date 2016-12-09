@@ -5,7 +5,7 @@ webpackJsonp([0],{
 
 	"use strict";
 	var admin_module_1 = __webpack_require__(1);
-	var platform_browser_dynamic_1 = __webpack_require__(463);
+	var platform_browser_dynamic_1 = __webpack_require__(466);
 	var platform = platform_browser_dynamic_1.platformBrowserDynamic();
 	platform.bootstrapModule(admin_module_1.AdminModule);
 
@@ -34,7 +34,7 @@ webpackJsonp([0],{
 	var routing_1 = __webpack_require__(69);
 	var services_1 = __webpack_require__(124);
 	var components_1 = __webpack_require__(416);
-	var module_properties_1 = __webpack_require__(462);
+	var module_properties_1 = __webpack_require__(465);
 	var AdminModule = (function () {
 	    function AdminModule() {
 	    }
@@ -73,11 +73,12 @@ webpackJsonp([0],{
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
 	__export(__webpack_require__(70));
-	__export(__webpack_require__(414));
 	__export(__webpack_require__(413));
+	__export(__webpack_require__(415));
+	__export(__webpack_require__(412));
 	__export(__webpack_require__(72));
 	__export(__webpack_require__(123));
-	__export(__webpack_require__(415));
+	__export(__webpack_require__(414));
 	__export(__webpack_require__(71));
 
 
@@ -90,9 +91,10 @@ webpackJsonp([0],{
 	var i18n_resolve_1 = __webpack_require__(71);
 	var structures_resolve_1 = __webpack_require__(72);
 	var structure_resolve_1 = __webpack_require__(123);
-	var session_resolve_1 = __webpack_require__(413);
-	var users_resolve_1 = __webpack_require__(414);
-	var groups_resolve_1 = __webpack_require__(415);
+	var session_resolve_1 = __webpack_require__(412);
+	var users_resolve_1 = __webpack_require__(413);
+	var groups_resolve_1 = __webpack_require__(414);
+	var user_resolve_1 = __webpack_require__(415);
 	var components_1 = __webpack_require__(416);
 	exports.routes = [
 	    {
@@ -105,8 +107,21 @@ webpackJsonp([0],{
 	                resolve: { structure: structure_resolve_1.StructureResolve },
 	                children: [
 	                    { path: '', component: components_1.StructureHome },
-	                    { path: 'users', component: components_1.UsersRoot, resolve: { userlist: users_resolve_1.UsersResolve } },
-	                    { path: 'groups', component: components_1.GroupsRoot, resolve: { grouplist: groups_resolve_1.GroupsResolve } }
+	                    { path: 'users', component: components_1.UsersRoot, resolve: { userlist: users_resolve_1.UsersResolve },
+	                        children: [
+	                            { path: 'create', component: components_1.UserCreate },
+	                            { path: 'filter', component: components_1.UserFilters },
+	                            { path: 'error', component: components_1.UserError },
+	                            { path: ':userId', component: components_1.UserDetail, resolve: { user: user_resolve_1.UserResolve } }
+	                        ]
+	                    },
+	                    { path: 'groups', component: components_1.GroupsRoot, resolve: { grouplist: groups_resolve_1.GroupsResolve },
+	                        children: [
+	                            { path: 'manual', component: components_1.ManualGroups },
+	                            { path: 'profile', component: components_1.ProfileGroups },
+	                            { path: 'functional', component: components_1.FunctionalGroups }
+	                        ]
+	                    }
 	                ]
 	            },
 	            {
@@ -258,6 +273,7 @@ webpackJsonp([0],{
 	    }
 	    StructureCollection.prototype.asTree = function () {
 	        var childrenMap = new Map();
+	        var referenceSet = new Set(this.data.map(function (s) { return s.id; }));
 	        this.data.forEach(function (structure) {
 	            structure.parents && structure.parents.forEach(function (parent) {
 	                childrenMap.has(parent.id) ?
@@ -270,7 +286,9 @@ webpackJsonp([0],{
 	                structure.children = childrenMap.get(structure.id);
 	        });
 	        var result = this.data.filter(function (structure) {
-	            return !structure.parents || structure.parents.length === 0;
+	            return !structure.parents ||
+	                structure.parents.length === 0 ||
+	                structure.parents.every(function (p) { return !referenceSet.has(p.id); });
 	        });
 	        return result;
 	    };
@@ -617,8 +635,8 @@ webpackJsonp([0],{
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
 	__export(__webpack_require__(125));
-	__export(__webpack_require__(411));
-	__export(__webpack_require__(412));
+	__export(__webpack_require__(409));
+	__export(__webpack_require__(410));
 
 
 /***/ },
@@ -694,7 +712,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 411:
+/***/ 409:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -727,7 +745,19 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 412:
+/***/ 410:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	function __export(m) {
+	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+	}
+	__export(__webpack_require__(411));
+
+
+/***/ },
+
+/***/ 411:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -826,7 +856,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 413:
+/***/ 412:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -858,7 +888,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 414:
+/***/ 413:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -906,7 +936,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 415:
+/***/ 414:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -954,6 +984,58 @@ webpackJsonp([0],{
 
 /***/ },
 
+/***/ 415:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
+	var router_1 = __webpack_require__(22);
+	var models_1 = __webpack_require__(73);
+	var services_1 = __webpack_require__(124);
+	var UserResolve = (function () {
+	    function UserResolve(loadingService, router) {
+	        this.loadingService = loadingService;
+	        this.router = router;
+	    }
+	    UserResolve.prototype.resolve = function (route) {
+	        var _this = this;
+	        this.loadingService.load('users-content');
+	        var structure = models_1.structureCollection.data.find(function (s) { return s.id === route.parent.parent.params['structureId']; });
+	        var user = structure &&
+	            structure.users.data.find(function (u) { return u.id === route.params['userId']; });
+	        if (user) {
+	            return user.userDetails.sync()
+	                .catch(function (err) {
+	                _this.router.navigate(['/admin', structure.id, 'users'], { replaceUrl: true });
+	            }).then(function () {
+	                _this.loadingService.done('users-content');
+	                return user;
+	            });
+	        }
+	        else {
+	            this.router.navigate(['/admin', structure.id, 'users'], { replaceUrl: true });
+	        }
+	    };
+	    return UserResolve;
+	}());
+	UserResolve = __decorate([
+	    core_1.Injectable(),
+	    __metadata("design:paramtypes", [services_1.LoadingService, router_1.Router])
+	], UserResolve);
+	exports.UserResolve = UserResolve;
+
+
+/***/ },
+
 /***/ 416:
 /***/ function(module, exports, __webpack_require__) {
 
@@ -966,8 +1048,8 @@ webpackJsonp([0],{
 	__export(__webpack_require__(421));
 	__export(__webpack_require__(422));
 	__export(__webpack_require__(429));
-	__export(__webpack_require__(447));
-	__export(__webpack_require__(454));
+	__export(__webpack_require__(449));
+	__export(__webpack_require__(457));
 
 
 /***/ },
@@ -1165,8 +1247,8 @@ webpackJsonp([0],{
 	    }
 	    StructureHome.prototype.ngOnInit = function () {
 	        var _this = this;
-	        this.routeSubscriber = this.route.params.subscribe(function (p) {
-	            _this.structure = _this.structures.data.find(function (s) { return s.id === p['structureId']; });
+	        this.routeSubscriber = this.route.data.subscribe(function (data) {
+	            _this.structure = data['structure'];
 	            _this.cdRef.markForCheck();
 	        });
 	    };
@@ -1267,7 +1349,7 @@ webpackJsonp([0],{
 	QuickActionsCard = __decorate([
 	    core_1.Component({
 	        selector: 'quick-actions-card',
-	        template: "\n        <div class=\"card-header\">\n            <span>\n                <i class=\"fa fa-wrench\"></i>\n                <s5l>quick.actions</s5l>\n            </span>\n        </div>\n        <div class=\"card-body\">\n            <button routerLink=\"users\" [queryParams]=\"{ createUser: 1 }\">\n                <s5l>create.user</s5l>\n                <i class=\"fa fa-user-plus\"></i>\n            </button>\n            <button routerLink=\"groups\">\n                <s5l>create.group</s5l>\n                <i class=\"fa fa-users\"></i>\n            </button>\n            <button>\n                <s5l>manage.duplicates</s5l>\n                <i class=\"fa fa-user-times\"></i>\n            </button>\n            <button>\n                <s5l>manage.reports</s5l>\n                <i class=\"fa fa-exclamation-circle\"></i>\n            </button>\n        </div>\n    ",
+	        template: "\n        <div class=\"card-header\">\n            <span>\n                <i class=\"fa fa-wrench\"></i>\n                <s5l>quick.actions</s5l>\n            </span>\n        </div>\n        <div class=\"card-body\">\n            <button routerLink=\"users/create\">\n                <s5l>create.user</s5l>\n                <i class=\"fa fa-user-plus\"></i>\n            </button>\n            <button routerLink=\"groups\">\n                <s5l>create.group</s5l>\n                <i class=\"fa fa-users\"></i>\n            </button>\n            <button>\n                <s5l>manage.duplicates</s5l>\n                <i class=\"fa fa-user-times\"></i>\n            </button>\n            <button>\n                <s5l>manage.reports</s5l>\n                <i class=\"fa fa-exclamation-circle\"></i>\n            </button>\n        </div>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [])
@@ -1335,7 +1417,7 @@ webpackJsonp([0],{
 	UserSearchCard = __decorate([
 	    core_1.Component({
 	        selector: 'user-search-card',
-	        template: "\n        <div class=\"card-header\">\n            <span>\n                <i class=\"fa fa-user\"></i>\n                <s5l>search.user</s5l>\n            </span>\n        </div>\n        <div class=\"card-body relative\">\n            <search-input\n                [delay]=\"500\"\n                [attr.placeholder]=\"'search.user' | translate\"\n                (onChange)=\"inputValue = $event\"></search-input>\n            <!-- position hack ... -->\n                <i class=\"fa fa-spinner fa-pulse fa-2x fa-fw\"\n                    *ngIf=\"loading\"\n                    style=\"position: absolute; top: 35px; right: -20px;\"></i>\n            <div class=\"card-list\">\n                <div class=\"card-big-margin\" *ngIf=\"!foundUsers || foundUsers.length === 0\">\n                    <em *ngIf=\"!inputValue\">\n                        <s5l>users.quick.search.intro</s5l>.\n                    </em>\n                    <em *ngIf=\"inputValue\">\n                        <s5l>no.user.found</s5l>.\n                    </em>\n                </div>\n                <ul *ngIf=\"foundUsers && foundUsers.length > 0\">\n                    <li *ngFor=\"let user of foundUsers\">\n                        <a routerLink=\"users\" [queryParams]=\"{ userId: user.id }\">\n                            {{ user.lastName | uppercase }} {{ user.firstName }}\n                        </a>\n                    </li>\n                </ul>\n            </div>\n        </div>\n    ",
+	        template: "\n        <div class=\"card-header\">\n            <span>\n                <i class=\"fa fa-user\"></i>\n                <s5l>search.user</s5l>\n            </span>\n        </div>\n        <div class=\"card-body relative\">\n            <search-input\n                [delay]=\"500\"\n                [attr.placeholder]=\"'search.user' | translate\"\n                (onChange)=\"inputValue = $event\"></search-input>\n            <!-- position hack ... -->\n                <i class=\"fa fa-spinner fa-pulse fa-2x fa-fw\"\n                    *ngIf=\"loading\"\n                    style=\"position: absolute; top: 35px; right: -20px;\"></i>\n            <div class=\"card-list\">\n                <div class=\"card-big-margin\" *ngIf=\"!foundUsers || foundUsers.length === 0\">\n                    <em *ngIf=\"!inputValue\">\n                        <s5l>users.quick.search.intro</s5l>.\n                    </em>\n                    <em *ngIf=\"inputValue\">\n                        <s5l>no.user.found</s5l>.\n                    </em>\n                </div>\n                <ul *ngIf=\"foundUsers && foundUsers.length > 0\">\n                    <li *ngFor=\"let user of foundUsers\">\n                        <a [routerLink]=\"['users', user.id]\">\n                            {{ user.lastName | uppercase }} {{ user.firstName }}\n                        </a>\n                    </li>\n                </ul>\n            </div>\n        </div>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [core_1.ChangeDetectorRef])
@@ -1390,12 +1472,12 @@ webpackJsonp([0],{
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
 	__export(__webpack_require__(430));
-	__export(__webpack_require__(431));
-	__export(__webpack_require__(433));
+	__export(__webpack_require__(434));
 	__export(__webpack_require__(435));
-	__export(__webpack_require__(444));
-	__export(__webpack_require__(445));
+	__export(__webpack_require__(437));
 	__export(__webpack_require__(446));
+	__export(__webpack_require__(447));
+	__export(__webpack_require__(448));
 
 
 /***/ },
@@ -1416,155 +1498,68 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(2);
 	var router_1 = __webpack_require__(22);
 	var services_1 = __webpack_require__(124);
-	var user_list_component_1 = __webpack_require__(431);
-	var userlist_filters_1 = __webpack_require__(432);
+	var userlist_filters_service_1 = __webpack_require__(431);
+	var users_data_service_1 = __webpack_require__(432);
 	var UsersRoot = (function () {
-	    function UsersRoot(route, router, cdRef, loadingService) {
+	    function UsersRoot(route, router, cdRef, dataService, filtersService, loadingService) {
 	        this.route = route;
 	        this.router = router;
 	        this.cdRef = cdRef;
+	        this.dataService = dataService;
+	        this.filtersService = filtersService;
 	        this.loadingService = loadingService;
-	        // User list & selection
-	        this.userlist = [];
-	        this.listCompanionView = '';
 	    }
-	    Object.defineProperty(UsersRoot.prototype, "currentStructure", {
-	        get: function () { return this._currentStructure; },
-	        set: function (structure) {
-	            this._currentStructure = structure;
-	            this._rawFilters = null;
-	            this.filters = {};
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    Object.defineProperty(UsersRoot.prototype, "selectedUser", {
-	        get: function () { return this._selectedUser; },
-	        set: function (user) {
-	            if (!user) {
-	                this.listCompanionView = '';
-	                this.cdRef.markForCheck();
-	            }
-	            else if (user !== this._selectedUser) {
-	                this._selectedUser = user;
-	                this.openUserDetail();
-	                this.router.navigate(['../users'], {
-	                    queryParams: { userId: this.selectedUser.id },
-	                    relativeTo: this.route
-	                });
-	            }
-	            else if (user === this._selectedUser) {
-	                this.listCompanionView = 'user-detail';
-	            }
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    UsersRoot.prototype.setUserById = function (id) {
-	        if (!this.selectedUser || id !== this.selectedUser.id)
-	            this.selectedUser = this.userlist.find(function (user) { return user.id === id; });
-	        else if (this.listCompanionView !== 'user-detail') {
-	            this.listCompanionView = 'user-detail';
-	            this.cdRef.markForCheck();
-	        }
-	    };
-	    Object.defineProperty(UsersRoot.prototype, "rawFilters", {
-	        get: function () { return this._rawFilters; },
-	        set: function (filters) {
-	            this._rawFilters = filters;
-	            var formattedFilters = {};
-	            for (var i = 0; i < filters.length; i++) {
-	                var filter = filters[i];
-	                formattedFilters[filter.type] = filter.filter;
-	            }
-	            this.filters = formattedFilters;
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
 	    UsersRoot.prototype.ngOnInit = function () {
 	        var _this = this;
-	        this.userlist = this.route.snapshot.data['userlist'];
-	        // Watch selected structure
 	        this.structureSubscriber = this.route.parent.data.subscribe(function (data) {
-	            _this.currentStructure = data['structure'];
-	            if (_this.currentStructure.users.data.length > 0) {
-	                _this.userlist = _this.currentStructure.users.data;
-	            }
-	            else {
+	            var structure = data['structure'];
+	            _this.dataService.structure = structure;
+	            _this.filtersService.resetFilters();
+	            _this.filtersService.setClasses(structure.classes);
+	            if (structure.users.data.length === 0) {
 	                _this.loadingService.load('portal-content');
-	                _this.currentStructure.users.sync().then(function () {
-	                    _this.userlist = _this.currentStructure.users.data;
-	                }).catch(function (e) {
-	                    _this.onError(e);
+	                structure.users.sync().catch(function (e) {
+	                    _this.router.navigate(['error']);
 	                }).then(function () {
 	                    _this.loadingService.done('portal-content');
 	                    _this.cdRef.markForCheck();
+	                    _this.cdRef.detectChanges();
 	                });
 	            }
-	            _this.userListComponent.userListService.resetLimit();
-	            _this.selectedUser = null;
 	            _this.cdRef.markForCheck();
-	        });
-	        // Watch query parameters
-	        this.querySubscriber = this.route.queryParams.subscribe(function (params) {
-	            if (params['userId']) {
-	                _this.setUserById(params['userId']);
-	            }
-	            else {
-	                _this.selectedUser = null;
-	            }
-	            if (params['createUser']) {
-	                _this.openCreationView();
-	            }
+	            _this.cdRef.detectChanges();
 	        });
 	    };
 	    UsersRoot.prototype.ngOnDestroy = function () {
 	        this.structureSubscriber.unsubscribe();
-	        this.querySubscriber.unsubscribe();
 	    };
-	    UsersRoot.prototype.openUserDetail = function () {
-	        var _this = this;
-	        this.listCompanionView = 'user-detail';
-	        this.loadingService.load('users-content');
-	        return this.selectedUser.userDetails.sync()
-	            .catch(function (err) {
-	            _this.onError(err);
-	        }).then(function () {
-	            _this.loadingService.done('users-content');
-	            _this.cdRef.markForCheck();
-	        });
+	    UsersRoot.prototype.closeCompanion = function () {
+	        this.router.navigate(['../users'], { relativeTo: this.route });
+	    };
+	    UsersRoot.prototype.openUserDetail = function (user) {
+	        this.dataService.user = user;
+	        this.router.navigate([user.id], { relativeTo: this.route });
 	    };
 	    UsersRoot.prototype.openCreationView = function () {
-	        if (this.listCompanionView !== 'user-create') {
-	            this.listCompanionView = 'user-create';
-	            this.router.navigate(['../users'], {
-	                queryParams: { createUser: 1 },
-	                relativeTo: this.route
-	            });
-	        }
+	        this.router.navigate(['create'], { relativeTo: this.route });
 	    };
-	    UsersRoot.prototype.onError = function (error) {
-	        console.error(error);
-	        this.listCompanionView = 'user-error';
-	        this.error = error;
+	    UsersRoot.prototype.openCompanionView = function (view) {
+	        this.router.navigate([view], { relativeTo: this.route });
 	    };
 	    return UsersRoot;
 	}());
-	__decorate([
-	    core_1.ViewChild("userListComponent"),
-	    __metadata("design:type", user_list_component_1.UserList)
-	], UsersRoot.prototype, "userListComponent", void 0);
 	UsersRoot = __decorate([
 	    core_1.Component({
 	        selector: 'users-root',
-	        template: "\n        <h1><i class=\"fa fa-user\"></i><s5l>users.title</s5l></h1>\n        <side-layout (closeCompanion)=\"listCompanionView = ''\" [showCompanion]=\"listCompanionView\">\n            <div side-card>\n                <div class=\"round-button top-right-button\"\n                    (click)=\"openCreationView()\"\n                    [class.selected]=\"listCompanionView === 'user-create'\"\n                    [tooltip]=\"'create.user' | translate\" position=\"top\">+</div>\n                <user-list [userlist]=\"userlist\"\n                    [(listCompanion)]=\"listCompanionView\"\n                    [(selectedUser)]=\"selectedUser\"\n                    [filters]=\"filters\"\n                    #userListComponent></user-list>\n            </div>\n            <div side-companion>\n                <user-detail [user]=\"selectedUser\" [structure]=\"currentStructure\"\n                    *ngIf=\"listCompanionView === 'user-detail'\"></user-detail>\n                <user-filters [structure]=\"currentStructure\" [(filters)]=\"rawFilters\"\n                    *ngIf=\"listCompanionView === 'user-filters'\"></user-filters>\n                <user-create\n                    *ngIf=\"listCompanionView === 'user-create'\"></user-create>\n                <user-error\n                    [error]=\"error\"\n                    *ngIf=\"listCompanionView === 'user-error'\"></user-error>\n            </div>\n        </side-layout>\n    ",
+	        template: "\n        <h1><i class=\"fa fa-user\"></i><s5l>users.title</s5l></h1>\n        <side-layout (closeCompanion)=\"closeCompanion()\"\n                [showCompanion]=\"!router.isActive('/admin/' + dataService.structure?.id + '/users', true)\">\n            <div side-card>\n                <div class=\"round-button top-right-button\"\n                    (click)=\"openCreationView()\"\n                    [class.selected]=\"router.isActive('/admin/' + dataService.structure?.id + '/users/create', true)\"\n                    [tooltip]=\"'create.user' | translate\" position=\"top\">+</div>\n                <user-list [userlist]=\"dataService.structure.users.data\"\n                    (listCompanionChange)=\"openCompanionView($event)\"\n                    [selectedUser]=\"dataService.user\"\n                    (selectedUserChange)=\"openUserDetail($event)\"></user-list>\n            </div>\n            <div side-companion>\n                <router-outlet></router-outlet>\n            </div>\n        </side-layout>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
-	        providers: [userlist_filters_1.UserlistFilters]
+	        providers: [userlist_filters_service_1.UserlistFiltersService, users_data_service_1.UsersDataService]
 	    }),
 	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
 	        router_1.Router,
 	        core_1.ChangeDetectorRef,
+	        users_data_service_1.UsersDataService,
+	        userlist_filters_service_1.UserlistFiltersService,
 	        services_1.LoadingService])
 	], UsersRoot);
 	exports.UsersRoot = UsersRoot;
@@ -1573,6 +1568,190 @@ webpackJsonp([0],{
 /***/ },
 
 /***/ 431:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
+	var rxjs_1 = __webpack_require__(126);
+	var UserFilter = (function () {
+	    function UserFilter(observable) {
+	        this.observable = observable;
+	        this._outputModel = [];
+	    }
+	    Object.defineProperty(UserFilter.prototype, "outputModel", {
+	        get: function () {
+	            return this._outputModel;
+	        },
+	        set: function (model) {
+	            this._outputModel = model;
+	            this.observable.next();
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return UserFilter;
+	}());
+	exports.UserFilter = UserFilter;
+	var ProfileFilter = (function (_super) {
+	    __extends(ProfileFilter, _super);
+	    function ProfileFilter() {
+	        var _this = _super.apply(this, arguments) || this;
+	        _this.type = 'type';
+	        _this.label = 'profiles.multi.combo.title';
+	        _this.comboModel = ['Student', 'Teacher', 'Relative', 'Personnel', 'Guest'];
+	        _this.filter = function (type) {
+	            var outputModel = _this.outputModel;
+	            return outputModel.length === 0 || outputModel.indexOf(type) >= 0;
+	        };
+	        return _this;
+	    }
+	    return ProfileFilter;
+	}(UserFilter));
+	var ActivationFilter = (function (_super) {
+	    __extends(ActivationFilter, _super);
+	    function ActivationFilter() {
+	        var _this = _super.apply(this, arguments) || this;
+	        _this.type = 'code';
+	        _this.label = 'code.multi.combo.title';
+	        _this.comboModel = ['users.activated', 'users.not.activated'];
+	        _this.filter = function (code) {
+	            var outputModel = _this.outputModel;
+	            return outputModel.length === 0 ||
+	                outputModel.indexOf('users.activated') >= 0 && !code ||
+	                outputModel.indexOf('users.not.activated') >= 0 && !(!code);
+	        };
+	        return _this;
+	    }
+	    return ActivationFilter;
+	}(UserFilter));
+	var ClassesFilter = (function (_super) {
+	    __extends(ClassesFilter, _super);
+	    function ClassesFilter() {
+	        var _this = _super.apply(this, arguments) || this;
+	        _this.type = 'allClasses';
+	        _this.label = 'classes.multi.combo.title';
+	        _this.comboModel = [];
+	        _this.display = 'name';
+	        _this.order = '+name';
+	        _this.filterProp = 'name';
+	        _this.filter = function (allClasses) {
+	            var outputModel = _this.outputModel;
+	            return outputModel.length === 0 ||
+	                allClasses && allClasses.length > 0 &&
+	                    allClasses.some(function (c) {
+	                        return outputModel.some(function (o) { return o.id === c.id; });
+	                    });
+	        };
+	        return _this;
+	    }
+	    return ClassesFilter;
+	}(UserFilter));
+	var UserlistFiltersService = (function () {
+	    function UserlistFiltersService() {
+	        this.updateSubject = new rxjs_1.Subject();
+	        this.profileFilter = new ProfileFilter(this.updateSubject);
+	        this.activationFilter = new ActivationFilter(this.updateSubject);
+	        this.classesFilter = new ClassesFilter(this.updateSubject);
+	        this.filters = [
+	            this.profileFilter,
+	            this.activationFilter,
+	            this.classesFilter
+	        ];
+	    }
+	    UserlistFiltersService.prototype.resetFilters = function () {
+	        for (var i = 0; i < this.filters.length; i++) {
+	            this.filters[i].outputModel = [];
+	        }
+	    };
+	    UserlistFiltersService.prototype.setClasses = function (classes) {
+	        this.classesFilter.comboModel = classes;
+	    };
+	    UserlistFiltersService.prototype.getFormattedFilters = function () {
+	        var formattedFilters = {};
+	        for (var i = 0; i < this.filters.length; i++) {
+	            var filter = this.filters[i];
+	            formattedFilters[filter.type] = filter.filter;
+	        }
+	        return formattedFilters;
+	    };
+	    return UserlistFiltersService;
+	}());
+	UserlistFiltersService = __decorate([
+	    core_1.Injectable(),
+	    __metadata("design:paramtypes", [])
+	], UserlistFiltersService);
+	exports.UserlistFiltersService = UserlistFiltersService;
+
+
+/***/ },
+
+/***/ 432:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var abstract_data_service_1 = __webpack_require__(433);
+	var UsersDataService = (function (_super) {
+	    __extends(UsersDataService, _super);
+	    function UsersDataService() {
+	        return _super.call(this, ['structure', 'user']) || this;
+	    }
+	    return UsersDataService;
+	}(abstract_data_service_1.AbstractDataService));
+	exports.UsersDataService = UsersDataService;
+
+
+/***/ },
+
+/***/ 433:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var rxjs_1 = __webpack_require__(126);
+	var AbstractDataService = (function () {
+	    function AbstractDataService(triggers) {
+	        var _this = this;
+	        this.onchange = new rxjs_1.Subject();
+	        triggers.forEach(function (trigger) {
+	            _this['_' + trigger] = _this[trigger];
+	            delete _this[trigger];
+	            Object.defineProperty(_this, trigger, {
+	                set: function (x) {
+	                    _this['_' + trigger] = x;
+	                    _this.onchange.next();
+	                },
+	                get: function () {
+	                    return _this['_' + trigger];
+	                }
+	            });
+	        });
+	    }
+	    return AbstractDataService;
+	}());
+	exports.AbstractDataService = AbstractDataService;
+
+
+/***/ },
+
+/***/ 434:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1588,22 +1767,33 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(2);
 	var dist_1 = __webpack_require__(56);
 	var services_1 = __webpack_require__(124);
+	var userlist_filters_service_1 = __webpack_require__(431);
 	var UserList = (function () {
-	    function UserList(cdRef, bundlesService, userListService) {
+	    function UserList(cdRef, bundlesService, userListService, listFilters) {
 	        var _this = this;
 	        this.cdRef = cdRef;
 	        this.bundlesService = bundlesService;
 	        this.userListService = userListService;
+	        this.listFilters = listFilters;
 	        this.userlist = [];
-	        this.openfilters = new core_1.EventEmitter();
+	        this.companionChange = new core_1.EventEmitter();
 	        this.onselect = new core_1.EventEmitter();
 	        this.isSelected = function (user) {
-	            return _this.selectedUser === user;
+	            return _this.selectedUser && user &&
+	                _this.selectedUser.id === user.id;
 	        };
 	        // Scroll
 	        this.ticking = false;
 	    }
-	    UserList.prototype.ngOnInit = function () { };
+	    UserList.prototype.ngOnInit = function () {
+	        var _this = this;
+	        this.filtersUpdatesSubscriber = this.listFilters.updateSubject.subscribe(function () {
+	            _this.cdRef.markForCheck();
+	        });
+	    };
+	    UserList.prototype.ngOnDestroy = function () {
+	        this.filtersUpdatesSubscriber.unsubscribe();
+	    };
 	    UserList.prototype.selectUser = function (user) {
 	        this.selectedUser = user;
 	        this.onselect.emit(user);
@@ -1634,7 +1824,7 @@ webpackJsonp([0],{
 	__decorate([
 	    core_1.Output("listCompanionChange"),
 	    __metadata("design:type", core_1.EventEmitter)
-	], UserList.prototype, "openfilters", void 0);
+	], UserList.prototype, "companionChange", void 0);
 	__decorate([
 	    core_1.Input(),
 	    __metadata("design:type", Object)
@@ -1643,14 +1833,10 @@ webpackJsonp([0],{
 	    core_1.Output("selectedUserChange"),
 	    __metadata("design:type", core_1.EventEmitter)
 	], UserList.prototype, "onselect", void 0);
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", Object)
-	], UserList.prototype, "filters", void 0);
 	UserList = __decorate([
 	    core_1.Component({
 	        selector: 'user-list',
-	        template: "\n    <list-component [model]=\"userlist\" [filters]=\"filters\" [inputFilter]=\"userListService.filterByInput\"\n        [sort]=\"userListService.sorts\" [limit]=\"userListService.limit\" searchPlaceholder=\"search.user\"\n        [isSelected]=\"isSelected\" [display]=\"userListService.display\"\n        (inputChange)=\"userListService.inputFilter = $event\"\n        (onSelect)=\"selectedUser = $event; onselect.emit($event)\">\n        <div toolbar class=\"user-toolbar\">\n             <i class=\"fa\" aria-hidden=\"true\"\n                [ngClass]=\"{\n                    'fa-sort-alpha-asc': userListService.sortsMap.alphabetical.sort === '+',\n                    'fa-sort-alpha-desc': userListService.sortsMap.alphabetical.sort === '-',\n                    'selected': userListService.sortsMap.alphabetical.selected\n                }\"\n                [tooltip]=\"'sort.alphabetical' | translate\" position=\"top\"\n                (click)=\"userListService.changeSorts('alphabetical')\"></i>\n            <i class=\"fa\" aria-hidden=\"true\"\n                [ngClass]=\"{\n                    'fa-sort-amount-asc': userListService.sortsMap.profile.sort === '+',\n                    'fa-sort-amount-desc': userListService.sortsMap.profile.sort === '-',\n                    'selected': userListService.sortsMap.profile.selected\n                }\"\n                [tooltip]=\"'sort.profile' | translate\" position=\"top\"\n                (click)=\"userListService.changeSorts('profile')\"></i>\n            <i class=\"fa fa-filter toolbar-right\" aria-hidden=\"true\"\n                [class.selected]=\"listCompanion === 'user-filters'\"\n                [tooltip]=\"'filters' | translate\" position=\"top\"\n                (click)=\"openfilters.emit('user-filters')\"></i>\n        </div>\n    </list-component>\n    ",
+	        template: "\n    <list-component\n        [model]=\"userlist\"\n        [filters]=\"listFilters.getFormattedFilters()\"\n        [inputFilter]=\"userListService.filterByInput\"\n        [sort]=\"userListService.sorts\"\n        [limit]=\"userListService.limit\"\n        searchPlaceholder=\"search.user\"\n        [isSelected]=\"isSelected\"\n        [display]=\"userListService.display\"\n        (inputChange)=\"userListService.inputFilter = $event\"\n        (onSelect)=\"selectedUser = $event; onselect.emit($event)\">\n        <div toolbar class=\"user-toolbar\">\n             <i class=\"fa\" aria-hidden=\"true\"\n                [ngClass]=\"{\n                    'fa-sort-alpha-asc': userListService.sortsMap.alphabetical.sort === '+',\n                    'fa-sort-alpha-desc': userListService.sortsMap.alphabetical.sort === '-',\n                    'selected': userListService.sortsMap.alphabetical.selected\n                }\"\n                [tooltip]=\"'sort.alphabetical' | translate\" position=\"top\"\n                (click)=\"userListService.changeSorts('alphabetical')\"></i>\n            <i class=\"fa\" aria-hidden=\"true\"\n                [ngClass]=\"{\n                    'fa-sort-amount-asc': userListService.sortsMap.profile.sort === '+',\n                    'fa-sort-amount-desc': userListService.sortsMap.profile.sort === '-',\n                    'selected': userListService.sortsMap.profile.selected\n                }\"\n                [tooltip]=\"'sort.profile' | translate\" position=\"top\"\n                (click)=\"userListService.changeSorts('profile')\"></i>\n            <i class=\"fa fa-filter toolbar-right\" aria-hidden=\"true\"\n                [tooltip]=\"'filters' | translate\" position=\"top\"\n                (click)=\"companionChange.emit('filter')\"></i>\n        </div>\n    </list-component>\n    ",
 	        styles: ["\n        .user-toolbar {\n            padding: 15px;\n            font-size: 1.2em;\n        }\n        .user-toolbar i {\n            cursor: pointer;\n        }\n    "],
 	        host: {
 	            '(document:scroll)': 'onDocumentScroll($event)',
@@ -1660,101 +1846,15 @@ webpackJsonp([0],{
 	    }),
 	    __metadata("design:paramtypes", [core_1.ChangeDetectorRef,
 	        dist_1.BundlesService,
-	        services_1.UserListService])
+	        services_1.UserListService,
+	        userlist_filters_service_1.UserlistFiltersService])
 	], UserList);
 	exports.UserList = UserList;
 
 
 /***/ },
 
-/***/ 432:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(2);
-	var UserlistFilters = (function () {
-	    function UserlistFilters() {
-	        var _this = this;
-	        this.filters = [
-	            {
-	                type: 'type',
-	                label: 'profiles.multi.combo.title',
-	                comboModel: ['Student', 'Teacher', 'Relative', 'Personnel', 'Guest'],
-	                setOutput: function (output) {
-	                    _this.filters[0].outputModel = output;
-	                },
-	                outputModel: [],
-	                filter: function (type) {
-	                    var outputModel = _this.filters[0].outputModel;
-	                    return outputModel.length === 0 || outputModel.indexOf(type) >= 0;
-	                }
-	            },
-	            {
-	                type: 'code',
-	                label: 'code.multi.combo.title',
-	                comboModel: ['users.activated', 'users.not.activated'],
-	                setOutput: function (output) {
-	                    _this.filters[1].outputModel = output;
-	                },
-	                outputModel: [],
-	                filter: function (code) {
-	                    var outputModel = _this.filters[1].outputModel;
-	                    return outputModel.length === 0 ||
-	                        outputModel.indexOf('users.activated') >= 0 && !code ||
-	                        outputModel.indexOf('users.not.activated') >= 0 && !(!code);
-	                }
-	            },
-	            {
-	                type: 'allClasses',
-	                label: 'classes.multi.combo.title',
-	                comboModel: [],
-	                setOutput: function (output) {
-	                    _this.filters[2].outputModel = output;
-	                },
-	                display: 'name',
-	                order: '+name',
-	                filterProp: 'name',
-	                outputModel: [],
-	                filter: function (allClasses) {
-	                    var outputModel = _this.filters[2].outputModel;
-	                    return outputModel.length === 0 ||
-	                        allClasses && allClasses.length > 0 &&
-	                            allClasses.some(function (c) {
-	                                return outputModel.find(function (o) { return o.id === c.id; });
-	                            });
-	                }
-	            }
-	        ];
-	    }
-	    UserlistFilters.prototype.getFormattedFilters = function () {
-	        var formattedFilters = {};
-	        for (var i = 0; i < this.filters.length; i++) {
-	            var filter = this.filters[i];
-	            formattedFilters[filter.type] = filter.filter;
-	        }
-	        return formattedFilters;
-	    };
-	    return UserlistFilters;
-	}());
-	UserlistFilters = __decorate([
-	    core_1.Injectable(),
-	    __metadata("design:paramtypes", [])
-	], UserlistFilters);
-	exports.UserlistFilters = UserlistFilters;
-
-
-/***/ },
-
-/***/ 433:
+/***/ 435:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1770,32 +1870,52 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(2);
 	var forms_1 = __webpack_require__(54);
 	var services_1 = __webpack_require__(124);
-	var models_1 = __webpack_require__(73);
+	var router_1 = __webpack_require__(22);
+	var users_data_service_1 = __webpack_require__(432);
 	var UserDetail = (function () {
-	    function UserDetail(loadingService, cdRef) {
+	    function UserDetail(loadingService, dataService, cdRef, route, router) {
 	        this.loadingService = loadingService;
+	        this.dataService = dataService;
 	        this.cdRef = cdRef;
-	        this.now = new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate();
-	        this.emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+	        this.route = route;
+	        this.router = router;
+	        this.structure = this.dataService.structure;
 	    }
+	    UserDetail.prototype.ngOnInit = function () {
+	        var _this = this;
+	        this.dataSubscriber = this.dataService.onchange.subscribe(function () {
+	            if (_this.dataService.user &&
+	                !_this.dataService.user.structures.find(function (s) { return _this.dataService.structure.id === s.id; })) {
+	                setTimeout(function () {
+	                    _this.router.navigate(['..'], { relativeTo: _this.route, replaceUrl: true });
+	                }, 0);
+	            }
+	            else if (_this.user !== _this.dataService.user) {
+	                _this.user = _this.dataService.user;
+	            }
+	        });
+	        this.userSubscriber = this.route.data.subscribe(function (data) {
+	            _this.dataService.user = data['user'];
+	        });
+	    };
+	    UserDetail.prototype.ngOnDestroy = function () {
+	        this.userSubscriber.unsubscribe();
+	        this.dataSubscriber.unsubscribe();
+	    };
 	    Object.defineProperty(UserDetail.prototype, "user", {
 	        get: function () { return this._user; },
 	        set: function (user) {
-	            if (user) {
-	                this._user = user;
-	                this.details = user.userDetails;
-	                if (this.codeInput)
-	                    this.codeInput.reset();
-	                if (this.administrativeForm)
-	                    this.administrativeForm.reset();
-	            }
+	            this._user = user;
+	            this.details = user.userDetails;
+	            if (this.codeInput)
+	                this.codeInput.reset();
+	            if (this.administrativeForm)
+	                this.administrativeForm.reset();
+	            this.cdRef.markForCheck();
 	        },
 	        enumerable: true,
 	        configurable: true
 	    });
-	    UserDetail.prototype.getStructure = function (id) {
-	        return models_1.structureCollection.data.find(function (s) { return s.id === id; });
-	    };
 	    UserDetail.prototype.isContextAdml = function () {
 	        var _this = this;
 	        return this.details && this.details.functions &&
@@ -1812,53 +1932,47 @@ webpackJsonp([0],{
 	    core_1.ViewChild("administrativeForm"),
 	    __metadata("design:type", forms_1.NgForm)
 	], UserDetail.prototype, "administrativeForm", void 0);
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", Object),
-	    __metadata("design:paramtypes", [Object])
-	], UserDetail.prototype, "user", null);
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", models_1.StructureModel)
-	], UserDetail.prototype, "structure", void 0);
 	UserDetail = __decorate([
 	    core_1.Component({
 	        selector: 'user-detail',
-	        templateUrl: __webpack_require__(434),
+	        templateUrl: __webpack_require__(436),
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [services_1.LoadingService,
-	        core_1.ChangeDetectorRef])
+	        users_data_service_1.UsersDataService,
+	        core_1.ChangeDetectorRef,
+	        router_1.ActivatedRoute,
+	        router_1.Router])
 	], UserDetail);
 	exports.UserDetail = UserDetail;
 
 
 /***/ },
 
-/***/ 434:
+/***/ 436:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "templates/user-detail.component.html";
 
 /***/ },
 
-/***/ 435:
+/***/ 437:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(436));
-	__export(__webpack_require__(439));
+	__export(__webpack_require__(438));
 	__export(__webpack_require__(441));
-	__export(__webpack_require__(442));
 	__export(__webpack_require__(443));
+	__export(__webpack_require__(444));
+	__export(__webpack_require__(445));
 
 
 /***/ },
 
-/***/ 436:
+/***/ 438:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1878,7 +1992,7 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var forms_1 = __webpack_require__(54);
-	var abstract_section_1 = __webpack_require__(437);
+	var abstract_section_1 = __webpack_require__(439);
 	var services_1 = __webpack_require__(124);
 	var UserAdministrativeSection = (function (_super) {
 	    __extends(UserAdministrativeSection, _super);
@@ -1901,7 +2015,7 @@ webpackJsonp([0],{
 	UserAdministrativeSection = __decorate([
 	    core_1.Component({
 	        selector: 'user-administrative-section',
-	        templateUrl: __webpack_require__(438),
+	        templateUrl: __webpack_require__(440),
 	        inputs: ['user', 'structure']
 	    }),
 	    __metadata("design:paramtypes", [services_1.LoadingService,
@@ -1912,7 +2026,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 437:
+/***/ 439:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -1942,9 +2056,9 @@ webpackJsonp([0],{
 	    Object.defineProperty(AbstractSection.prototype, "user", {
 	        get: function () { return this._user; },
 	        set: function (u) {
+	            this.onUserChange();
 	            this._user = u;
 	            this.details = u.userDetails;
-	            this.onUserChange();
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -1959,71 +2073,10 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 438:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "templates/user-administrative-section.component.html";
-
-/***/ },
-
-/***/ 439:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(2);
-	var forms_1 = __webpack_require__(54);
-	var abstract_section_1 = __webpack_require__(437);
-	var services_1 = __webpack_require__(124);
-	var UserInfoSection = (function (_super) {
-	    __extends(UserInfoSection, _super);
-	    function UserInfoSection(loadingService, cdRef) {
-	        var _this = _super.call(this, loadingService, cdRef) || this;
-	        _this.loadingService = loadingService;
-	        _this.cdRef = cdRef;
-	        return _this;
-	    }
-	    UserInfoSection.prototype.onUserChange = function () {
-	        if (this.codeInput)
-	            this.codeInput.reset();
-	    };
-	    return UserInfoSection;
-	}(abstract_section_1.AbstractSection));
-	__decorate([
-	    core_1.ViewChild("codeInput"),
-	    __metadata("design:type", forms_1.AbstractControl)
-	], UserInfoSection.prototype, "codeInput", void 0);
-	UserInfoSection = __decorate([
-	    core_1.Component({
-	        selector: 'user-info-section',
-	        templateUrl: __webpack_require__(440),
-	        inputs: ['user', 'structure']
-	    }),
-	    __metadata("design:paramtypes", [services_1.LoadingService,
-	        core_1.ChangeDetectorRef])
-	], UserInfoSection);
-	exports.UserInfoSection = UserInfoSection;
-
-
-/***/ },
-
 /***/ 440:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__.p + "templates/user-info-section.component.html";
+	module.exports = __webpack_require__.p + "templates/user-administrative-section.component.html";
 
 /***/ },
 
@@ -2047,7 +2100,68 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var forms_1 = __webpack_require__(54);
-	var abstract_section_1 = __webpack_require__(437);
+	var abstract_section_1 = __webpack_require__(439);
+	var services_1 = __webpack_require__(124);
+	var UserInfoSection = (function (_super) {
+	    __extends(UserInfoSection, _super);
+	    function UserInfoSection(loadingService, cdRef) {
+	        var _this = _super.call(this, loadingService, cdRef) || this;
+	        _this.loadingService = loadingService;
+	        _this.cdRef = cdRef;
+	        return _this;
+	    }
+	    UserInfoSection.prototype.onUserChange = function () {
+	        if (this.passwordMailInput)
+	            this.passwordMailInput.reset();
+	    };
+	    return UserInfoSection;
+	}(abstract_section_1.AbstractSection));
+	__decorate([
+	    core_1.ViewChild("passwordMailInput"),
+	    __metadata("design:type", forms_1.NgModel)
+	], UserInfoSection.prototype, "passwordMailInput", void 0);
+	UserInfoSection = __decorate([
+	    core_1.Component({
+	        selector: 'user-info-section',
+	        templateUrl: __webpack_require__(442),
+	        inputs: ['user', 'structure']
+	    }),
+	    __metadata("design:paramtypes", [services_1.LoadingService,
+	        core_1.ChangeDetectorRef])
+	], UserInfoSection);
+	exports.UserInfoSection = UserInfoSection;
+
+
+/***/ },
+
+/***/ 442:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "templates/user-info-section.component.html";
+
+/***/ },
+
+/***/ 443:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
+	var forms_1 = __webpack_require__(54);
+	var abstract_section_1 = __webpack_require__(439);
 	var services_1 = __webpack_require__(124);
 	var UserRelativesSection = (function (_super) {
 	    __extends(UserRelativesSection, _super);
@@ -2078,7 +2192,7 @@ webpackJsonp([0],{
 	UserRelativesSection = __decorate([
 	    core_1.Component({
 	        selector: 'user-relatives-section',
-	        template: "\n        <panel-section section-title=\"users.details.section.relatives\" [folded]=\"true\" *ngIf=\"isStudent(user)\">\n            <button (click)=\"showRelativesLightbox = true\">\n                <s5l>add.relative</s5l><i class=\"fa fa-plus-circle\"></i>\n            </button>\n            <light-box class=\"inner-list\"\n                    [show]=\"showRelativesLightbox\" (onClose)=\"showRelativesLightbox = false\">\n                <div class=\"padded\">\n                    <h3><s5l>add.relative</s5l></h3>\n                    <list-component class=\"inner-list\"\n                        [model]=\"structure?.users?.data\"\n                        [inputFilter]=\"userListService.filterByInput\"\n                        [filters]=\"filterRelatives\"\n                        searchPlaceholder=\"search.user\"\n                        [sort]=\"userListService.sorts\"\n                        [display]=\"userListService.display\"\n                        (inputChange)=\"userListService.inputFilter = $event\"\n                        [isDisabled]=\"disableRelative\"\n                        (onSelect)=\"wrapRequest(details?.addRelative, $event.id, 0, $event)\">\n                    </list-component>\n                </div>\n            </light-box>\n            <ul class=\"actions-list\">\n                <li *ngFor=\"let parent of details?.parents\">\n                    <a class=\"action\" [routerLink]=\"['../users']\" [queryParams]=\"{ userId: parent.id }\">\n                        {{ parent.lastName | uppercase }} {{ parent.firstName }}\n                    </a>\n                    <i  class=\"fa fa-times action\" (click)=\"wrapRequest(details?.removeRelative, parent.id, 0, parent)\"\n                        [tooltip]=\"'delete.this.relative' | translate\"\n                        [ngClass]=\"{ disabled: loadingService.isLoading(parent.id)}\"></i>\n                </li>\n            </ul>\n        </panel-section>\n    ",
+	        template: "\n        <panel-section section-title=\"users.details.section.relatives\" [folded]=\"true\" *ngIf=\"isStudent(user)\">\n            <button (click)=\"showRelativesLightbox = true\">\n                <s5l>add.relative</s5l><i class=\"fa fa-plus-circle\"></i>\n            </button>\n            <light-box class=\"inner-list\"\n                    [show]=\"showRelativesLightbox\" (onClose)=\"showRelativesLightbox = false\">\n                <div class=\"padded\">\n                    <h3><s5l>add.relative</s5l></h3>\n                    <list-component class=\"inner-list\"\n                        [model]=\"structure?.users?.data\"\n                        [inputFilter]=\"userListService.filterByInput\"\n                        [filters]=\"filterRelatives\"\n                        searchPlaceholder=\"search.user\"\n                        [sort]=\"userListService.sorts\"\n                        [display]=\"userListService.display\"\n                        (inputChange)=\"userListService.inputFilter = $event\"\n                        [isDisabled]=\"disableRelative\"\n                        (onSelect)=\"wrapRequest(details?.addRelative, $event.id, 0, $event)\">\n                    </list-component>\n                </div>\n            </light-box>\n            <ul class=\"actions-list\">\n                <li *ngFor=\"let parent of details?.parents\">\n                    <a class=\"action\" [routerLink]=\"['..', parent.id]\">\n                        {{ parent.lastName | uppercase }} {{ parent.firstName }}\n                    </a>\n                    <i  class=\"fa fa-times action\" (click)=\"wrapRequest(details?.removeRelative, parent.id, 0, parent)\"\n                        [tooltip]=\"'delete.this.relative' | translate\"\n                        [ngClass]=\"{ disabled: loadingService.isLoading(parent.id)}\"></i>\n                </li>\n            </ul>\n        </panel-section>\n    ",
 	        inputs: ['user', 'structure'],
 	        providers: [services_1.UserListService]
 	    }),
@@ -2091,7 +2205,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 442:
+/***/ 444:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2111,7 +2225,7 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var forms_1 = __webpack_require__(54);
-	var abstract_section_1 = __webpack_require__(437);
+	var abstract_section_1 = __webpack_require__(439);
 	var services_1 = __webpack_require__(124);
 	var UserChildrenSection = (function (_super) {
 	    __extends(UserChildrenSection, _super);
@@ -2142,7 +2256,7 @@ webpackJsonp([0],{
 	UserChildrenSection = __decorate([
 	    core_1.Component({
 	        selector: 'user-children-section',
-	        template: "\n        <panel-section section-title=\"users.details.section.children\" [folded]=\"true\" *ngIf=\"isRelative(user)\">\n            <button (click)=\"showChildrenLightbox = true\">\n                <s5l>add.child</s5l><i class=\"fa fa-plus-circle\"></i>\n            </button>\n            <light-box class=\"inner-list\"\n                    [show]=\"showChildrenLightbox\" (onClose)=\"showChildrenLightbox = false\">\n                <div class=\"padded\">\n                    <h3><s5l>add.child</s5l></h3>\n                    <list-component class=\"inner-list\"\n                        [model]=\"structure?.users?.data\"\n                        [inputFilter]=\"userListService.filterByInput\"\n                        [filters]=\"filterChildren\"\n                        searchPlaceholder=\"search.user\"\n                        [sort]=\"userListService.sorts\"\n                        [display]=\"userListService.display\"\n                        (inputChange)=\"userListService.inputFilter = $event\"\n                        [isDisabled]=\"disableChild\"\n                        (onSelect)=\"wrapRequest(details?.addChild, $event.id, 0, $event)\">\n                    </list-component>\n                </div>\n            </light-box>\n            <ul class=\"actions-list\">\n                <li *ngFor=\"let child of details?.children\">\n                    <a class=\"action\" [routerLink]=\"['../users']\" [queryParams]=\"{ userId: child.id }\">\n                        {{ child.lastName | uppercase }} {{ child.firstName }}\n                    </a>\n                    <i  class=\"fa fa-times action\" (click)=\"wrapRequest(details?.removeChild, child.id, 0, child)\"\n                        [tooltip]=\"'delete.this.child' | translate\"\n                        [ngClass]=\"{ disabled: loadingService.isLoading(child.id)}\"></i>\n                </li>\n            </ul>\n        </panel-section>\n    ",
+	        template: "\n        <panel-section section-title=\"users.details.section.children\" [folded]=\"true\" *ngIf=\"isRelative(user)\">\n            <button (click)=\"showChildrenLightbox = true\">\n                <s5l>add.child</s5l><i class=\"fa fa-plus-circle\"></i>\n            </button>\n            <light-box class=\"inner-list\"\n                    [show]=\"showChildrenLightbox\" (onClose)=\"showChildrenLightbox = false\">\n                <div class=\"padded\">\n                    <h3><s5l>add.child</s5l></h3>\n                    <list-component class=\"inner-list\"\n                        [model]=\"structure?.users?.data\"\n                        [inputFilter]=\"userListService.filterByInput\"\n                        [filters]=\"filterChildren\"\n                        searchPlaceholder=\"search.user\"\n                        [sort]=\"userListService.sorts\"\n                        [display]=\"userListService.display\"\n                        (inputChange)=\"userListService.inputFilter = $event\"\n                        [isDisabled]=\"disableChild\"\n                        (onSelect)=\"wrapRequest(details?.addChild, $event.id, 0, $event)\">\n                    </list-component>\n                </div>\n            </light-box>\n            <ul class=\"actions-list\">\n                <li *ngFor=\"let child of details?.children\">\n                    <a class=\"action\" [routerLink]=\"['..', child.id]\">\n                        {{ child.lastName | uppercase }} {{ child.firstName }}\n                    </a>\n                    <i  class=\"fa fa-times action\" (click)=\"wrapRequest(details?.removeChild, child.id, 0, child)\"\n                        [tooltip]=\"'delete.this.child' | translate\"\n                        [ngClass]=\"{ disabled: loadingService.isLoading(child.id)}\"></i>\n                </li>\n            </ul>\n        </panel-section>\n    ",
 	        inputs: ['user', 'structure'],
 	        providers: [services_1.UserListService]
 	    }),
@@ -2155,7 +2269,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 443:
+/***/ 445:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2176,7 +2290,7 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(2);
 	var forms_1 = __webpack_require__(54);
 	var router_1 = __webpack_require__(22);
-	var abstract_section_1 = __webpack_require__(437);
+	var abstract_section_1 = __webpack_require__(439);
 	var services_1 = __webpack_require__(124);
 	var models_1 = __webpack_require__(73);
 	var UserStructuresSection = (function (_super) {
@@ -2236,9 +2350,7 @@ webpackJsonp([0],{
 	    //Routing
 	    UserStructuresSection.prototype.routeToStructure = function (structureId) {
 	        //[routerLink]="['/admin', structure.id, 'users']" [queryParams]="{userId: user.id, refresh: 1}"
-	        this.router.navigate(['/admin', structureId, 'users'], {
-	            queryParams: { userId: this.user.id }
-	        });
+	        this.router.navigate(['/admin', structureId, 'users', this.user.id]);
 	    };
 	    return UserStructuresSection;
 	}(abstract_section_1.AbstractSection));
@@ -2249,7 +2361,7 @@ webpackJsonp([0],{
 	UserStructuresSection = __decorate([
 	    core_1.Component({
 	        selector: 'user-structures-section',
-	        template: "\n        <panel-section section-title=\"users.details.section.structures\" [folded]=\"true\">\n            <button (click)=\"showStructuresLightbox = true\">\n                <s5l>add.structure</s5l><i class=\"fa fa-plus-circle\"></i>\n            </button>\n            <light-box class=\"inner-list\"\n                    [show]=\"showStructuresLightbox\" (onClose)=\"showStructuresLightbox = false\">\n                <div class=\"padded\">\n                    <h3><s5l>add.structure</s5l></h3>\n                    <list-component class=\"inner-list\"\n                        [model]=\"structureCollection.data\"\n                        [inputFilter]=\"filterByInput\"\n                        [filters]=\"filterStructures\"\n                        searchPlaceholder=\"search.structure\"\n                        sort=\"name\"\n                        [display]=\"display\"\n                        (inputChange)=\"inputFilter = $event\"\n                        [isDisabled]=\"disableStructure\"\n                        (onSelect)=\"wrapRequest(user?.addStructure, $event.id, 0, $event.id)\">\n                    </list-component>\n                </div>\n            </light-box>\n            <ul class=\"actions-list\">\n                <li *ngFor=\"let structure of user?.structures\">\n                    <a class=\"action\" (click)=\"routeToStructure(structure.id)\">\n                        {{ structure.name }}\n                    </a>\n                    <i  class=\"fa fa-times action\" (click)=\"wrapRequest(user?.removeStructure, structure.id, 0, structure.id)\"\n                        [tooltip]=\"'delete.this.structure' | translate\"\n                        [ngClass]=\"{ disabled: loadingService.isLoading(structure.id)}\"></i>\n                </li>\n            </ul>\n        </panel-section>\n    ",
+	        template: "\n        <panel-section section-title=\"users.details.section.structures\" [folded]=\"true\">\n            <button (click)=\"showStructuresLightbox = true\">\n                <s5l>add.structure</s5l><i class=\"fa fa-plus-circle\"></i>\n            </button>\n            <light-box class=\"inner-list\"\n                    [show]=\"showStructuresLightbox\" (onClose)=\"showStructuresLightbox = false\">\n                <div class=\"padded\">\n                    <h3><s5l>add.structure</s5l></h3>\n                    <list-component class=\"inner-list\"\n                        [model]=\"structureCollection.data\"\n                        [inputFilter]=\"filterByInput\"\n                        [filters]=\"filterStructures\"\n                        searchPlaceholder=\"search.structure\"\n                        sort=\"name\"\n                        [display]=\"display\"\n                        (inputChange)=\"inputFilter = $event\"\n                        [isDisabled]=\"disableStructure\"\n                        (onSelect)=\"wrapRequest(user?.addStructure, $event.id, 0, $event.id)\">\n                    </list-component>\n                </div>\n            </light-box>\n            <ul class=\"actions-list\">\n                <li *ngFor=\"let structure of user?.structures\">\n                    <a class=\"action\" [routerLink]=\"['/admin', structure.id, 'users', user.id]\">\n                        {{ structure.name }}\n                    </a>\n                    <i  class=\"fa fa-times action\" (click)=\"wrapRequest(user?.removeStructure, structure.id, 0, structure.id)\"\n                        [tooltip]=\"'delete.this.structure' | translate\"\n                        [ngClass]=\"{ disabled: loadingService.isLoading(structure.id)}\"></i>\n                </li>\n            </ul>\n        </panel-section>\n    ",
 	        inputs: ['user', 'structure']
 	    }),
 	    __metadata("design:paramtypes", [services_1.UserListService,
@@ -2262,7 +2374,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 444:
+/***/ 446:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2277,123 +2389,57 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var dist_1 = __webpack_require__(56);
-	var userlist_filters_1 = __webpack_require__(432);
+	var userlist_filters_service_1 = __webpack_require__(431);
+	var router_1 = __webpack_require__(22);
+	var users_data_service_1 = __webpack_require__(432);
 	var UserFilters = (function () {
-	    function UserFilters(bundles, listFilters) {
+	    function UserFilters(bundles, cdRef, route, dataService, listFilters) {
 	        var _this = this;
 	        this.bundles = bundles;
+	        this.cdRef = cdRef;
+	        this.route = route;
+	        this.dataService = dataService;
 	        this.listFilters = listFilters;
-	        this._filters = [
-	            {
-	                type: 'type',
-	                label: 'profiles.multi.combo.title',
-	                comboModel: ['Student', 'Teacher', 'Relative', 'Personnel', 'Guest'],
-	                setOutput: function (output) {
-	                    _this._filters[0].outputModel = output;
-	                },
-	                outputModel: [],
-	                filter: function (type) {
-	                    var outputModel = _this._filters[0].outputModel;
-	                    return outputModel.length === 0 || outputModel.indexOf(type) >= 0;
-	                }
-	            },
-	            {
-	                type: 'code',
-	                label: 'code.multi.combo.title',
-	                comboModel: ['users.activated', 'users.not.activated'],
-	                setOutput: function (output) {
-	                    _this._filters[1].outputModel = output;
-	                },
-	                outputModel: [],
-	                filter: function (code) {
-	                    var outputModel = _this._filters[1].outputModel;
-	                    return outputModel.length === 0 ||
-	                        outputModel.indexOf('users.activated') >= 0 && !code ||
-	                        outputModel.indexOf('users.not.activated') >= 0 && !(!code);
-	                }
-	            },
-	            {
-	                type: 'allClasses',
-	                label: 'classes.multi.combo.title',
-	                comboModel: [],
-	                setOutput: function (output) {
-	                    _this._filters[2].outputModel = output;
-	                },
-	                display: 'name',
-	                order: '+name',
-	                filterProp: 'name',
-	                outputModel: [],
-	                filter: function (allClasses) {
-	                    var outputModel = _this._filters[2].outputModel;
-	                    return outputModel.length === 0 ||
-	                        allClasses && allClasses.length > 0 &&
-	                            allClasses.some(function (c) {
-	                                return outputModel.find(function (o) { return o.id === c.id; });
-	                            });
-	                }
-	            }
-	        ];
-	        this.onfilterschange = new core_1.EventEmitter();
+	        this.structure = this.dataService.structure;
 	        this.translateFunction = function (key) {
 	            return _this.bundles.translate(key);
 	        };
 	    }
-	    UserFilters.prototype.ngOnInit = function () { };
-	    Object.defineProperty(UserFilters.prototype, "structure", {
-	        get: function () { return this._structure; },
-	        set: function (s) {
-	            this._structure = s;
-	            this._filters[2].comboModel = s.classes;
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    Object.defineProperty(UserFilters.prototype, "filters", {
-	        set: function (filters) {
-	            if (filters) {
-	                this._filters = filters;
-	            }
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
+	    UserFilters.prototype.ngOnInit = function () {
+	        var _this = this;
+	        this.dataSubscriber = this.dataService.onchange.subscribe(function () {
+	            _this.cdRef.markForCheck();
+	        });
+	    };
+	    UserFilters.prototype.ngOnDestroy = function () {
+	        this.dataSubscriber.unsubscribe();
+	    };
 	    UserFilters.prototype.orderer = function (a) {
 	        return a;
 	    };
 	    UserFilters.prototype.deselect = function (filter, item) {
 	        filter.outputModel.splice(filter.outputModel.indexOf(item), 1);
-	        this.onfilterschange.emit(this._filters);
 	    };
 	    return UserFilters;
 	}());
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", Object),
-	    __metadata("design:paramtypes", [])
-	], UserFilters.prototype, "structure", null);
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", Array),
-	    __metadata("design:paramtypes", [Array])
-	], UserFilters.prototype, "filters", null);
-	__decorate([
-	    core_1.Output("filtersChange"),
-	    __metadata("design:type", core_1.EventEmitter)
-	], UserFilters.prototype, "onfilterschange", void 0);
 	UserFilters = __decorate([
 	    core_1.Component({
 	        selector: 'user-filters',
-	        template: "\n        <div class=\"panel-header\">\n            <i class=\"fa fa-filter\"></i>\n            <span><s5l>filters</s5l></span>\n        </div>\n        <div class=\"padded\">\n            <div *ngFor=\"let filter of _filters\">\n                <div *ngIf=\"filter.comboModel.length > 0\">\n                    <multi-combo\n                        [comboModel]=\"filter.comboModel\"\n                        [outputModel]=\"filter.outputModel\"\n                        (outputModelChange)=\"filter.setOutput($event); onfilterschange.emit(_filters)\"\n                        [title]=\"filter.label | translate\"\n                        [display]=\"filter.display || translateFunction\"\n                        [orderBy]=\"filter.order || orderer\"\n                        [filter]=\"filter.filterProp\"\n                    ></multi-combo>\n                    <div class=\"multi-combo-companion\">\n                        <div *ngFor=\"let item of filter.outputModel\" (click)=\"deselect(filter, item)\">\n                            <span *ngIf=\"filter.display\">\n                                {{ item[filter.display] }}\n                            </span>\n                            <span *ngIf=\"!filter.display\">\n                                {{ item | translate }}\n                            </span>\n                            <i class=\"fa fa-trash\"></i>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    ",
+	        template: "\n        <div class=\"panel-header\">\n            <i class=\"fa fa-filter\"></i>\n            <span><s5l>filters</s5l></span>\n        </div>\n        <div class=\"padded\">\n            <div *ngFor=\"let filter of listFilters.filters\">\n                <div *ngIf=\"filter.comboModel.length > 0\">\n                    <multi-combo\n                        [comboModel]=\"filter.comboModel\"\n                        [(outputModel)]=\"filter.outputModel\"\n                        [title]=\"filter.label | translate\"\n                        [display]=\"filter.display || translateFunction\"\n                        [orderBy]=\"filter.order || orderer\"\n                        [filter]=\"filter.filterProp\"\n                    ></multi-combo>\n                    <div class=\"multi-combo-companion\">\n                        <div *ngFor=\"let item of filter.outputModel\" (click)=\"deselect(filter, item)\">\n                            <span *ngIf=\"filter.display\">\n                                {{ item[filter.display] }}\n                            </span>\n                            <span *ngIf=\"!filter.display\">\n                                {{ item | translate }}\n                            </span>\n                            <i class=\"fa fa-trash\"></i>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
-	    __metadata("design:paramtypes", [dist_1.BundlesService, userlist_filters_1.UserlistFilters])
+	    __metadata("design:paramtypes", [dist_1.BundlesService,
+	        core_1.ChangeDetectorRef,
+	        router_1.ActivatedRoute,
+	        users_data_service_1.UsersDataService,
+	        userlist_filters_service_1.UserlistFiltersService])
 	], UserFilters);
 	exports.UserFilters = UserFilters;
 
 
 /***/ },
 
-/***/ 445:
+/***/ 447:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2425,7 +2471,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 446:
+/***/ 448:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2444,14 +2490,10 @@ webpackJsonp([0],{
 	    }
 	    return UserError;
 	}());
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", Error)
-	], UserError.prototype, "error", void 0);
 	UserError = __decorate([
 	    core_1.Component({
 	        selector: 'user-error',
-	        template: "\n        <div class=\"panel-header\">\n            <i class=\"fa fa-warning\"></i>\n            <span><s5l>user.root.error</s5l></span>\n        </div>\n        <div class=\"padded\">\n            <s5l>user.root.error.text</s5l>\n            <div class=\"error-tech\">\n                <span>\n                    {{ error.stack || error }}\n                </span>\n            </div>\n        </div>\n    ",
+	        template: "\n        <div class=\"panel-header\">\n            <i class=\"fa fa-warning\"></i>\n            <span><s5l>user.root.error</s5l></span>\n        </div>\n        <div class=\"padded\">\n            <s5l>user.root.error.text</s5l>\n            <div class=\"error-tech\"  *ngIf=\"error\">\n                <span>\n                    {{ error?.stack || error }}\n                </span>\n            </div>\n        </div>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [])
@@ -2461,167 +2503,19 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 447:
+/***/ 449:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(448));
-	__export(__webpack_require__(449));
 	__export(__webpack_require__(450));
-	__export(__webpack_require__(451));
 	__export(__webpack_require__(452));
 	__export(__webpack_require__(453));
-
-
-/***/ },
-
-/***/ 448:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(2);
-	var router_1 = __webpack_require__(22);
-	var services_1 = __webpack_require__(124);
-	var GroupsRoot = (function () {
-	    function GroupsRoot(route, router, cdRef, loadingService) {
-	        this.route = route;
-	        this.router = router;
-	        this.cdRef = cdRef;
-	        this.loadingService = loadingService;
-	        // Model
-	        this.grouplist = [];
-	        // View
-	        this.shownView = '';
-	        // Tabs
-	        this.tabs = [
-	            { label: "manual.groups", view: "manual-groups" },
-	            { label: "profile.groups", view: "profile-groups" },
-	            { label: "functional.groups", view: "functional-groups" }
-	        ];
-	    }
-	    Object.defineProperty(GroupsRoot.prototype, "currentStructure", {
-	        get: function () { return this._currentStructure; },
-	        set: function (structure) { this._currentStructure = structure; },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    GroupsRoot.prototype.openView = function (view) {
-	        this.shownView = view;
-	        this.selectedGroup = null;
-	    };
-	    GroupsRoot.prototype.ngOnInit = function () {
-	        var _this = this;
-	        this.grouplist = this.route.snapshot.data['grouplist'];
-	        // Watch selected structure
-	        this.structureSubscriber = this.route.parent.data.subscribe(function (data) {
-	            _this.currentStructure = data['structure'];
-	            if (_this.currentStructure.groups.data.length > 0) {
-	                _this.grouplist = _this.currentStructure.groups.data;
-	            }
-	            else {
-	                _this.loadingService.load('portal-content');
-	                _this.currentStructure.groups.sync().then(function () {
-	                    _this.grouplist = _this.currentStructure.groups.data;
-	                }).catch(function (e) {
-	                    _this.onError(e);
-	                }).then(function () {
-	                    _this.loadingService.done('portal-content');
-	                    _this.cdRef.markForCheck();
-	                });
-	            }
-	            _this.cdRef.markForCheck();
-	        });
-	        this.querySubscriber = this.route.queryParams.subscribe(function (params) {
-	            if (params['view'] && params['view'] !== _this.shownView) {
-	                _this.openView(params['view']);
-	                _this.cdRef.markForCheck();
-	            }
-	        });
-	    };
-	    GroupsRoot.prototype.ngOnDestroy = function () {
-	        this.structureSubscriber.unsubscribe();
-	    };
-	    GroupsRoot.prototype.onError = function (error) {
-	        console.error(error);
-	        this.error = error;
-	    };
-	    return GroupsRoot;
-	}());
-	GroupsRoot = __decorate([
-	    core_1.Component({
-	        selector: 'groups-root',
-	        template: "\n        <div class=\"tabs\">\n            <button class=\"tab\" *ngFor=\"let tab of tabs\"\n                routerLink=\"../groups\" [queryParams]=\"{ view: tab.view }\"\n                [class.active]=\"shownView === tab.view\">\n                {{ tab.label | translate }}\n            </button>\n        </div>\n        <h1>\n            <i class=\"fa fa-users\"></i>\n            <s5l>groups</s5l>\n        </h1>\n\n        <manual-groups [selectedGroup]=\"selectedGroup\" [groups]=\"grouplist\"\n            *ngIf=\"shownView === 'manual-groups'\"></manual-groups>\n        <profile-groups [selectedGroup]=\"selectedGroup\" [groups]=\"grouplist\"\n            *ngIf=\"shownView === 'profile-groups'\"></profile-groups>\n        <functional-groups [selectedGroup]=\"selectedGroup\" [groups]=\"grouplist\"\n             *ngIf=\"shownView === 'functional-groups'\"></functional-groups>\n    ",
-	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
-	    }),
-	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
-	        router_1.Router,
-	        core_1.ChangeDetectorRef,
-	        services_1.LoadingService])
-	], GroupsRoot);
-	exports.GroupsRoot = GroupsRoot;
-
-
-/***/ },
-
-/***/ 449:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(2);
-	var router_1 = __webpack_require__(22);
-	var mappings_1 = __webpack_require__(120);
-	var services_1 = __webpack_require__(124);
-	var dist_1 = __webpack_require__(56);
-	var ManualGroups = (function () {
-	    function ManualGroups(route, router, bundles, cdRef, loadingService) {
-	        this.route = route;
-	        this.router = router;
-	        this.bundles = bundles;
-	        this.cdRef = cdRef;
-	        this.loadingService = loadingService;
-	    }
-	    ManualGroups.prototype.ngOnInit = function () { };
-	    ManualGroups.prototype.ngOnDestroy = function () { };
-	    return ManualGroups;
-	}());
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", Array)
-	], ManualGroups.prototype, "groups", void 0);
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", mappings_1.Group)
-	], ManualGroups.prototype, "selectedGroup", void 0);
-	ManualGroups = __decorate([
-	    core_1.Component({
-	        selector: 'manual-groups',
-	        template: "\n        <groups-view groupType=\"ManualGroup\" viewName=\"manual-groups\"\n                    [groups]=\"groups\" [(selectedGroup)]=\"selectedGroup\">\n            <div class=\"padded\">\n                <group-users-list [groups]=\"groups\" [selectedGroup]=\"selectedGroup\">\n                    <em>{{ selectedGroup?.users?.length }} {{ 'members' | translate | lowercase }}</em>\n                </group-users-list>\n            </div>\n        </groups-view>\n    "
-	    }),
-	    __metadata("design:paramtypes", [router_1.ActivatedRoute, router_1.Router, dist_1.BundlesService,
-	        core_1.ChangeDetectorRef, services_1.LoadingService])
-	], ManualGroups);
-	exports.ManualGroups = ManualGroups;
+	__export(__webpack_require__(454));
+	__export(__webpack_require__(455));
+	__export(__webpack_require__(456));
 
 
 /***/ },
@@ -2641,43 +2535,89 @@ webpackJsonp([0],{
 	};
 	var core_1 = __webpack_require__(2);
 	var router_1 = __webpack_require__(22);
-	var mappings_1 = __webpack_require__(120);
 	var services_1 = __webpack_require__(124);
-	var dist_1 = __webpack_require__(56);
-	var FunctionalGroups = (function () {
-	    function FunctionalGroups(route, router, bundles, cdRef, loadingService) {
+	var groups_data_service_1 = __webpack_require__(451);
+	var GroupsRoot = (function () {
+	    function GroupsRoot(route, router, cdRef, dataService, loadingService) {
 	        this.route = route;
 	        this.router = router;
-	        this.bundles = bundles;
 	        this.cdRef = cdRef;
+	        this.dataService = dataService;
 	        this.loadingService = loadingService;
+	        // Tabs
+	        this.tabs = [
+	            { label: "manual.groups", view: "manual" },
+	            { label: "profile.groups", view: "profile" },
+	            { label: "functional.groups", view: "functional" }
+	        ];
 	    }
-	    FunctionalGroups.prototype.ngOnInit = function () { };
-	    FunctionalGroups.prototype.ngOnDestroy = function () { };
-	    return FunctionalGroups;
+	    GroupsRoot.prototype.ngOnInit = function () {
+	        var _this = this;
+	        // Watch selected structure
+	        this.structureSubscriber = this.route.parent.data.subscribe(function (data) {
+	            _this.dataService.structure = data['structure'];
+	            if (!_this.dataService.structure.groups.data.length) {
+	                _this.loadingService.load('portal-content');
+	                _this.dataService.structure.groups.sync().catch(function (e) {
+	                    _this.onError(e);
+	                }).then(function () {
+	                    _this.loadingService.done('portal-content');
+	                    _this.cdRef.markForCheck();
+	                });
+	            }
+	            _this.cdRef.markForCheck();
+	        });
+	    };
+	    GroupsRoot.prototype.ngOnDestroy = function () {
+	        this.structureSubscriber.unsubscribe();
+	    };
+	    GroupsRoot.prototype.onError = function (error) {
+	        console.error(error);
+	        this.error = error;
+	    };
+	    return GroupsRoot;
 	}());
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", Array)
-	], FunctionalGroups.prototype, "groups", void 0);
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", mappings_1.Group)
-	], FunctionalGroups.prototype, "selectedGroup", void 0);
-	FunctionalGroups = __decorate([
+	GroupsRoot = __decorate([
 	    core_1.Component({
-	        selector: 'functional-groups',
-	        template: "\n        <groups-view groupType=\"FunctionalGroup\" viewName=\"functional-groups\"\n                    [groups]=\"groups\" [(selectedGroup)]=\"selectedGroup\">\n            <div class=\"padded\">\n                <group-users-list [groups]=\"groups\" [selectedGroup]=\"selectedGroup\">\n                </group-users-list>\n            </div>\n        </groups-view>\n    "
+	        selector: 'groups-root',
+	        template: "\n        <div class=\"tabs\">\n            <button class=\"tab\" *ngFor=\"let tab of tabs\"\n                [routerLink]=\"tab.view\"\n                routerLinkActive=\"active\">\n                {{ tab.label | translate }}\n            </button>\n        </div>\n        <h1>\n            <i class=\"fa fa-users\"></i>\n            <s5l>groups</s5l>\n        </h1>\n\n        <router-outlet></router-outlet>\n    ",
+	        changeDetection: core_1.ChangeDetectionStrategy.OnPush,
+	        providers: [groups_data_service_1.GroupsDataService]
 	    }),
-	    __metadata("design:paramtypes", [router_1.ActivatedRoute, router_1.Router, dist_1.BundlesService,
-	        core_1.ChangeDetectorRef, services_1.LoadingService])
-	], FunctionalGroups);
-	exports.FunctionalGroups = FunctionalGroups;
+	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
+	        router_1.Router,
+	        core_1.ChangeDetectorRef,
+	        groups_data_service_1.GroupsDataService,
+	        services_1.LoadingService])
+	], GroupsRoot);
+	exports.GroupsRoot = GroupsRoot;
 
 
 /***/ },
 
 /***/ 451:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var abstract_data_service_1 = __webpack_require__(433);
+	var GroupsDataService = (function (_super) {
+	    __extends(GroupsDataService, _super);
+	    function GroupsDataService() {
+	        return _super.call(this, ['structure', 'group']) || this;
+	    }
+	    return GroupsDataService;
+	}(abstract_data_service_1.AbstractDataService));
+	exports.GroupsDataService = GroupsDataService;
+
+
+/***/ },
+
+/***/ 452:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2691,44 +2631,98 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(2);
-	var router_1 = __webpack_require__(22);
-	var mappings_1 = __webpack_require__(120);
-	var services_1 = __webpack_require__(124);
-	var dist_1 = __webpack_require__(56);
+	var groups_data_service_1 = __webpack_require__(451);
+	var ManualGroups = (function () {
+	    function ManualGroups(dataService) {
+	        this.dataService = dataService;
+	    }
+	    ManualGroups.prototype.ngOnInit = function () { };
+	    ManualGroups.prototype.ngOnDestroy = function () { };
+	    return ManualGroups;
+	}());
+	ManualGroups = __decorate([
+	    core_1.Component({
+	        selector: 'manual-groups',
+	        template: "\n        <groups-view groupType=\"ManualGroup\" viewName=\"manual\"\n                     [groups]=\"dataService.structure.groups.data\" [(selectedGroup)]=\"dataService.group\">\n            <div class=\"padded\">\n                <group-users-list [groups]=\"groups\" [selectedGroup]=\"dataService.group\">\n                    <em>{{ dataService.group?.users?.length }} {{ 'members' | translate | lowercase }}</em>\n                </group-users-list>\n            </div>\n        </groups-view>\n    "
+	    }),
+	    __metadata("design:paramtypes", [groups_data_service_1.GroupsDataService])
+	], ManualGroups);
+	exports.ManualGroups = ManualGroups;
+
+
+/***/ },
+
+/***/ 453:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
+	var groups_data_service_1 = __webpack_require__(451);
+	var FunctionalGroups = (function () {
+	    function FunctionalGroups(dataService) {
+	        this.dataService = dataService;
+	    }
+	    FunctionalGroups.prototype.ngOnInit = function () { };
+	    FunctionalGroups.prototype.ngOnDestroy = function () { };
+	    return FunctionalGroups;
+	}());
+	FunctionalGroups = __decorate([
+	    core_1.Component({
+	        selector: 'functional-groups',
+	        template: "\n        <groups-view groupType=\"FunctionalGroup\" viewName=\"functional\"\n                     [groups]=\"dataService.structure.groups.data\" [(selectedGroup)]=\"dataService.group\">\n            <div class=\"padded\">\n                <group-users-list [groups]=\"groups\" [selectedGroup]=\"dataService.group\">\n                </group-users-list>\n            </div>\n        </groups-view>\n    "
+	    }),
+	    __metadata("design:paramtypes", [groups_data_service_1.GroupsDataService])
+	], FunctionalGroups);
+	exports.FunctionalGroups = FunctionalGroups;
+
+
+/***/ },
+
+/***/ 454:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(2);
+	var groups_data_service_1 = __webpack_require__(451);
 	var ProfileGroups = (function () {
-	    function ProfileGroups(route, router, bundles, cdRef, loadingService) {
-	        this.route = route;
-	        this.router = router;
-	        this.bundles = bundles;
-	        this.cdRef = cdRef;
-	        this.loadingService = loadingService;
+	    function ProfileGroups(dataService) {
+	        this.dataService = dataService;
 	    }
 	    ProfileGroups.prototype.ngOnInit = function () { };
 	    ProfileGroups.prototype.ngOnDestroy = function () { };
 	    return ProfileGroups;
 	}());
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", Array)
-	], ProfileGroups.prototype, "groups", void 0);
-	__decorate([
-	    core_1.Input(),
-	    __metadata("design:type", mappings_1.Group)
-	], ProfileGroups.prototype, "selectedGroup", void 0);
 	ProfileGroups = __decorate([
 	    core_1.Component({
 	        selector: 'profile-groups',
-	        template: "\n        <groups-view groupType=\"ProfileGroup\" viewName=\"profile-groups\"\n                    [groups]=\"groups\" [(selectedGroup)]=\"selectedGroup\">\n            <div class=\"padded\">\n                <group-users-list [groups]=\"groups\" [selectedGroup]=\"selectedGroup\">\n                </group-users-list>\n            </div>\n        </groups-view>\n    "
+	        template: "\n        <groups-view groupType=\"ProfileGroup\" viewName=\"profile\"\n                     [groups]=\"dataService.structure.groups.data\" [(selectedGroup)]=\"dataService.group\">\n            <div class=\"padded\">\n                <group-users-list [groups]=\"groups\" [selectedGroup]=\"dataService.group\">\n                </group-users-list>\n            </div>\n        </groups-view>\n    "
 	    }),
-	    __metadata("design:paramtypes", [router_1.ActivatedRoute, router_1.Router, dist_1.BundlesService,
-	        core_1.ChangeDetectorRef, services_1.LoadingService])
+	    __metadata("design:paramtypes", [groups_data_service_1.GroupsDataService])
 	], ProfileGroups);
 	exports.ProfileGroups = ProfileGroups;
 
 
 /***/ },
 
-/***/ 452:
+/***/ 455:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2797,8 +2791,8 @@ webpackJsonp([0],{
 	        this.querySubscriber.unsubscribe();
 	    };
 	    GroupView.prototype.routeToGroup = function (g) {
-	        this.router.navigate(['../groups'], {
-	            queryParams: { groupId: g.id, view: this.viewName },
+	        this.router.navigate(['.'], {
+	            queryParams: { groupId: g.id },
 	            relativeTo: this.route
 	        });
 	    };
@@ -2841,7 +2835,7 @@ webpackJsonp([0],{
 	GroupView = __decorate([
 	    core_1.Component({
 	        selector: 'groups-view',
-	        template: "\n        <side-layout (closeCompanion)=\"showCompanion = false\" [showCompanion]=\"showCompanion\">\n            <div side-card>\n                <list-component\n                    [model]=\"groups\"\n                    [filters]=\"{type: groupType}\"\n                    [inputFilter]=\"filterByInput\"\n                    sort=\"name\" searchPlaceholder=\"search.group\"\n                    [isSelected]=\"isSelected\" [display]=\"display\"\n                    (inputChange)=\"groupInputFilter = $event\"\n                    (onSelect)=\"routeToGroup($event)\">\n                </list-component>\n            </div>\n            <div side-companion>\n                <spinner-cube class=\"component-spinner\" waitingFor=\"groups-content\"></spinner-cube>\n\n                <div class=\"panel-header\">\n                    <i class=\"fa fa-users\"></i>\n                    <span><s5l>members.of.group</s5l>:</span><span>{{ selectedGroup?.name }}</span>\n                </div>\n\n                <div>\n                    <ng-content></ng-content>\n                </div>\n            </div>\n        </side-layout>\n    ",
+	        template: "\n        <side-layout (closeCompanion)=\"showCompanion = false\" [showCompanion]=\"showCompanion\">\n            <div side-card>\n                <list-component\n                    [model]=\"groups\"\n                    [filters]=\"{type: groupType}\"\n                    [inputFilter]=\"filterByInput\"\n                    sort=\"name\"\n                    searchPlaceholder=\"search.group\"\n                    [isSelected]=\"isSelected\"\n                    [display]=\"display\"\n                    (inputChange)=\"groupInputFilter = $event\"\n                    (onSelect)=\"routeToGroup($event)\">\n                </list-component>\n            </div>\n            <div side-companion>\n                <spinner-cube class=\"component-spinner\" waitingFor=\"groups-content\"></spinner-cube>\n\n                <div class=\"panel-header\">\n                    <i class=\"fa fa-users\"></i>\n                    <span><s5l>members.of.group</s5l>:</span><span>{{ selectedGroup?.name }}</span>\n                </div>\n\n                <div>\n                    <ng-content></ng-content>\n                </div>\n            </div>\n        </side-layout>\n    ",
 	        changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	    }),
 	    __metadata("design:paramtypes", [router_1.ActivatedRoute,
@@ -2854,7 +2848,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 453:
+/***/ 456:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2898,9 +2892,7 @@ webpackJsonp([0],{
 	    //protected isSelected = (user: GroupUser) => this.selectedUser === user
 	    GroupUsersList.prototype.selectUser = function (user) {
 	        if (user.structures.length > 0) {
-	            this.router.navigate(['admin', user.structures[0].id, 'users'], {
-	                queryParams: { userId: user.id }
-	            });
+	            this.router.navigate(['admin', user.structures[0].id, 'users', user.id]);
 	        }
 	    };
 	    return GroupUsersList;
@@ -2932,24 +2924,24 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 454:
+/***/ 457:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	function __export(m) {
 	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 	}
-	__export(__webpack_require__(455));
-	__export(__webpack_require__(456));
-	__export(__webpack_require__(457));
+	__export(__webpack_require__(458));
 	__export(__webpack_require__(459));
 	__export(__webpack_require__(460));
-	__export(__webpack_require__(461));
+	__export(__webpack_require__(462));
+	__export(__webpack_require__(463));
+	__export(__webpack_require__(464));
 
 
 /***/ },
 
-/***/ 455:
+/***/ 458:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3009,7 +3001,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 456:
+/***/ 459:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3051,7 +3043,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 457:
+/***/ 460:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3129,7 +3121,7 @@ webpackJsonp([0],{
 	ListComponent = __decorate([
 	    core_1.Component({
 	        selector: 'list-component',
-	        templateUrl: __webpack_require__(458),
+	        templateUrl: __webpack_require__(461),
 	        styles: ["\n        ul {\n            margin: 0;\n            padding: 0px;\n            font-size: 0.9em;\n        }\n\n        ul li {\n            cursor: pointer;\n            border-top: 1px solid #ddd;\n            padding: 5px 10px;\n        }\n\n        ul li.disabled {\n            pointer-events: none;\n        }\n    "]
 	    }),
 	    __metadata("design:paramtypes", [core_1.ChangeDetectorRef])
@@ -3139,14 +3131,14 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 458:
+/***/ 461:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__.p + "templates/list-component.html";
 
 /***/ },
 
-/***/ 459:
+/***/ 462:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3182,7 +3174,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 460:
+/***/ 463:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3223,7 +3215,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 461:
+/***/ 464:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -3267,7 +3259,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 462:
+/***/ 465:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";

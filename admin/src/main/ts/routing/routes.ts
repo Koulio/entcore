@@ -5,7 +5,10 @@ import { StructureResolve } from './structure.resolve'
 import { SessionResolve } from './session.resolve'
 import { UsersResolve } from './users.resolve'
 import { GroupsResolve } from './groups.resolve'
-import { Portal, Home, UsersRoot, GroupsRoot, StructureHome } from '../components'
+import { UserResolve } from './user.resolve'
+import { Portal, Home, UsersRoot, GroupsRoot, StructureHome,
+	UserCreate, UserDetail, UserFilters, UserError, ManualGroups,
+	ProfileGroups, FunctionalGroups } from '../components'
 
 export let routes : Routes = [
 	{
@@ -18,8 +21,21 @@ export let routes : Routes = [
 				resolve: { structure: StructureResolve },
 				children: [
 					{ path: '', component: StructureHome },
-					{ path: 'users', component: UsersRoot, resolve: { userlist: UsersResolve } },
-					{ path: 'groups', component: GroupsRoot, resolve: { grouplist: GroupsResolve } }
+					{ path: 'users', component: UsersRoot, resolve: { userlist: UsersResolve },
+						children: [
+							{ path: 'create', 	component: UserCreate },
+							{ path: 'filter', 	component: UserFilters },
+							{ path: 'error', 	component: UserError },
+							{ path: ':userId', 	component: UserDetail, resolve: { user: UserResolve }}
+						]
+					},
+					{ path: 'groups', component: GroupsRoot, resolve: { grouplist: GroupsResolve },
+						 children: [
+							 { path: 'manual',		component: ManualGroups },
+							 { path: 'profile',		component: ProfileGroups },
+							 { path: 'functional',	component: FunctionalGroups }
+						 ]
+					}
 				]
 			},
 			{

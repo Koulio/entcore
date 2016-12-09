@@ -1,18 +1,14 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core'
-import { ActivatedRoute, Router, Params } from '@angular/router'
-
-import { Group } from '../../../models/mappings'
-import { LoadingService } from '../../../services'
-import { BundlesService } from 'sijil/dist'
+import { Component, OnInit, OnDestroy } from '@angular/core'
+import { GroupsDataService } from '../../../services/groups/groups.data.service'
 
 @Component({
     selector: 'manual-groups',
     template: `
-        <groups-view groupType="ManualGroup" viewName="manual-groups"
-                    [groups]="groups" [(selectedGroup)]="selectedGroup">
+        <groups-view groupType="ManualGroup" viewName="manual"
+                     [groups]="dataService.structure.groups.data" [(selectedGroup)]="dataService.group">
             <div class="padded">
-                <group-users-list [groups]="groups" [selectedGroup]="selectedGroup">
-                    <em>{{ selectedGroup?.users?.length }} {{ 'members' | translate | lowercase }}</em>
+                <group-users-list [groups]="groups" [selectedGroup]="dataService.group">
+                    <em>{{ dataService.group?.users?.length }} {{ 'members' | translate | lowercase }}</em>
                 </group-users-list>
             </div>
         </groups-view>
@@ -20,12 +16,7 @@ import { BundlesService } from 'sijil/dist'
 })
 export class ManualGroups implements OnInit, OnDestroy {
 
-    constructor(private route: ActivatedRoute, private router: Router, private bundles: BundlesService,
-            private cdRef: ChangeDetectorRef, private loadingService: LoadingService) {}
-
-    // Model
-    @Input() groups: Group[]
-    @Input() selectedGroup : Group
+    constructor(private dataService: GroupsDataService) {}
 
     ngOnInit() {}
     ngOnDestroy() {}

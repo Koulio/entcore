@@ -14,6 +14,7 @@ export class StructureCollection extends Collection<StructureModel>{
 
     public asTree() {
         let childrenMap = new Map<string, StructureModel[]>()
+        let referenceSet = new Set<string>(this.data.map(s => s.id))
         this.data.forEach(structure => {
             structure.parents && structure.parents.forEach(parent => {
                 childrenMap.has(parent.id) ?
@@ -26,7 +27,9 @@ export class StructureCollection extends Collection<StructureModel>{
                 structure.children = childrenMap.get(structure.id)
         })
         let result = this.data.filter(structure => {
-            return !structure.parents || structure.parents.length === 0
+            return !structure.parents ||
+                    structure.parents.length === 0 ||
+                    structure.parents.every(p => !referenceSet.has(p.id))
         })
         return result
     }

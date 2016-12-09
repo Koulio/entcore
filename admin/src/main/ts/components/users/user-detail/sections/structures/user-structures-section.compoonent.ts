@@ -33,7 +33,7 @@ import { structureCollection, StructureCollection } from '../../../../../models'
             </light-box>
             <ul class="actions-list">
                 <li *ngFor="let structure of user?.structures">
-                    <a class="action" (click)="routeToStructure(structure.id)">
+                    <a class="action" [routerLink]="['/admin', structure.id, 'users', user.id]">
                         {{ structure.name }}
                     </a>
                     <i  class="fa fa-times action" (click)="wrapRequest(user?.removeStructure, structure.id, 0, structure.id)"
@@ -47,8 +47,7 @@ import { structureCollection, StructureCollection } from '../../../../../models'
 })
 export class UserStructuresSection extends AbstractSection {
 
-    constructor(
-            private userListService: UserListService,
+    constructor(private userListService: UserListService,
             private router: Router,
             protected loadingService: LoadingService,
             protected cdRef: ChangeDetectorRef) {
@@ -101,9 +100,7 @@ export class UserStructuresSection extends AbstractSection {
     //Routing
     private routeToStructure(structureId: string) {
         //[routerLink]="['/admin', structure.id, 'users']" [queryParams]="{userId: user.id, refresh: 1}"
-        this.router.navigate(['/admin', structureId, 'users'], {
-            queryParams: {userId: this.user.id}
-        })
+        this.router.navigate(['/admin', structureId, 'users', this.user.id])
     }
 
 }

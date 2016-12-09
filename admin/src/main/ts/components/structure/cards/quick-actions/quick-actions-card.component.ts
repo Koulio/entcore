@@ -11,7 +11,7 @@ import { StructureModel } from '../../../../models'
             </span>
         </div>
         <div class="card-body">
-            <button routerLink="users" [queryParams]="{ createUser: 1 }">
+            <button routerLink="users/create">
                 <s5l>create.user</s5l>
                 <i class="fa fa-user-plus"></i>
             </button>

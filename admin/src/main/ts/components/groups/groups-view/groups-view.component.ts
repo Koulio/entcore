@@ -14,8 +14,10 @@ import { LoadingService } from '../../../services'
                     [model]="groups"
                     [filters]="{type: groupType}"
                     [inputFilter]="filterByInput"
-                    sort="name" searchPlaceholder="search.group"
-                    [isSelected]="isSelected" [display]="display"
+                    sort="name"
+                    searchPlaceholder="search.group"
+                    [isSelected]="isSelected"
+                    [display]="display"
                     (inputChange)="groupInputFilter = $event"
                     (onSelect)="routeToGroup($event)">
                 </list-component>
@@ -101,8 +103,8 @@ export class GroupView implements OnInit, OnDestroy {
     }
 
     routeToGroup(g:Group) {
-        this.router.navigate(['../groups'],{
-            queryParams: { groupId: g.id, view: this.viewName },
+        this.router.navigate(['.'], {
+            queryParams: { groupId: g.id },
             relativeTo: this.route
         })
     }

@@ -30,7 +30,7 @@ import { StructureModel } from '../../../../models'
                 </div>
                 <ul *ngIf="foundUsers && foundUsers.length > 0">
                     <li *ngFor="let user of foundUsers">
-                        <a routerLink="users" [queryParams]="{ userId: user.id }">
+                        <a [routerLink]="['users', user.id]">
                             {{ user.lastName | uppercase }} {{ user.firstName }}
                         </a>
                     </li>

@@ -31,7 +31,7 @@ import { User } from '../../../../../models/mappings/user'
             </light-box>
             <ul class="actions-list">
                 <li *ngFor="let parent of details?.parents">
-                    <a class="action" [routerLink]="['../users']" [queryParams]="{ userId: parent.id }">
+                    <a class="action" [routerLink]="['..', parent.id]">
                         {{ parent.lastName | uppercase }} {{ parent.firstName }}
                     </a>
                     <i  class="fa fa-times action" (click)="wrapRequest(details?.removeRelative, parent.id, 0, parent)"

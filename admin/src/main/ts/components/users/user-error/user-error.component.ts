@@ -9,17 +9,17 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
         </div>
         <div class="padded">
             <s5l>user.root.error.text</s5l>
-            <div class="error-tech">
+            <div class="error-tech"  *ngIf="error">
                 <span>
-                    {{ error.stack || error }}
+                    {{ error?.stack || error }}
                 </span>
             </div>
         </div>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserError{
+export class UserError {
 
-    @Input() error : Error
+    private error : Error
 
 }

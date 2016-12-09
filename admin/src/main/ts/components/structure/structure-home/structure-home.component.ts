@@ -29,8 +29,8 @@ export class StructureHome implements OnInit, OnDestroy {
     constructor(private route: ActivatedRoute, private cdRef: ChangeDetectorRef){}
 
     ngOnInit() {
-        this.routeSubscriber = this.route.params.subscribe(p => {
-            this.structure = this.structures.data.find(s => s.id === p['structureId'])
+        this.routeSubscriber = this.route.data.subscribe(data => {
+            this.structure = data['structure']
             this.cdRef.markForCheck()
         })
     }

@@ -4,14 +4,15 @@ import { LoadingService } from '../../../services'
 import { Group } from '../../../models/mappings'
 import { StructureModel } from '../../../models'
 import { Subscription } from 'rxjs'
+import { GroupsDataService } from '../../../services/groups/groups.data.service'
 
 @Component({
     selector: 'groups-root',
     template: `
         <div class="tabs">
             <button class="tab" *ngFor="let tab of tabs"
-                routerLink="../groups" [queryParams]="{ view: tab.view }"
-                [class.active]="shownView === tab.view">
+                [routerLink]="tab.view"
+                routerLinkActive="active">
                 {{ tab.label | translate }}
             </button>
         </div>
@@ -20,37 +21,18 @@ import { Subscription } from 'rxjs'
             <s5l>groups</s5l>
         </h1>
 
-        <manual-groups [selectedGroup]="selectedGroup" [groups]="grouplist"
-            *ngIf="shownView === 'manual-groups'"></manual-groups>
-        <profile-groups [selectedGroup]="selectedGroup" [groups]="grouplist"
-            *ngIf="shownView === 'profile-groups'"></profile-groups>
-        <functional-groups [selectedGroup]="selectedGroup" [groups]="grouplist"
-             *ngIf="shownView === 'functional-groups'"></functional-groups>
+        <router-outlet></router-outlet>
     `,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [GroupsDataService]
 })
 export class GroupsRoot implements OnInit, OnDestroy {
 
     constructor(private route: ActivatedRoute,
         private router: Router,
         private cdRef: ChangeDetectorRef,
+        private dataService: GroupsDataService,
         private loadingService: LoadingService) { }
-
-    // Current structure
-    private _currentStructure: StructureModel
-    get currentStructure() { return this._currentStructure }
-    set currentStructure(structure) { this._currentStructure = structure }
-
-    // Model
-    private grouplist: Group[] = []
-    private selectedGroup: Group
-
-    // View
-    private shownView: string = ''
-    private openView(view: string) {
-        this.shownView = view
-        this.selectedGroup = null
-    }
 
     // Subscriberts
     private structureSubscriber: Subscription
@@ -58,24 +40,18 @@ export class GroupsRoot implements OnInit, OnDestroy {
 
     // Tabs
     private tabs = [
-        { label: "manual.groups", view: "manual-groups" },
-        { label: "profile.groups", view: "profile-groups" },
-        { label: "functional.groups", view: "functional-groups" }
+        { label: "manual.groups", view: "manual" },
+        { label: "profile.groups", view: "profile" },
+        { label: "functional.groups", view: "functional" }
     ]
 
     ngOnInit(): void {
-        this.grouplist = this.route.snapshot.data['grouplist']
-
         // Watch selected structure
         this.structureSubscriber = this.route.parent.data.subscribe((data: Data) => {
-            this.currentStructure = data['structure']
-            if (this.currentStructure.groups.data.length > 0) {
-                this.grouplist = this.currentStructure.groups.data
-            } else {
+            this.dataService.structure = data['structure']
+            if (!this.dataService.structure.groups.data.length) {
                 this.loadingService.load('portal-content')
-                this.currentStructure.groups.sync().then(() => {
-                    this.grouplist = this.currentStructure.groups.data
-                }).catch(e => {
+                this.dataService.structure.groups.sync().catch(e => {
                     this.onError(e)
                 }).then(() => {
                     this.loadingService.done('portal-content')
@@ -83,13 +59,6 @@ export class GroupsRoot implements OnInit, OnDestroy {
                 })
             }
             this.cdRef.markForCheck()
-        })
-
-        this.querySubscriber = this.route.queryParams.subscribe((params: Params) => {
-            if(params['view'] && params['view'] !== this.shownView) {
-                this.openView(params['view'])
-                this.cdRef.markForCheck()
-            }
         })
     }
 
