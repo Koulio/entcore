@@ -8,10 +8,10 @@ import { User } from '../models/mappings'
 @Injectable()
 export class UserResolve implements Resolve<User | Error> {
 
-    constructor(private loadingService: LoadingService, private router: Router){}
+    constructor(private ls: LoadingService, private router: Router){}
 
     resolve(route: ActivatedRouteSnapshot): Promise<User> {
-        this.loadingService.load('users-content')
+        this.ls.load('users-content')
 
         let structure = structureCollection.data.find(s => s.id === route.parent.parent.params['structureId'])
         let user = structure &&
@@ -22,7 +22,7 @@ export class UserResolve implements Resolve<User | Error> {
                 .catch((err) => {
                     this.router.navigate(['/admin', structure.id, 'users'], {replaceUrl: true})
                 }).then(() => {
-                    this.loadingService.done('users-content')
+                    this.ls.done('users-content')
                     return user
                 })
         } else {

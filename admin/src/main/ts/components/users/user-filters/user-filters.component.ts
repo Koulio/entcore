@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core'
-import { BundlesService } from 'sijil/dist'
+import { BundlesService } from 'sijil'
 import { User } from '../../../models/mappings'
 import { StructureModel } from '../../../models'
 import { UserlistFiltersService } from '../../../services/users/userlist.filters.service'

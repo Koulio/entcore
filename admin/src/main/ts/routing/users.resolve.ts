@@ -8,19 +8,19 @@ import { User } from '../models/mappings'
 @Injectable()
 export class UsersResolve implements Resolve<User[]> {
 
-    constructor(private loadingService: LoadingService){}
+    constructor(private ls: LoadingService){}
 
     resolve(route: ActivatedRouteSnapshot): Promise<User[]> {
         let currentStructure = structureCollection.data.find(s => s.id === route.parent.params['structureId'])
         if(currentStructure.users.data.length > 0) {
             return Promise.resolve(currentStructure.users.data)
         } else {
-            this.loadingService.load('portal-content')
+            this.ls.load('portal-content')
             return currentStructure.users.sync().then(() => {
-                this.loadingService.done('portal-content')
+                this.ls.done('portal-content')
                 return currentStructure.users.data
             }).catch(e => {
-                this.loadingService.done('portal-content')
+                this.ls.done('portal-content')
                 console.error(e)
             })
         }

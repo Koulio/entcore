@@ -10,9 +10,9 @@ import { LoadingService } from '../../../../../services'
 })
 export class UserInfoSection extends AbstractSection {
 
-    constructor(protected loadingService: LoadingService,
+    constructor(protected ls: LoadingService,
         protected cdRef: ChangeDetectorRef) {
-        super(loadingService, cdRef)
+        super(ls, cdRef)
     }
 
     @ViewChild("passwordMailInput") passwordMailInput : NgModel
@@ -20,6 +20,19 @@ export class UserInfoSection extends AbstractSection {
     protected onUserChange(){
         if(this.passwordMailInput)
             this.passwordMailInput.reset()
+    }
+
+    toggleUserBlock() {
+        this.ls.load('user.block')
+        this.details.toggleBlock().then(() => {
+            this.user.blocked = !this.user.blocked
+        }).catch((err) => {
+            console.error(err)
+        }).then(() => {
+            this.ls.done('user.block')
+            this.cdRef.markForCheck()
+        })
+        this.cdRef.markForCheck()
     }
 
 }

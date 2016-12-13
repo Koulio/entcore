@@ -50,18 +50,18 @@ class ActivationFilter extends UserFilter<string> {
 }
 
 class ClassesFilter extends UserFilter<{id: string, name: string}> {
-    type = 'allClasses'
+    type = 'classes'
     label = 'classes.multi.combo.title'
     comboModel = []
     display = 'name'
     order = '+name'
     filterProp = 'name'
 
-    filter = (allClasses: {id: string, name: string}[]) => {
+    filter = (classes: {id: string, name: string}[]) => {
         let outputModel = this.outputModel
         return outputModel.length === 0 ||
-            allClasses && allClasses.length > 0 &&
-            allClasses.some(c => {
+            classes && classes.length > 0 &&
+            classes.some(c => {
                 return outputModel.some(o => o.id === c.id)
             })
     }

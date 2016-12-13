@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy,
     ViewChild } from '@angular/core'
-import { ActivatedRoute, Router, Params, Data } from '@angular/router'
+import { ActivatedRoute, Router, Params, Data, NavigationEnd } from '@angular/router'
 import { Subscription } from 'rxjs'
 
 import { UserModel } from '../../../models'
@@ -41,10 +41,11 @@ export class UsersRoot implements OnInit, OnDestroy {
         private cdRef: ChangeDetectorRef,
         private dataService: UsersDataService,
         private filtersService: UserlistFiltersService,
-        private loadingService: LoadingService){}
+        private ls: LoadingService){}
 
     // Subscriptions
     private structureSubscriber : Subscription
+    private routerSubscriber : Subscription
 
     ngOnInit(): void {
         this.structureSubscriber = this.route.parent.data.subscribe((data: Data) => {
@@ -52,27 +53,24 @@ export class UsersRoot implements OnInit, OnDestroy {
             this.dataService.structure = structure
             this.filtersService.resetFilters()
             this.filtersService.setClasses(structure.classes)
-            if (structure.users.data.length === 0) {
-                this.loadingService.load('portal-content')
-                structure.users.sync().catch(e => {
-                    this.router.navigate(['error'])
-                }).then(() => {
-                    this.loadingService.done('portal-content')
-                    this.cdRef.markForCheck()
-                    this.cdRef.detectChanges()
-                })
-            }
             this.cdRef.markForCheck()
-            this.cdRef.detectChanges()
+        })
+
+        this.routerSubscriber = this.router.events.subscribe(e => {
+            if(e instanceof NavigationEnd)
+                this.cdRef.markForCheck()
         })
     }
 
     ngOnDestroy(): void {
         this.structureSubscriber.unsubscribe()
+        this.routerSubscriber.unsubscribe()
     }
 
     closeCompanion() {
-        this.router.navigate(['../users'], {relativeTo: this.route })
+        this.router.navigate(['../users'], {relativeTo: this.route }).then(() => {
+            this.dataService.user = null
+        })
     }
 
     openUserDetail(user) {

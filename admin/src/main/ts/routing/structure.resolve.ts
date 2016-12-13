@@ -8,7 +8,7 @@ import { LoadingService } from '../services'
 @Injectable()
 export class StructureResolve implements Resolve<StructureModel> {
 
-    constructor(private loadingService: LoadingService){}
+    constructor(private ls: LoadingService){}
 
     resolve(route: ActivatedRouteSnapshot): Promise<StructureModel> {
         let target = structureCollection.data.find(s => s.id === route.params['structureId'])
@@ -18,11 +18,11 @@ export class StructureResolve implements Resolve<StructureModel> {
             })
         }
 
-        this.loadingService.load('portal-content')
+        this.ls.load('portal-content')
         return target.syncClasses().catch(err =>{
             console.error(err)
         }).then(() => {
-            this.loadingService.done('portal-content')
+            this.ls.done('portal-content')
             return Promise.resolve(target)
         })
     }

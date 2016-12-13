@@ -26,10 +26,10 @@ interface Widget {
 
 interface Function {
     code: string,
-    functioName: string,
+    functioName?: string,
     scope: string[],
-    structureExternalIds: string[]
-    subjects: Map<string, Subject>
+    structureExternalIds?: string[]
+    subjects?: Map<string, Subject>
 }
 
 interface Subject {
@@ -53,9 +53,9 @@ export class Session {
 
 	birthDate: string
 
-    classes: string
+    classes: string[]
 	classNames: string[]
-    structures: string
+    structures: string[]
 	structureNames: string[]
 	uai: string[]
 
@@ -68,5 +68,6 @@ export class Session {
 	authorizedActions: Action[]
 	apps: Application[]
 	widgets: Widget[]
+    functions: {[key: string] : Function}
 
 }

@@ -1,8 +1,8 @@
 import { Component, Input, ChangeDetectorRef } from '@angular/core'
 import { Group, GroupUser } from '../../../models/mappings/group'
 import { ActivatedRoute, Router } from '@angular/router'
-import { BundlesService } from 'sijil/dist'
-import { LoadingService, UserListService } from '../../../services'
+import { BundlesService } from 'sijil'
+import { UserListService } from '../../../services'
 
 @Component({
     selector: 'group-users-list',
@@ -45,7 +45,6 @@ export class GroupUsersList {
             private router: Router,
             private cdRef: ChangeDetectorRef,
             private bundles: BundlesService,
-            private loadingService: LoadingService,
             private userListService: UserListService){}
 
     // Model

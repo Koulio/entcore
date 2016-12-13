@@ -39,6 +39,7 @@ export class ListComponent implements AfterViewInit {
     @Input() searchPlaceholder = "search"
     @Input() isSelected = () => false
     @Input() isDisabled = () => false
+    @Input() ngClass = () => ({})
 
     @Input() display = (item) => { return item }
 

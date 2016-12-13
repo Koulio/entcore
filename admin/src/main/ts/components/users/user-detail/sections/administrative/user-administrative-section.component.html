@@ -32,13 +32,13 @@
         <form-field label="homePhone">
             <input type="tel" [(ngModel)]="details.homePhone" name="homePhone">
         </form-field>
-        <form-field label="mobilePhone">
-            <input type="tel" [(ngModel)]="details.mobile" name="mobilePhone">
+        <form-field label="mobile">
+            <input type="tel" [(ngModel)]="details.mobile" name="mobile">
         </form-field>
     </form>
     <div>
-        <button [disabled]="administrativeForm.pristine || administrativeForm.invalid || loadingService.isLoading('user.update', 1)"
-            (click)="wrapRequest(details.update, 'user.update')" class="relative">
+        <button [disabled]="administrativeForm.pristine || administrativeForm.invalid || ls.isLoading('user.update', 1)"
+            (click)="wrap(details.update, 'user.update')" class="relative">
                 <spinner-cube class="button-spinner" waitingFor="user.update"></spinner-cube>
                 <s5l>save.modifications</s5l>
             </button>

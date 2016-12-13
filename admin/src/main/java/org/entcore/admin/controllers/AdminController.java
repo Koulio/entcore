@@ -46,4 +46,12 @@ public class AdminController extends BaseController {
 
 		this.service.quickSearchUsers(structureId, input, arrayResponseHandler(request));
 	}
+
+	@Get("api/structure/:id/users")
+	@SecuredAction(type = ActionType.RESOURCE, value = "")
+	@ResourceFilter(AdminStructureFilter.class)
+	public void userList(HttpServerRequest request) {
+		String structureId = request.params().get("id");
+		this.service.userList(structureId, arrayResponseHandler(request));
+	}
 }

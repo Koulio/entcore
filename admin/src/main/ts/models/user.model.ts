@@ -17,25 +17,27 @@ export class UserModel extends Model<User> implements User {
         this.userDetails.id = id
     }
     type: string
-    externalId: string
     code: string
     login: string
     firstName: string
     lastName: string
     displayName: string
     source: string
-    attachmentId: string
-    birthDate: string
-    aafFunction: string[]
+    blocked: boolean
+    aafFunctions: string[]
     structures: { id: string, name: string }[]
-    allClasses: { id: string, name: string}[]
-    functions: [string, string]
-    parents: { id: string, firstName: string,  lastName: string }[]
-    children: { id: string, firstName: string,  lastName: string, attachmentId: string }[]
-    //parent1ExternalId: string[]
-    //parent2ExternalId: string
+    classes: { id: string, name: string}[]
+    duplicates: { id: string, firstName: string, lastName: string, code: string, structures: string[] }[]
 
     userDetails: UserDetailsModel
+
+    visibleStructures() {
+        return this.structures.filter(s => structureCollection.data.find(struct => struct.id === s.id))
+    }
+
+    invisibleStructures() {
+        return this.structures.filter(s => structureCollection.data.every(struct => struct.id !== s.id))
+    }
 
     addStructure(structureId: string) {
         return this.http.put(`/directory/structure/${structureId}/link/${this.id}`).then(() => {
@@ -55,6 +57,32 @@ export class UserModel extends Model<User> implements User {
             if(targetStructure && targetStructure.users.data.length > 0) {
                targetStructure.users.data = targetStructure.users.data.filter(u => u.id !== this.id)
             }
+        })
+    }
+
+    async mergeDuplicate(duplicateId: string) {
+        await this.http.put(`/directory/duplicate/merge/${this.id}/${duplicateId}`)
+        let duplicate = this.duplicates.find(d => d.id === duplicateId)
+        this.duplicates = this.duplicates.filter(d => d.id !== duplicateId)
+        try {
+            await this.userDetails.sync()
+            return { id: this.id }
+        } catch(e) {
+            return { id: duplicate.id, structure: duplicate.structures[0] }
+        }
+    }
+
+    separateDuplicate(duplicateId: string) {
+        return this.http.delete(`/directory/duplicate/ignore/${this.id}/${duplicateId}`).then(() => {
+            let duplicate = this.duplicates.find(d => d.id === duplicateId)
+            duplicate.structures.forEach(s => {
+                let structure = structureCollection.data.find(struct => struct.id === s)
+                if(structure && structure.users.data.length > 0) {
+                    let dup = structure.users.data.find(u => u.id === duplicateId)
+                    if(dup) dup.duplicates = dup.duplicates.filter(d => d.id !== this.id)
+                }
+            })
+            this.duplicates = this.duplicates.filter(d => d.id !== duplicateId)
         })
     }
 }

@@ -27,18 +27,21 @@ import { structureCollection, StructureCollection } from '../../../../../models'
                         [display]="display"
                         (inputChange)="inputFilter = $event"
                         [isDisabled]="disableStructure"
-                        (onSelect)="wrapRequest(user?.addStructure, $event.id, 0, $event.id)">
+                        (onSelect)="wrap(user?.addStructure, $event.id, 0, $event.id)">
                     </list-component>
                 </div>
             </light-box>
             <ul class="actions-list">
-                <li *ngFor="let structure of user?.structures">
+                <li *ngFor="let structure of user.visibleStructures()">
                     <a class="action" [routerLink]="['/admin', structure.id, 'users', user.id]">
                         {{ structure.name }}
                     </a>
-                    <i  class="fa fa-times action" (click)="wrapRequest(user?.removeStructure, structure.id, 0, structure.id)"
+                    <i  class="fa fa-times action" (click)="wrap(user?.removeStructure, structure.id, 0, structure.id)"
                         [tooltip]="'delete.this.structure' | translate"
-                        [ngClass]="{ disabled: loadingService.isLoading(structure.id)}"></i>
+                        [ngClass]="{ disabled: ls.isLoading(structure.id)}"></i>
+                </li>
+                <li *ngFor="let structure of user.invisibleStructures()">
+                    <span>{{ structure.name }}</span>
                 </li>
             </ul>
         </panel-section>
@@ -49,9 +52,9 @@ export class UserStructuresSection extends AbstractSection {
 
     constructor(private userListService: UserListService,
             private router: Router,
-            protected loadingService: LoadingService,
+            protected ls: LoadingService,
             protected cdRef: ChangeDetectorRef) {
-        super(loadingService, cdRef)
+        super(ls, cdRef)
     }
 
     private structureCollection : StructureCollection = structureCollection
@@ -61,10 +64,14 @@ export class UserStructuresSection extends AbstractSection {
     protected onUserChange(){}
 
     private disableStructure = (s) => {
-        return this.loadingService.isLoading(s.id)
+        return this.ls.isLoading(s.id)
     }
 
-     // Filters
+    private isVisibleStructure = (s) => {
+        return this.structureCollection.data.find(struct => struct.id === s)
+    }
+
+    // Filters
     private _inputFilter = ""
     set inputFilter(filter: string) {
         this._inputFilter = filter
@@ -86,20 +93,12 @@ export class UserStructuresSection extends AbstractSection {
     }
 
     // Loading wrapper
-    protected wrapRequest = (request, loadingLabel: string, delay: number, ...args) => {
-        this.loadingService.load(loadingLabel, delay)
-        request.bind(this.user)(...args).catch((err) => {
-            console.error(err)
-        }).then(() => {
-            this.loadingService.done(loadingLabel)
-            this.cdRef.markForCheck()
-        })
-        this.cdRef.markForCheck()
+    protected wrap = (func, label, delay = 0, ...args) => {
+        return this.ls.wrap(func, label, {delay: delay, cdRef: this.cdRef, binding: this.user}, ...args)
     }
 
     //Routing
     private routeToStructure(structureId: string) {
-        //[routerLink]="['/admin', structure.id, 'users']" [queryParams]="{userId: user.id, refresh: 1}"
         this.router.navigate(['/admin', structureId, 'users', this.user.id])
     }
 

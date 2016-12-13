@@ -25,7 +25,7 @@ import { User } from '../../../../../models/mappings/user'
                         [display]="userListService.display"
                         (inputChange)="userListService.inputFilter = $event"
                         [isDisabled]="disableChild"
-                        (onSelect)="wrapRequest(details?.addChild, $event.id, 0, $event)">
+                        (onSelect)="wrap(details?.addChild, $event.id, 0, $event)">
                     </list-component>
                 </div>
             </light-box>
@@ -34,9 +34,9 @@ import { User } from '../../../../../models/mappings/user'
                     <a class="action" [routerLink]="['..', child.id]">
                         {{ child.lastName | uppercase }} {{ child.firstName }}
                     </a>
-                    <i  class="fa fa-times action" (click)="wrapRequest(details?.removeChild, child.id, 0, child)"
+                    <i  class="fa fa-times action" (click)="wrap(details?.removeChild, child.id, 0, child)"
                         [tooltip]="'delete.this.child' | translate"
-                        [ngClass]="{ disabled: loadingService.isLoading(child.id)}"></i>
+                        [ngClass]="{ disabled: ls.isLoading(child.id)}"></i>
                 </li>
             </ul>
         </panel-section>
@@ -48,9 +48,9 @@ export class UserChildrenSection extends AbstractSection {
 
     constructor(
             private userListService: UserListService,
-            protected loadingService: LoadingService,
+            protected ls: LoadingService,
             protected cdRef: ChangeDetectorRef) {
-        super(loadingService, cdRef)
+        super(ls, cdRef)
     }
 
     @ViewChild("codeInput") codeInput : AbstractControl
@@ -67,7 +67,7 @@ export class UserChildrenSection extends AbstractSection {
     }
 
     private disableChild = (child) => {
-        return this.loadingService.isLoading(child.id)
+        return this.ls.isLoading(child.id)
     }
 
 }

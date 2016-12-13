@@ -32,7 +32,7 @@ export class GroupsRoot implements OnInit, OnDestroy {
         private router: Router,
         private cdRef: ChangeDetectorRef,
         private dataService: GroupsDataService,
-        private loadingService: LoadingService) { }
+        private ls: LoadingService) { }
 
     // Subscriberts
     private structureSubscriber: Subscription
@@ -50,11 +50,11 @@ export class GroupsRoot implements OnInit, OnDestroy {
         this.structureSubscriber = this.route.parent.data.subscribe((data: Data) => {
             this.dataService.structure = data['structure']
             if (!this.dataService.structure.groups.data.length) {
-                this.loadingService.load('portal-content')
+                this.ls.load('portal-content')
                 this.dataService.structure.groups.sync().catch(e => {
                     this.onError(e)
                 }).then(() => {
-                    this.loadingService.done('portal-content')
+                    this.ls.done('portal-content')
                     this.cdRef.markForCheck()
                 })
             }

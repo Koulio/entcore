@@ -9,7 +9,7 @@ export class AbstractDataService {
             Object.defineProperty(this, trigger, {
                 set: (x) => {
                     this['_' + trigger] = x
-                    this.onchange.next()
+                    this.onchange.next(trigger)
                 },
                 get: () => {
                     return this['_' + trigger]
@@ -18,5 +18,5 @@ export class AbstractDataService {
         })
     }
 
-    onchange = new Subject<void>()
+    onchange = new Subject<string>()
 }

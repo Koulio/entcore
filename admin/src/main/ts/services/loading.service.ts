@@ -1,4 +1,4 @@
-import { Injectable, ApplicationRef } from '@angular/core'
+import { Injectable, ApplicationRef, ChangeDetectorRef } from '@angular/core'
 import { Subject } from 'rxjs'
 
 @Injectable()
@@ -46,6 +46,25 @@ export class LoadingService {
         this.loading.delete(something)
         this.trigger.next(true)
         this.appRef.tick()
+    }
+
+    wrap = (func: (...params) => Promise<any>, label: string,
+            props : { delay?: number, binding?: any, cdRef?: ChangeDetectorRef } = {}, ...args) => {
+
+        this.load(label, props.delay)
+        let promise = props.binding ?
+            func.bind(props.binding)(...args) :
+            func(...args)
+
+        promise.catch((err) => {
+            console.error(err)
+        }).then(() => {
+            this.done(label)
+            if(props.cdRef) props.cdRef.markForCheck()
+        })
+        if(props.cdRef) props.cdRef.markForCheck()
+
+        return promise
     }
 
 }

@@ -19,7 +19,7 @@ module.exports = {
     resolve: {
         alias: {
             'infra-components/dist': 'infra-components/dist/bundle/infra-components.bundle.js',
-            'sijil/dist': 'sijil/dist/bundles/sijil.module.umd.js'
+            'sijil': 'sijil/dist/bundles/sijil.module.umd.js'
         },
         extensions: ['', '.js', '.ts']
     },
@@ -41,5 +41,13 @@ module.exports = {
         }),
         new webpack.NoErrorsPlugin(),
         new webpack.optimize.DedupePlugin()
+        /*,new webpack.optimize.UglifyJsPlugin({
+            mangle: {
+                keep_fnames: true
+            },
+            compress: {
+                warnings: false
+            }
+        })*/
     ]
 }

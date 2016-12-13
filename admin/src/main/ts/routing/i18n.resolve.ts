@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { Resolve } from '@angular/router'
 
-import { BundlesService } from 'sijil/dist'
+import { BundlesService } from 'sijil'
 
 @Injectable()
 export class I18nResolve implements Resolve<void> {

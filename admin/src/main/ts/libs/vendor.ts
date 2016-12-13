@@ -7,13 +7,15 @@ import '@angular/http'
 import '@angular/router'
 
 // RxJS
-import 'rxjs'
+import 'rxjs/Observable'
+import 'rxjs/Subscription'
+import 'rxjs/add/operator/map'
 
 // Infra Components
 import 'infra-components/dist'
 
 // Sijil.js
-import 'sijil/dist'
+import 'sijil'
 
 // Toolkit
 import 'toolkit'

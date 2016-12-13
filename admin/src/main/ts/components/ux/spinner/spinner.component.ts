@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs'
     selector: 'spinner-cube',
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-    <div class="spinner-wrapper" *ngIf="loadingService.isLoading(loadingProp)">
+    <div class="spinner-wrapper" *ngIf="ls.isLoading(loadingProp)">
         <div class="spinner-cube">
             <div class="sk-cube sk-cube1"></div>
             <div class="sk-cube sk-cube2"></div>
@@ -114,11 +114,11 @@ export class SpinnerComponent implements OnInit, OnDestroy {
 
     private subscription : Subscription
 
-    constructor(private loadingService: LoadingService,
+    constructor(private ls: LoadingService,
         private cdRef: ChangeDetectorRef) {}
 
     ngOnInit() {
-        this.subscription = this.loadingService.trigger.subscribe(() => {
+        this.subscription = this.ls.trigger.subscribe(() => {
             this.cdRef.markForCheck()
         })
     }

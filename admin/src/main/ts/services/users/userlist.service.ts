@@ -1,9 +1,9 @@
 import { User } from '../../models/mappings/user'
 import { Injectable } from '@angular/core'
-import { BundlesService } from 'sijil/dist'
+import { BundlesService } from 'sijil'
 
 @Injectable()
-export class UserListService{
+export class UserListService {
 
     constructor(private bundlesService: BundlesService){}
 

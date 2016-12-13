@@ -1,6 +1,6 @@
 import { Component, Input, Output, OnInit, EventEmitter,
     ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core'
-import { BundlesService } from 'sijil/dist'
+import { BundlesService } from 'sijil'
 
 import { User } from '../../../models/mappings'
 import { UserListService } from '../../../services'
@@ -18,7 +18,7 @@ import { Subscription } from 'rxjs'
         [sort]="userListService.sorts"
         [limit]="userListService.limit"
         searchPlaceholder="search.user"
-        [isSelected]="isSelected"
+        [ngClass]="setStyles"
         [display]="userListService.display"
         (inputChange)="userListService.inputFilter = $event"
         (onSelect)="selectedUser = $event; onselect.emit($event)">
@@ -93,7 +93,15 @@ export class UserList implements OnInit, OnDestroy {
         this.onselect.emit(user)
     }
 
-    isSelected = (user: User) => {
+    private setStyles = (user: User) => {
+        return {
+            selected: this.isSelected(user),
+            blocked: user.blocked,
+            duplicates: user.duplicates && user.duplicates.length > 0
+        }
+    }
+
+    private isSelected = (user: User) => {
         return this.selectedUser && user &&
             this.selectedUser.id === user.id
     }

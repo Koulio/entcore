@@ -25,14 +25,16 @@ export class UserDetail implements OnInit, OnDestroy{
     @ViewChild("administrativeForm") administrativeForm : NgForm
 
     ngOnInit() {
-        this.dataSubscriber = this.dataService.onchange.subscribe(() => {
-            if(this.dataService.user &&
-                    !this.dataService.user.structures.find(s => this.dataService.structure.id === s.id)) {
-                setTimeout(() => {
-                    this.router.navigate(['..'], {relativeTo: this.route, replaceUrl: true})
-                }, 0)
-            } else if(this.user !== this.dataService.user) {
-                this.user = this.dataService.user
+        this.dataSubscriber = this.dataService.onchange.subscribe(field => {
+            if(field === 'user') {
+                if(this.dataService.user &&
+                        !this.dataService.user.structures.find(s => this.dataService.structure.id === s.id)) {
+                    setTimeout(() => {
+                        this.router.navigate(['..'], {relativeTo: this.route, replaceUrl: true})
+                    }, 0)
+                } else if(this.user !== this.dataService.user) {
+                    this.user = this.dataService.user
+                }
             }
         })
         this.userSubscriber = this.route.data.subscribe((data: Data) => {
@@ -67,5 +69,19 @@ export class UserDetail implements OnInit, OnDestroy{
         return this.details && this.details.functions &&
             this.details.functions[0][0] &&
             this.details.functions[0][1].find(id => this.structure.id === id)
+    }
+
+    private hasDuplicates() {
+        return this.user.duplicates && this.user.duplicates.length > 0
+    }
+
+    private forceDuplicates : boolean
+    private openDuplicates() {
+        this.forceDuplicates = null
+        setTimeout(() => {
+            this.forceDuplicates = true
+            this.cdRef.markForCheck()
+            this.cdRef.detectChanges()
+        }, 0)
     }
 }

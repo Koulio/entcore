@@ -43,7 +43,7 @@ export class GroupView implements OnInit, OnDestroy {
     constructor(private route: ActivatedRoute,
         private router: Router,
         private cdRef: ChangeDetectorRef,
-        private loadingService: LoadingService){}
+        private ls: LoadingService){}
 
     // Distinguish group type
     @Input() groupType : string
@@ -110,13 +110,13 @@ export class GroupView implements OnInit, OnDestroy {
     }
 
     openGroup() {
-        this.loadingService.load('groups-content')
+        this.ls.load('groups-content')
         this.selectedGroup.syncUsers().then(() => {
             this.showCompanion = true
         }).catch(err => {
             console.error(err)
         }).then(() => {
-            this.loadingService.done('groups-content')
+            this.ls.done('groups-content')
             this.cdRef.markForCheck()
         })
         this.cdRef.markForCheck()

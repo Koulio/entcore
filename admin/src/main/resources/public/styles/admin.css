@@ -80,14 +80,29 @@ form-errors {
 ul {
   list-style: none;
   padding-left: 20px; }
-  ul.actions-list li {
-    display: table-row; }
-    ul.actions-list li > * {
-      margin-left: 10px; }
-    ul.actions-list li > *:first-child {
-      display: table-cell; }
+  ul.actions-list {
+    display: table;
+    border-spacing: 10px 5px;
+    text-align: center; }
+    ul.actions-list li {
+      display: table-row; }
+      ul.actions-list li > * {
+        display: table-cell; }
+      ul.actions-list li > *:first-child {
+        text-align: left; }
 
 /* UX */
+.badge {
+  font-size: 0.8em;
+  padding: 1px 10px;
+  border-radius: 5px; }
+  .badge.alert {
+    background-color: crimson;
+    color: white; }
+  .badge.info {
+    background-color: #00c8f8;
+    color: white; }
+
 .tabs {
   text-align: center;
   position: relative;
@@ -467,7 +482,18 @@ user-list .user-toolbar .toolbar-right {
   float: right; }
 
 user-list li {
-  transition: background-color 0.25s, color 0.25s; }
+  transition: background-color 0.25s, color 0.25s;
+  position: relative; }
+  user-list li.blocked::after {
+    content: "\f05e";
+    font-family: fontAwesome;
+    float: right;
+    font-size: 1.3em; }
+  user-list li.duplicates::after {
+    content: "\f0c0";
+    font-family: fontAwesome;
+    float: right;
+    font-size: 1.3em; }
 
 /* Group users list */
 group-users-list list-component div.toolbar {

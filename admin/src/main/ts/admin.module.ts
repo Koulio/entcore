@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser'
 import { RouterModule } from '@angular/router'
 import { FormsModule } from '@angular/forms'
 
-import { SijilModule } from 'sijil/dist'
+import { SijilModule } from 'sijil'
 import { InfraComponentsModule, LabelsService } from 'infra-components/dist'
 import { routes } from './routing'
 import { SijilLabelsService } from './services'

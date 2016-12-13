@@ -5,7 +5,7 @@ import { LoadingService } from '../../../../services'
 
 export abstract class AbstractSection {
 
-    constructor(protected loadingService: LoadingService,
+    constructor(protected ls: LoadingService,
         protected cdRef: ChangeDetectorRef){}
 
     get user(){ return this._user }
@@ -25,15 +25,8 @@ export abstract class AbstractSection {
         return structureCollection.data.find(s => s.id === id)
     }
 
-    protected wrapRequest = (request, loadingLabel: string, delay: number, ...args) => {
-        this.loadingService.load(loadingLabel, delay)
-        request.bind(this.details)(...args).catch((err) => {
-            console.error(err)
-        }).then(() => {
-            this.loadingService.done(loadingLabel)
-            this.cdRef.markForCheck()
-        })
-        this.cdRef.markForCheck()
+    protected wrap = (func, label, delay = 0, ...args) => {
+        return this.ls.wrap(func, label, {delay: delay, cdRef: this.cdRef, binding: this.details}, ...args)
     }
 
     protected abstract onUserChange()

@@ -44,6 +44,7 @@
     "users.details.section.classes": "Classe(s)",
     "users.details.section.learning.groups": "Groupe(s) d'enseignement",
     "users.details.section.manual.groups": "Groupe(s) ENT",
+    "users.details.section.duplicates": "Doublon(s)",
     "form.error.required": "Champ requis",
     "form.error.minlength": "{{requiredLength}} caractères minimum",
     "form.error.maxlength": "{{requiredLength}} caractères maximum",
@@ -67,7 +68,8 @@
     "administration": "Administration",
     "ADMIN_LOCAL": "Administrateur local",
     "SUPER_ADMIN": "Administrateur central",
-    "structure.or.more": "{{ rest > 0 ? $head et $rest établissement(s) : $head }}",
+    "structure.or.more": "{{ rest ? $head et $rest établissement(s) : $head }}",
+    "member.of.n.structures": "{{ count > 1 ? $count établissements : $count établissement }}",
     "adml.current.structure": "Administrateur local sur cet établissement",
     "quick.actions": "Actions rapides",
     "structure": "Etablissement",
@@ -99,5 +101,12 @@
     "add.child": "Ajouter un enfant",
     "delete.this.child": "Supprimer l'enfant",
     "add.structure": "Ajouter un établissement",
-    "delete.this.structure": "Supprimer l'établissement"
+    "delete.this.structure": "Supprimer l'établissement",
+    "user.has.duplicates": "Utilisateur en doublon",
+    "merge": "Fusionner",
+    "separate": "Dissocier",
+    "blocking.duplicate": "Bloquant",
+    "blocking.duplicate.tooltip": "Le doublon bloque l'activation des utilisateurs concernés",
+    "minor.duplicate": "Mineur",
+    "minor.duplicate.tooltip": "Le doublon est sans conséquence"
 }

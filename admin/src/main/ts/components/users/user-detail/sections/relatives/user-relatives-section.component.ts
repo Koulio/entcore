@@ -25,7 +25,7 @@ import { User } from '../../../../../models/mappings/user'
                         [display]="userListService.display"
                         (inputChange)="userListService.inputFilter = $event"
                         [isDisabled]="disableRelative"
-                        (onSelect)="wrapRequest(details?.addRelative, $event.id, 0, $event)">
+                        (onSelect)="wrap(details?.addRelative, $event.id, 0, $event)">
                     </list-component>
                 </div>
             </light-box>
@@ -34,9 +34,9 @@ import { User } from '../../../../../models/mappings/user'
                     <a class="action" [routerLink]="['..', parent.id]">
                         {{ parent.lastName | uppercase }} {{ parent.firstName }}
                     </a>
-                    <i  class="fa fa-times action" (click)="wrapRequest(details?.removeRelative, parent.id, 0, parent)"
+                    <i  class="fa fa-times action" (click)="wrap(details?.removeRelative, parent.id, 0, parent)"
                         [tooltip]="'delete.this.relative' | translate"
-                        [ngClass]="{ disabled: loadingService.isLoading(parent.id)}"></i>
+                        [ngClass]="{ disabled: ls.isLoading(parent.id) }"></i>
                 </li>
             </ul>
         </panel-section>
@@ -48,9 +48,9 @@ export class UserRelativesSection extends AbstractSection {
 
     constructor(
             private userListService: UserListService,
-            protected loadingService: LoadingService,
+            protected ls: LoadingService,
             protected cdRef: ChangeDetectorRef) {
-        super(loadingService, cdRef)
+        super(ls, cdRef)
     }
 
     @ViewChild("codeInput") codeInput : AbstractControl
@@ -67,7 +67,7 @@ export class UserRelativesSection extends AbstractSection {
     }
 
     private disableRelative = (relative) => {
-        return this.loadingService.isLoading(relative.id)
+        return this.ls.isLoading(relative.id)
     }
 
 }
