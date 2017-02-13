@@ -21,6 +21,14 @@ export class LoadingService {
             (pending && this.timers.has(something))
     }
 
+    perform<T>(something, promise: Promise<T>, timer?: number) : Promise<T>{
+        this.load(something, timer)
+        return promise.then(_ => {
+             this.done(something)
+             return _
+        })
+    }
+
     load(something, timer?: number) : void {
         if(this.timers.has(something)){
             window.clearTimeout(this.timers.get(something))

@@ -1,3 +1,4 @@
+import { routing } from './routing.utils'
 import { Injectable } from '@angular/core'
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router'
 
@@ -11,18 +12,16 @@ export class UsersResolve implements Resolve<User[]> {
     constructor(private ls: LoadingService){}
 
     resolve(route: ActivatedRouteSnapshot): Promise<User[]> {
-        let currentStructure = structureCollection.data.find(s => s.id === route.parent.params['structureId'])
+        let currentStructure = structureCollection.data.find(s => s.id === routing.getParam(route, 'structureId'))
         if(currentStructure.users.data.length > 0) {
             return Promise.resolve(currentStructure.users.data)
         } else {
-            this.ls.load('portal-content')
-            return currentStructure.users.sync().then(() => {
-                this.ls.done('portal-content')
-                return currentStructure.users.data
-            }).catch(e => {
-                this.ls.done('portal-content')
-                console.error(e)
-            })
+            return this.ls.perform('portal-content', currentStructure.users.sync()
+                .then(() => {
+                    return currentStructure.users.data
+                }).catch(e => {
+                    console.error(e)
+                }))
         }
     }
 }

@@ -18,12 +18,11 @@ export class StructureResolve implements Resolve<StructureModel> {
             })
         }
 
-        this.ls.load('portal-content')
-        return target.syncClasses().catch(err =>{
-            console.error(err)
-        }).then(() => {
-            this.ls.done('portal-content')
-            return Promise.resolve(target)
-        })
+        return this.ls.perform('portal-content', target.syncClasses()
+            .catch(err =>{
+                console.error(err)
+            }).then(() => {
+                return Promise.resolve(target)
+            }))
     }
 }

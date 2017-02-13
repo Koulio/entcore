@@ -95,7 +95,7 @@
     "profile.groups": "Groupes de profil",
     "functional.groups": "Groupes fonctionnels",
     "members.of.group": "Membres du groupe",
-    "members": "Membre(s)",
+    "members": "{{ count < 2 ? Membre : Membres }}",
     "add.relative": "Ajouter un responsable",
     "delete.this.relative": "Supprimer le responsable",
     "add.child": "Ajouter un enfant",

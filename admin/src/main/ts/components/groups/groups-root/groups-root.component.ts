@@ -1,10 +1,9 @@
-import { Component, ChangeDetectorRef, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core'
-import { ActivatedRoute, Router, Data, Params } from '@angular/router'
 import { LoadingService } from '../../../services'
-import { Group } from '../../../models/mappings'
-import { StructureModel } from '../../../models'
-import { Subscription } from 'rxjs'
 import { GroupsDataService } from '../../../services/groups/groups.data.service'
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core'
+import { ActivatedRoute, Data, Router } from '@angular/router'
+import { Subscription } from 'rxjs'
+import { routing } from '../../../routing/routing.utils'
 
 @Component({
     selector: 'groups-root',
@@ -28,15 +27,8 @@ import { GroupsDataService } from '../../../services/groups/groups.data.service'
 })
 export class GroupsRoot implements OnInit, OnDestroy {
 
-    constructor(private route: ActivatedRoute,
-        private router: Router,
-        private cdRef: ChangeDetectorRef,
-        private dataService: GroupsDataService,
-        private ls: LoadingService) { }
-
-    // Subscriberts
+     // Subscriberts
     private structureSubscriber: Subscription
-    private querySubscriber: Subscription
 
     // Tabs
     private tabs = [
@@ -45,20 +37,22 @@ export class GroupsRoot implements OnInit, OnDestroy {
         { label: "functional.groups", view: "functional" }
     ]
 
+    private error: Error
+
+    constructor(
+        private route: ActivatedRoute,
+        private router: Router,
+        private cdRef: ChangeDetectorRef,
+        private dataService: GroupsDataService,
+        private ls: LoadingService) { }
+
     ngOnInit(): void {
         // Watch selected structure
-        this.structureSubscriber = this.route.parent.data.subscribe((data: Data) => {
-            this.dataService.structure = data['structure']
-            if (!this.dataService.structure.groups.data.length) {
-                this.ls.load('portal-content')
-                this.dataService.structure.groups.sync().catch(e => {
-                    this.onError(e)
-                }).then(() => {
-                    this.ls.done('portal-content')
-                    this.cdRef.markForCheck()
-                })
+        this.structureSubscriber = routing.observe(this.route, "data").subscribe((data: Data) => {
+            if(data['structure']) {
+                this.dataService.structure = data['structure']
+                this.cdRef.markForCheck()
             }
-            this.cdRef.markForCheck()
         })
     }
 
@@ -66,7 +60,7 @@ export class GroupsRoot implements OnInit, OnDestroy {
         this.structureSubscriber.unsubscribe()
     }
 
-    private error: Error
+
     onError(error: Error){
         console.error(error)
         this.error = error

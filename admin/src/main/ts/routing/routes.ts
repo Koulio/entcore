@@ -1,3 +1,4 @@
+import { GroupDetailComponent, GroupsTypeView } from '../components/groups'
 import { Routes } from '@angular/router'
 import { I18nResolve } from './i18n.resolve'
 import { StructuresResolve } from './structures.resolve'
@@ -5,10 +6,10 @@ import { StructureResolve } from './structure.resolve'
 import { SessionResolve } from './session.resolve'
 import { UsersResolve } from './users.resolve'
 import { GroupsResolve } from './groups.resolve'
+import { GroupResolve } from './group.resolve'
 import { UserResolve } from './user.resolve'
 import { Portal, Home, UsersRoot, GroupsRoot, StructureHome,
-	UserCreate, UserDetail, UserFilters, UserError, ManualGroups,
-	ProfileGroups, FunctionalGroups } from '../components'
+	UserCreate, UserDetail, UserFilters, UserError } from '../components'
 
 export let routes : Routes = [
 	{
@@ -31,9 +32,11 @@ export let routes : Routes = [
 					},
 					{ path: 'groups', component: GroupsRoot, resolve: { grouplist: GroupsResolve },
 						 children: [
-							 { path: 'manual',		component: ManualGroups },
-							 { path: 'profile',		component: ProfileGroups },
-							 { path: 'functional',	component: FunctionalGroups }
+							{ path: ':groupType', component: GroupsTypeView,
+								children: [
+									{ path: ':groupId', component: GroupDetailComponent, resolve: { _: GroupResolve } }
+								]
+							}
 						 ]
 					}
 				]

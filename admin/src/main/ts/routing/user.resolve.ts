@@ -1,3 +1,4 @@
+import { routing } from './routing.utils'
 import { Injectable } from '@angular/core'
 import { Resolve, ActivatedRouteSnapshot, Router } from '@angular/router'
 
@@ -11,20 +12,17 @@ export class UserResolve implements Resolve<User | Error> {
     constructor(private ls: LoadingService, private router: Router){}
 
     resolve(route: ActivatedRouteSnapshot): Promise<User> {
-        this.ls.load('users-content')
-
-        let structure = structureCollection.data.find(s => s.id === route.parent.parent.params['structureId'])
+        let structure = structureCollection.data.find(s => s.id === routing.getParam(route, 'structureId'))
         let user = structure &&
             structure.users.data.find(u => u.id === route.params['userId'])
 
         if(user) {
-             return user.userDetails.sync()
+             return this.ls.perform('users-content', user.userDetails.sync()
                 .catch((err) => {
                     this.router.navigate(['/admin', structure.id, 'users'], {replaceUrl: true})
                 }).then(() => {
-                    this.ls.done('users-content')
                     return user
-                })
+                }))
         } else {
             this.router.navigate(['/admin', structure.id, 'users'], {replaceUrl: true})
         }

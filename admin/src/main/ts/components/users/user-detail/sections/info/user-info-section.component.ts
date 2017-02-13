@@ -23,16 +23,12 @@ export class UserInfoSection extends AbstractSection {
     }
 
     toggleUserBlock() {
-        this.ls.load('user.block')
-        this.details.toggleBlock().then(() => {
-            this.user.blocked = !this.user.blocked
-        }).catch((err) => {
-            console.error(err)
-        }).then(() => {
-            this.ls.done('user.block')
-            this.cdRef.markForCheck()
-        })
-        this.cdRef.markForCheck()
+        this.ls.perform('user.block', this.details.toggleBlock()
+            .then(() => {
+                this.user.blocked = !this.user.blocked
+            }).catch((err) => {
+                console.error(err)
+            }))
     }
 
 }

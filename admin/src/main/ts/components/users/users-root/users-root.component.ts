@@ -9,6 +9,7 @@ import { LoadingService } from '../../../services'
 import { UserList } from '../user-list/user-list.component'
 import { UserlistFiltersService } from '../../../services/users/userlist.filters.service'
 import { UsersDataService } from '../../../services/users/users.data.service'
+import { routing } from '../../../routing/routing.utils'
 
 @Component({
     selector: 'users-root',
@@ -36,7 +37,8 @@ import { UsersDataService } from '../../../services/users/users.data.service'
 })
 export class UsersRoot implements OnInit, OnDestroy {
 
-    constructor(private route: ActivatedRoute,
+    constructor(
+        private route: ActivatedRoute,
         private router: Router,
         private cdRef: ChangeDetectorRef,
         private dataService: UsersDataService,
@@ -48,12 +50,14 @@ export class UsersRoot implements OnInit, OnDestroy {
     private routerSubscriber : Subscription
 
     ngOnInit(): void {
-        this.structureSubscriber = this.route.parent.data.subscribe((data: Data) => {
-            let structure: StructureModel = data['structure']
-            this.dataService.structure = structure
-            this.filtersService.resetFilters()
-            this.filtersService.setClasses(structure.classes)
-            this.cdRef.markForCheck()
+        this.structureSubscriber = routing.observe(this.route, "data").subscribe((data: Data) => {
+            if(data['structure']) {
+                let structure: StructureModel = data['structure']
+                this.dataService.structure = structure
+                this.filtersService.resetFilters()
+                this.filtersService.setClasses(structure.classes)
+                this.cdRef.markForCheck()
+            }
         })
 
         this.routerSubscriber = this.router.events.subscribe(e => {

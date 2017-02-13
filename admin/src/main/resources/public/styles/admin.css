@@ -94,7 +94,7 @@ ul {
 /* UX */
 .badge {
   font-size: 0.8em;
-  padding: 1px 10px;
+  padding: 0.2em 10px;
   border-radius: 5px; }
   .badge.alert {
     background-color: crimson;

@@ -48,7 +48,6 @@ export class GroupUsersList {
             private userListService: UserListService){}
 
     // Model
-    @Input() groups: Group[]
     @Input() selectedGroup : Group
 
     //protected isSelected = (user: GroupUser) => this.selectedUser === user

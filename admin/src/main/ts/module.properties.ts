@@ -18,7 +18,7 @@ for(let directive in directives) {
 // Service providers //
 
 for(let routingService in routing) {
-    if(routingService !== 'routes') {
+    if(routingService !== 'routes' && routingService !== 'routing') {
         providers.push(routing[routingService])
     }
 }
